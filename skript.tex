@@ -1,0 +1,105 @@
+\documentclass[a4paper,ngerman]{scrbook}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[ngerman]{babel}
+\usepackage{hyperref}
+
+%Compiler
+\usepackage{ifxetex}
+\usepackage{ifluatex}
+\ifxetex
+  \usepackage{fontspec,xunicode}
+  \catcode`\ß=13
+  \defß{\ss}
+\else\ifluatex
+  \usepackage{fontspec,xunicode}
+\else
+  \usepackage[utf8]{inputenc}
+\fi\fi
+% /Compiler
+
+\newcommand{\bO}{\ensuremath{\mathcal{O}}}%
+
+\title{Computergestützte Methoden der exakten Naturwissenschaften }
+\subtitle{Computerphysik}
+\date{Wintersemester 2013/2014}
+\author{Carlos Martín Nieto}
+\begin{document}
+\maketitle
+\chapter{Fehler}
+
+Ziel der Naturwissenschaften: Beschreibung der natur durch (einfache) Gleichungen und deren Lösungen
+
+\paragraph{Problem}
+
+Gleichungen typischerweise nicht lösbar mit Papier und Bleistift.
+\begin{itemize}
+\item[Lösung 1] Gleichungen vereinfachen $\hat{=}$ Näherung/Approximation
+\item[Lösung 2] Numerische Lösung von Gleichungen $\implies$ \boxed{\text{diese Vorlesung}}
+\end{itemize}
+
+in Naturwissenschaften wichtig: Genauigkeit (den Fehler) von numerischen Rechenergebnissen beurteilen! Es gibt verschiedene Fehlerquellen
+\begin{enumerate}
+\item Eingabefehler durch Ungenauigkeiten in den Eingabedaten.
+\item Näherungsfehler wenn statt exakten mathematische Ausdrücke vereinfachte Ausdrücke benutzt werden.
+\item Modelfehler durch vereinfachte physikalische Modelle.
+\item Rundungsfehler durch die numerische Darstellung von Zahlen und der damit verbundenden endlichen Genauigkeiten.
+\end{enumerate}
+
+\section{Näherungsfehler}
+
+Viele mathemiatische Ausdrúcke, die in der Physik auftreten sind in der exakten Formulierung nicht oder sehr aufwendig zu berechnen $\to$ Approximation $\to$ Näherungsfehler. Häufig: Funktionen definiert durch unendliche Reihen.
+
+\paragraph{Bsp 1}
+Exponenzialfunktionen
+
+Die Funktion ist $e^x = \displaystyle\sum^\infty_{n=0} \frac{x^n}{n!}$. Die Näherung $e^x = \displaystyle\sum^N_{n=0} \frac{x^n}{n!}$
+
+$\displaystyle\frac{df(x)}{dx} = F(x)$ werden durch e-Funktion gelöst.
+
+\paragraph{Bsp 2}
+Lösung einer Differenzialgleichung im Kontinuum wird ersetzt durch Lösung der diskretisierten Gleichung.
+
+Ausgangs-DG: $\displaystyle\frac{d}{dx}f(x) = a\cdot f(x)$, Lösung $f(x) = e^{ax}$.
+
+Lösung durch Beschränkung auf diskrete Gitterpunkte. $x_i$ mit $x_{i+1} - x_i = \Delta x \to$
+
+\[
+f(x) = \frac{f(x_{i+1}) - f(x_i)}{x_{i+1} - x_i} = a\cdot \frac{f(x_{i+1}) - f(x_i)}{2}
+\]
+
+Verbesserung der Näherung durch Verfeinerung der Diskretisierung, also $\Delta x \to 0$.
+
+Nachteil: mehr Rechenoperationen und damit mehr Rechenzeit, außerdem mehr Rundingsfehler (mehr in \autoref{sec:rundungsfehler}).
+
+Ziel der Numerik: optimaler Kompromiss zwischen Fehler und Rechenzeit finden.
+\section{Modellfehler}
+\label{sec:modellfehler}
+
+\paragraph{Beispiel}
+Planetenbewegung
+
+Erster Keppler Gesetzt: Planeten bewegen sich auf elyptischen Bahnen, in einem Brennpunkt steht die Sonne.
+
+Neutonische Bewegungsgleichung
+\[
+\vec{F} = m\cdot \vec{a} = m\cdot \frac{d^2\vec{r}(t)}{dt^2} = -G \frac{Mm\vec{r}}{|r|^3}
+\]
+
+\paragraph{Modelnäherungen}
+
+\begin{enumerate}
+\item Sonnenmass $M \gg$ Planetenmasse $m$ (leicht korrigierbar)
+\item Reibungskraft $\vec{F}_R = -\gamma \frac{d\vec{r}(t)}{dt}$ vernachlässigt. OK für Planeten, wichtig für kleine Objekte.
+\item Gravitationsgesetzt in der einfachen Form gilt nur für Kugeln!
+\item Relativistische Effekte $\to$ Merkur-Perikeldrehung.
+\item Mehrkörperproblem $r_i(t)$, $i=1,\dots,N$
+  \[
+  m_i \frac{d^2r_i(t)}{dt^2} = \vec{F_i} = -\sum_{j\neq i} G m_i m_j \frac{\vec{r_i}(t) - \vec{r_j}(t)}{|v_i(t) - r_j(t)|^3}
+  \]
+\end{enumerate}
+
+Gleichung für $N>2$ wechselwirkende Massen kann leicht hingeschrieben werden (durch Summatia der Knüpfe). Lösung aber nur nummerisch möglich! Annahme: $N=3$ Dreikörperproblem als 3-Stöße!
+
+\end{document}
