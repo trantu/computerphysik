@@ -4,6 +4,7 @@
 # Carlos Martín Nieto
 # Tu Tran
 
+import time
 import math
 import numpy
 import matplotlib.pyplot as plot
@@ -51,4 +52,13 @@ for (n, location) in plots:
     plot.legend((u'$t\cos_N(x)$', u'$\cos(x)$', u'Fehler'), loc='lower left')
     plot.axis([0, 2*math.pi, -1, 1])
 
-plot.show()
+#plot.show()
+
+## Let's benchmark it
+
+ours = [bench(lambda: tcos(0, n)) for n in range(0, 1000, 10)]
+theirs = [bench(lambda: numpy.cos(n)) for n in range(0, 1000, 10)]
+plot.subplot(111)
+plot.plot(range(0, 1000, 10), [t for (_, t) in ours])
+plot.plot(range(0, 1000, 10), [t for (_, t) in theirs])
+#plot.show()
