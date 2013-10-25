@@ -4,7 +4,7 @@ import numpy
 '''
 Aufgabe 1.2.1
 
-Gleitkommaarithmetik: Operation der Gleitkommazahlen, bei der die Darstellung der Zahlen durch Angabe die Mantisse sowie das Exponent begrenzt ist. Davon hängt die Genauigkeit des Egebnisses ab. Gleitkommaarithmetik fordert in der Regel jenach Länge der Darstellung viel Rechenaufwand und Speicherbedarf, weil auch Zwischenergebnisse mit gespeichert werden. Ein Beispiel sind Berechnungen der unterschiedlichen Winkel oder Farbenänderungen bei den Grafikkarten, sodass dafür extra viel Speicher und leistungstarke Prozessoren verbaut werden.
+Gleitkommaarithmetik: Operation der Gleitkommazahlen, bei der die Darstellung der Zahlen durch Angabe die Mantisse sowie das Exponent begrenzt ist. Davon hängt die Genauigkeit des Egebnisses ab. 
 
 Ausloeschung: hier spricht man von Rundungsfehlern bei der Subtraktion zweier Gleitkommazahlen, dass es entsprechende Wirkung zeigt, wenn es an einer bestimmten Stelle nach der Zahl mit kürzeren Stellen nach dem Komma  nach dem komma gerundet wird.
 Bei der Reihenfolge der numerischen Sumation wird das Ergebnis beeinflusst, weil die Genauigkeit von der Zahlendarstellung abhaengt. Z.B. bei einer Reihe mit einer Wiederholung von 10 wird jedes Mal die Zahl 0.00001 summiert und wenn es ab der 4. Stelle nach dem KOmma gerundet werden soll, dann wird das Ergebnis nach der Summation gleich null sein. Wir wissen, wenn es z.B. ab 6. Stelle gerundet wird, dann erhalten wir 0.0001 als Ergebnis. Hier sieht man die Wirkung der numerischen Sumation.
