@@ -1,0 +1,58 @@
+\documentclass[a4paper,ngerman]{scrartcl}
+
+%Compiler
+\usepackage{ifxetex}
+\usepackage{ifluatex}
+\ifxetex
+  \usepackage{fontspec,xunicode}
+  \catcode`\ß=13
+  \defß{\ss}
+\else\ifluatex
+  \usepackage{fontspec,xunicode}
+\else
+  \usepackage[utf8]{inputenc}
+\fi\fi
+% /Compiler
+
+\usepackage{fullpage}
+\usepackage{minted}
+\usepackage{amsmath}
+
+\usepackage[ngerman]{babel}
+
+\begin{document}
+\noindent WS 13/14\hfill \textbf{Computerphysik}\hfill Carlos Martín Nieto\\
+Blatt 1 | 27.10.2013 \hfill Tran Tu\\
+
+\noindent\hrulefill
+
+\section*{Aufgabe 1.1}
+
+\paragraph{1.1.1}
+
+\inputminted[mathescape,linenos]{python}{aufgabe1.py}
+
+\texttt{\% python aufgabe1.py}
+
+\[
+\begin{array}{|l|l|}\hline
+  \alpha & \epsilon\\\hline
+  1       &1.11022\cdot 10^{-16}\\\hline
+  1.1\cdot 10^{-5} &8.47033\cdot 10^{-22}\\\hline
+  1\cdot 10^{-30}   &8.75812\cdot 10^{-47}\\\hline
+  5\cdot 10^{12}   &0.000488281\\\hline
+\end{array}
+\]
+\paragraph{1.1.2}
+
+$\epsilon$ ist der Wert, was addiert zu $\alpha$ keine Änderung des Wertes erzeugt. Das nennt man Machinengenauigkeit.
+
+\paragraph{1.1.3}
+
+Ja, aus dem Standard lässt sich die Machinengenauigkeit bestimmen.
+
+\[
+\varepsilon_{\text{max}} = 2^{-n} = 2^{-23} = 1.1920928955078125\cdot 10^{-7}
+\]
+
+\end{document}
