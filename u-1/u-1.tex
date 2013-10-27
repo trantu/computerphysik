@@ -45,7 +45,7 @@ Blatt 1 | 27.10.2013 \hfill Tran Tu\\
 \]
 \paragraph{1.1.2}
 
-$\epsilon$ ist der Wert, was addiert zu $\alpha$ keine Änderung des Wertes erzeugt. Das nennt man Machinengenauigkeit.
+$\epsilon$ ist der Wert, was addiert zu $\alpha$ keine Änderung des Wertes erzeugt. Dies bedeutet, dass je größer die Zahlen sind mit der wir arbeiten, desto grober werden die Operation, die wir machen können.
 
 \paragraph{1.1.3}
 
@@ -55,4 +55,31 @@ Ja, aus dem Standard lässt sich die Machinengenauigkeit bestimmen.
 \varepsilon_{\text{max}} = 2^{-n} = 2^{-23} = 1.1920928955078125\cdot 10^{-7}
 \]
 
+\section*{Aufgabe 1.2}
+
+\paragraph{1.2.1}
+
+Gleitkommaarithmetik: Operation der Gleitkommazahlen, bei der die Darstellung der Zahlen durch Angabe die Mantisse sowie das Exponent begrenzt ist. Davon hängt die Genauigkeit des Egebnisses ab. Gleitkommaarithmetik fordert in der Regel jenach Länge der Darstellung viel Rechenaufwand und Speicherbedarf, weil auch Zwischenergebnisse mit gespeichert werden. Ein Beispiel sind Berechnungen der unterschiedlichen Winkel oder Farbenänderungen bei den Grafikkarten, sodass dafür extra viel Speicher und leistungstarke Prozessoren verbaut werden.
+
+Ausloeschung: hier spricht man von Rundungsfehlern bei der Subtraktion zweier Gleitkommazahlen, dass es entsprechende Wirkung zeigt, wenn es an einer bestimmten Stelle nach der Zahl mit kürzeren Stellen nach dem Komma  nach dem komma gerundet wird.
+Bei der Reihenfolge der numerischen Sumation wird das Ergebnis beeinflusst, weil die Genauigkeit von der Zahlendarstellung abhaengt. Z.B. bei einer Reihe mit einer Wiederholung von 10 wird jedes Mal die Zahl 0.00001 summiert und wenn es ab der 4. Stelle nach dem KOmma gerundet werden soll, dann wird das Ergebnis nach der Summation gleich null sein. Wir wissen, wenn es z.B. ab 6. Stelle gerundet wird, dann erhalten wir 0.0001 als Ergebnis. Hier sieht man die Wirkung der numerischen Sumation.
+
+\paragraph{1.2.3}
+
+Die Summe stagniert, wenn $\frac{1}{i^2}$ kleiner als der Wert wird, was bei Abrundung Null wird. Für $n = 4$ ist es $0.00004$ und für $n=6$ ist es $0.0000004$. Die Grenze liegt bei
+
+\[
+\frac{1}{i^2} = x \implies i = \sqrt{\frac{1}{x}}
+\]
+
+wobei $x$ $0.0000004$ oder $0.00004$ ist. $k$ ist immer eine ganze Zahl, also $k = \lceil i \rceil$ je $n$.
+
+\begin{align*}
+  i &= \sqrt{\frac{1}{0.00004}} = 158.11 & k = 159\\
+  i &= \sqrt{\frac{1}{0.0000004}} = 1581.1 & k = 1582\\  
+\end{align*}
+
 \end{document}
+%%% Local variables:
+%%% LaTeX-command: "pdflatex -shell-escape"
+%%% End:
