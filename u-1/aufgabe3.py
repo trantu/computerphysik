@@ -31,7 +31,7 @@ for val in res:
 ## Now let's compare the results of tcos with numpy.cos
 
 # These lists are constant for all of the plots
-xs = numpy.arange(0, 2*math.pi, 0.1)
+xs = numpy.arange(0, 4*math.pi, 0.1)
 theirs = [numpy.cos(n) for n in xs]
 
 # Return tcos(x, N) values for our list
@@ -59,7 +59,7 @@ for (n, location) in plots:
     plot.ylabel(u'cos(x)')
 
     plot.legend((u'$t\cos_N(x)$', u'$\cos(x)$', u'Fehler'), loc='lower left')
-    plot.axis([0, 2*math.pi, -1, 1])
+    plot.axis([0, 4*math.pi, -1, 1])
 
 plot.show()
 

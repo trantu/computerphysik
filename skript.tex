@@ -20,6 +20,7 @@
 % /Compiler
 
 \newcommand{\bO}{\ensuremath{\mathcal{O}}}%
+\newcommand{\R}{\ensuremath{\mathds{R}}}%
 
 \title{Computergestützte Methoden der exakten Naturwissenschaften }
 \subtitle{Computerphysik}
@@ -101,5 +102,272 @@ Neutonische Bewegungsgleichung
 \end{enumerate}
 
 Gleichung für $N>2$ wechselwirkende Massen kann leicht hingeschrieben werden (durch Summatia der Knüpfe). Lösung aber nur nummerisch möglich! Annahme: $N=3$ Dreikörperproblem als 3-Stöße!
+
+\chapter{Blah blah}
+
+\chapter{Lineare Gleichungssyteme}
+\section{Gauß}
+
+Kompliziertes Zeug.
+
+\section{LR-Zerlegung (LU in en)}
+
+Möchte man mehrere LGS mit diasselben $A$ aber anderere rechter Seite lösen so empfiehlt es sich die Elementaren Umforomungen zu merken.
+
+Für $A =
+\begin{pmatrix}
+  1 & 2 & 3\\
+  6 & -2 & 2\\
+  2 & 1 & -4
+\end{pmatrix}
+$ führen wir durch
+
+\begin{align*}
+z_2 = z_2 - 6z_1 &\to L_1 =
+\begin{pmatrix}
+  1 & 0 & 0\\
+  -6 & 1 & 0\\
+  0 & 0 & 0
+\end{pmatrix}\\
+  z_3 = z_3 + 3z_1 &\to L_2 =
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    0 & 1 & 0\\
+    3 & 0 & 1
+  \end{pmatrix}\\
+  z_3 = z_3 + \frac{1}{2}z_2 &\to L_3 =
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    0 & 1 & 0\\
+    0 & \frac{1}{2} & 1
+  \end{pmatrix}\\
+L_1A &=
+\begin{pmatrix}
+  1 & 2 & 3\\
+  0 & -14 & -16\\
+  -3 & 1 & -4
+\end{pmatrix}
+\end{align*}
+
+\begin{align*}
+  L_2L_1 &=
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    0 & 1 & 0\\
+    3 & 0 & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    -6 & 1 & 0\\
+    0 & 0 & 1
+  \end{pmatrix} =
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    -6 & 1 & 0\\
+    3 & 0 & 1
+  \end{pmatrix}\\
+L &= L3(L_1\cdot L_1) = 
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    0 & 1 & 0\\
+    0 & \frac{1}{2} & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    -6 & 1 & 0\\
+    3 & 0 & 1
+  \end{pmatrix} =
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    -6 & 1 & 0\\
+    0 & \frac{1}{2} & 1
+  \end{pmatrix}\\
+  LA &= L_3L_2L_1A - R\\
+  R &= LA =
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    -6 & 1 & 0\\
+    0 & \frac{1}{2} & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+    1 & 2 & 3\\
+    6 & -2 & 2\\
+    2 & 1 & -4
+  \end{pmatrix} =
+  \begin{pmatrix}
+    1 & 2 & 3\\
+    0 & -14 & -16\\
+    0 & 0 & -3
+  \end{pmatrix}
+\end{align*}
+
+Dies ist die rechts-obere Dreiechsmatrix aus der letzten VL.
+
+\paragraph{Bsp}
+
+Lösung von $A\vec{x} = \vec{c}$ mit $\vec{c} =
+\begin{pmatrix}
+  12\\ -16\\ 2
+\end{pmatrix}$
+
+\begin{align*}
+  L\vec{c} &=
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    -6 & 1 & 0\\
+    0 & \frac{1}{2} & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+    12\\ -16\\ 2
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    12 \\ -88\\ -6
+  \end{pmatrix}
+\end{align*}
+
+D.h\@. wir losen $R\vec{x} = y\cdot
+\begin{pmatrix}
+  1 & 2 & 3 & 2\\
+  0 & -14 & -16 & -88 \\
+  0 & 0 & -3 & -6
+\end{pmatrix}$. Rückeinsetzen
+\begin{align*}
+  x_3 &= \frac{-6}{-3} = 2\\
+  14x_2 &= 88 - 16x_3\\
+  &= 88 - 32 = 56\\
+  \implies x_2 &= 4\\
+  x_1 &= 12 - 2x_2 - 3x_3\\
+  &= 12 - 8 - 6 = -2\\
+  \implies \vec{x} =
+  \begin{pmatrix}
+    -2\\ 4\\ 2
+  \end{pmatrix}
+\end{align*}
+
+Satz. Für jede $n \times n$-Matrix, für die der Gauß-Algorithmus durchführbar ohne Zeilenaustauschung durchführbar ist, gibt es $n\times n$-Matrizen $L$ und $R$ mit der Eigenschaften:
+\begin{itemize}
+\item $L$ ist eine links-untere Dreiechsmatrix mit $l_{ii} = 1$ für $i=1,\dots,n$
+\item $R$ ist eine rechts-obere Dreiechsmatrix mit $r_{ii} \neq 0$ für $i=1,\dots,n$.
+\item $A = L^{-1}R$ bezeichnet man als \underline{$LR$-Zerlegung} von $A$.
+\end{itemize}
+
+Es gilt: \framebox{$A\vec{x} = \vec{b} \iff L\vec{b} = y$ und $R\vec{x} = \vec{y}$}
+
+\section{Cholesky-Zerlegung}
+\label{sec:chorlesky}
+
+\paragraph{Definition}
+
+Eine Symmetrische $n \times n$-Matrix $A$ heißt \underline{positiv-definit}, wenn für alle $\vec{x}~\in~R^n$, $\vec{x} = 0$ gilt: $\vec{x}^{T} A \vec{x} > 0$.
+
+\paragraph{Satz}
+
+Für jede positiv-definierte Matrix $A$ gibe es genau eine rechts-obere Dreiechsform mit $r_{ii} > 0$ für $i=1,\dots,n$ und $A=R^{T}R$. Diese Zerlegung heißt Cholesky-Zerlegung.
+
+Zum berechnen der Cholesky-Zerlegung geht man wie folgt vor (Pseudo-Code)
+
+
+\begin{verbatim}
+for i = 1,...n,
+  s = a_ii - \sum_{k=1}^{i-1} r_{ki}^2 // für i=1 ist s=a_11
+  if s \leq 0
+    stop // $A$ ist nicht positiv definit
+  else
+    r_ii = \sqrt{s}
+    for j = i+1,...,n // nicht-Diagonalelemente
+      r_{ij} = \frac{1}{r_ii} (a_ij - \sum_{k=1}^{i-1} r_{ki}r_{kj})
+    endfor
+endfor
+\end{verbatim}
+
+\paragraph{Bsp}
+
+$A =
+\begin{pmatrix}
+  4 & 4 & 2\\
+  4 & 5 & 5\\
+  2 & 5 & 26
+\end{pmatrix}
+$
+$
+  R =
+  \begin{pmatrix}
+    r_{11} & r_{12} & r_{13}\\
+    0 & r_{22} & r_{23}\\
+    0 & 0 & r_{33}
+  \end{pmatrix} =
+  \begin{pmatrix}
+    2 & 2 & 1\\
+    0 & 1 & 3\\
+    0 & 0 & 4
+  \end{pmatrix}
+$
+\begin{itemize}
+\item $i=1$
+
+    $s = a_{11} = 4 > 0 \implies r_{11} = \sqrt{4} = 2$
+    \begin{itemize}
+    \item $j=2$
+
+      $r_{12} = \frac{1}{2}(4) = 2$
+    \item $j=3$
+      $r_{13} = \frac{1}{2}(2 - 0) = 1$
+    \end{itemize}
+  \item $i=2$
+
+    $s = a_{22} - \sum_{k=1}^{i-1} r_{ki}^2 = 5 - 2^2 =1 > 0 \implies r_{22} = \sqrt{1} = 1$
+\begin{itemize}
+\item $j=3$
+
+  $r_{23} = \frac{1}{1} (5 - \sum_{k=1}^1 r_{12} r_{12}) = 5 - 2 = 3$
+\end{itemize}
+\item $i=3$
+
+  $s = a_{33} = a_{33} - \sum_{k=1}^{2} r_{k3}^2 = 26 - (1^2 + 3^2) = 16 > 0 \implies r_{33} = \sqrt{16} = 4$
+\end{itemize}
+
+Test:
+
+\begin{align*}
+R^TR &=
+\begin{pmatrix}
+  2 & 0 & 0\\
+  2 & 1 & 0\\
+  1 & 3 & 4
+\end{pmatrix}
+\begin{pmatrix}
+  2 & 2 & 1\\
+  0 & 1 & 3\\
+  0 & 0 & 4
+\end{pmatrix} =
+\begin{pmatrix}
+  4 & 4 & 2\\
+  4 & 5 & 5\\
+  2 & 5 & 26
+\end{pmatrix} = A\\
+\intertext{aber:}
+RR^T &= 
+\begin{pmatrix}
+  2 & 2 & 1\\
+  0 & 1 & 3\\
+  0 & 0 & 4
+\end{pmatrix}
+\begin{pmatrix}
+  2 & 0 & 0\\
+  2 & 1 & 0\\
+  1 & 3 & 4
+\end{pmatrix} =
+\begin{pmatrix}
+  9 & 5 & 4\\
+  5 & 10 & 12\\
+  4 & 12 & 16
+\end{pmatrix} \neq A
+\end{align*}
+
+\paragraph{Bemerkung}
+
+Der numerische Aufwand des Cholesky-Verfahrens beträgt $\left(\frac{1}{6} n^3 + \frac{1}{2}n^2 - \frac{2}{3} n\right)$ Punktoperationen und $n$ Wurzelberechnungen.
+Das Gauß-Verfahren benötigt $\left(\frac{n^3}{3} + \frac{n}{3}\right)$ Operationen, also für $n \geq 2$ ist Cholesky schenller!
 
 \end{document}
