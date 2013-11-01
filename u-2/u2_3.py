@@ -9,7 +9,7 @@ import math
 def sig(v):
     return v >= 0
 
-def next_interval(f, (a,b), delta):
+def next_interval(f, (a,b)):
     """
 
     Return a more exact interval in which the zero lays, or the input
@@ -19,9 +19,6 @@ def next_interval(f, (a,b), delta):
 
     fa = f(a)
     fb = f(b)
-
-    if abs(fa - fb) < delta:
-        return (a, b)
 
     if fa * fb >= 0:
         raise ValueError("there is no zero in this interval")
@@ -34,6 +31,8 @@ def next_interval(f, (a,b), delta):
     else:
         return (mid, b)
 
+def tuple_diff((a,b)):
+    return abs(a - b)
 
 def bisection(f, a, b, delta):
     """
@@ -41,15 +40,12 @@ def bisection(f, a, b, delta):
     """
 
     # Start with the user's interval
-    last_interval = (a, b)
-    interval = next_interval(f, last_interval, delta)
+    interval = (a, b)
 
-    # Keep asking for the next interval as long as we find a
-    # change. If they're less than delta apart, next_interval() will
-    # return the input
-    while interval != last_interval:
-        last_interval = interval
-        interval = next_interval(f, last_interval, delta)
+    # Keep getting more accurate invervals until the differences are
+    # smaller than delta
+    while not tuple_diff(interval) < delta:
+        interval = next_interval(f, interval)
 
     return interval
 
@@ -61,7 +57,7 @@ def fixed_point_iteration(f, x0, delta):
     last_point = x0
     point = f(x0)
 
-    while abs(point - last_point) >= delta:
+    while not abs(point - last_point) < delta:
         last_point = point
         point = f(last_point)
 
