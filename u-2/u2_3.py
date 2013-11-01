@@ -53,5 +53,21 @@ def bisection(f, a, b, delta):
 
     return interval
 
+def fixed_point_iteration(f, x0, delta):
+    """
+    Return the zero with `delta` precision
+    """
+
+    last_point = x0
+    point = f(x0)
+
+    while abs(point - last_point) >= delta:
+        last_point = point
+        point = f(last_point)
+
+    return point
+
 f = lambda x: math.cos(x)**2 - x + 0.2
+fi = lambda x: math.cos(x)**2 + 0.2
 print("bisection (%g, %g)" % bisection(f, -1.0, 1.0, 0.01))
+print("fixed point iter %g" % fixed_point_iteration(fi, 0.0, 0.01))
