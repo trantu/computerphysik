@@ -5,6 +5,7 @@
 
 import math
 from scipy.misc import derivative
+import matplotlib.pyplot as plot
 
 # return 1 if v is positive, 0 otherwise
 def sig(v):
@@ -92,17 +93,34 @@ def newton(f, x0, delta):
 ## Sanity checking
 f = lambda x: math.cos(x)**2 - x + 0.2
 fi = lambda x: math.cos(x)**2 + 0.2
-print("For f(x):")
-((a,b), n) = bisection(f, -1.0, 1.0, 0.00001)
-print("\tbisection (%g, %g), %g" % (a,b,n))
-print("\tfixed point iter %g, %d" % fixed_point_iteration(fi, 0.0, 0.01))
-print("\tNewton iter %g, %d" % newton(f, 0.0, 0.01))
+# print("For f(x):")
+# ((a,b), n) = bisection(f, -1.0, 1.0, 0.00001)
+# print("\tbisection (%g, %g), %g" % (a,b,n))
+# print("\tfixed point iter %g, %d" % fixed_point_iteration(fi, 0.0, 0.01))
+# print("\tNewton iter %g, %d" % newton(f, 0.0, 0.01))
 
 g = lambda x: x**2 - x - 0.2
 gi = lambda x: x**2 - 0.2
-print("For g(x):")
-#print("\tbisection (%g, %g)" % bisection(g, -1.0, 1.0, 0.01))
-print("\tfixed point iter %g, %d" % fixed_point_iteration(gi, 0.0, 0.0000000001))
-print("\tNewton iter %g, %d" % newton(g, 0.0, 0.000000000000001))
+# print("For g(x):")
+# #print("\tbisection (%g, %g)" % bisection(g, -1.0, 1.0, 0.01))
+# print("\tfixed point iter %g, %d" % fixed_point_iteration(gi, 0.0, 0.0000000001))
+# print("\tNewton iter %g, %d" % newton(g, 0.0, 0.000000000000001))
 
 deltas = [2**-x for x in range(1, 21)]
+
+for (fn, fni, t) in [(f, fi, u'$f(x)$'), (g, gi, u'$f(x)$')]:
+    steps_bisection = [n for (_, n) in map(lambda d: bisection(fn, -1.0, 1.0, d), deltas)]
+    steps_fixed_point = [n for (_, n) in
+                         map(lambda d: fixed_point_iteration(fni, 0.0, d), deltas)]
+    steps_newton = [n for (_, n) in map(lambda d: newton(fn, 0.0, d), deltas)]
+
+    plot.title(u'n gegen $\Delta$ bei %s' % t)
+    plot.loglog(deltas, steps_bisection)
+    plot.loglog(deltas, steps_fixed_point)
+    plot.loglog(deltas, steps_newton)
+   
+    plot.ylabel(u'n')
+    plot.xlabel(u'$\Delta$')
+    plot.legend((u'Bisektion', u'Fixpunkt', u'Newton'))
+
+    plot.show()
