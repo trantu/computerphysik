@@ -86,16 +86,20 @@ def newton(f, x0, delta):
     return (point, n)
 
 ## Sanity checking
+
+# The functions from the exercises, fi and gi are f and g modified for the fixed-point iteration
 f = lambda x: math.cos(x)**2 - x + 0.2
 fi = lambda x: math.cos(x)**2 + 0.2
+
+g = lambda x: x**2 - x - 0.2
+gi = lambda x: x**2 - 0.2
+
 # print("For f(x):")
 # ((a,b), n) = bisection(f, -1.0, 1.0, 0.00001)
 # print("\tbisection (%g, %g), %g" % (a,b,n))
 # print("\tfixed point iter %g, %d" % fixed_point_iteration(fi, 0.0, 0.01))
 # print("\tNewton iter %g, %d" % newton(f, 0.0, 0.01))
 
-g = lambda x: x**2 - x - 0.2
-gi = lambda x: x**2 - 0.2
 # print("For g(x):")
 # #print("\tbisection (%g, %g)" % bisection(g, -1.0, 1.0, 0.01))
 # print("\tfixed point iter %g, %d" % fixed_point_iteration(gi, 0.0, 0.0000000001))
