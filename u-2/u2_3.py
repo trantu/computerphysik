@@ -94,16 +94,17 @@ fi = lambda x: math.cos(x)**2 + 0.2
 g = lambda x: x**2 - x - 0.2
 gi = lambda x: x**2 - 0.2
 
-# print("For f(x):")
-# ((a,b), n) = bisection(f, -1.0, 1.0, 0.00001)
-# print("\tbisection (%g, %g), %g" % (a,b,n))
-# print("\tfixed point iter %g, %d" % fixed_point_iteration(fi, 0.0, 0.01))
-# print("\tNewton iter %g, %d" % newton(f, 0.0, 0.01))
+print("For f(x):")
+((a,b), n) = bisection(f, -1.0, 1.0, 0.00001)
+print("\tbisection (%g, %g), %g" % (a,b,n))
+print("\tfixed point iter %g, %d" % fixed_point_iteration(fi, 0.0, 0.01))
+print("\tNewton iter %g, %d" % newton(f, 0.0, 0.01))
 
-# print("For g(x):")
-# #print("\tbisection (%g, %g)" % bisection(g, -1.0, 1.0, 0.01))
-# print("\tfixed point iter %g, %d" % fixed_point_iteration(gi, 0.0, 0.0000000001))
-# print("\tNewton iter %g, %d" % newton(g, 0.0, 0.000000000000001))
+print("For g(x):")
+((a,b), n) = bisection(f, -1.0, 1.0, 0.00001)
+print("\tbisection (%g, %g) %g" % (a, b, n))
+print("\tfixed point iter %g, %d" % fixed_point_iteration(gi, 0.0, 0.00001))
+print("\tNewton iter %g, %d" % newton(g, 0.0, 0.00001))
 
 deltas = [2**-x for x in range(1, 21)]
 
