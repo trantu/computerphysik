@@ -57,16 +57,21 @@ interval = numpy.arange(-math.pi,math.pi+delta_x_k,delta_x_k)
 ys = map(math.cos, interval)
 res1 = diff_quot(math.sin,interval, ys)
 
-plot.subplot(121)
-plot.plot(interval, ys)
+(vals, _) = zip(*res1)
+vals = list(vals)
 
-#print res1
-ys = map(lambda x: math.sin(x)*(-1), interval)
-res2 = diff_quot(math.cos,interval, ys)
-#print res2
-resa = [a for (a,b) in res1]
-#print resa
-#print ys
-plot.subplot(122)
 plot.plot(interval, ys)
+plot.plot(interval[1:-1], vals)
+
+# We need to restrict the inverval more, as we always skip the first
+# and last values.
+vals = [a for (a, b) in diff_quot(math.sin,interval[1:-1], vals)]
+plot.plot(interval[2:-2], vals)
+
+plot.plot(interval, map(lambda x: -math.cos(x), interval))
+
+plot.legend(("$\cos(x)$", "$\cos'(x)$", "$\cos''(x)$", "$-cos(x)$"))
+plot.xlabel("x")
+plot.ylabel("y")
+
 plot.show()
