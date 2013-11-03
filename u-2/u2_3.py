@@ -6,6 +6,7 @@
 import math
 from scipy.misc import derivative
 import matplotlib.pyplot as plot
+from operator import sub
 
 # return 1 if v is positive, 0 otherwise
 def sig(v):
@@ -13,17 +14,14 @@ def sig(v):
 
 def next_interval(f, (a,b)):
     """
-
-    Return a more exact interval in which the zero lays, or the input
-    if they're less than `delta` apart.
-
+    Return a more accurate interval in which the root can be found
     """
 
     fa = f(a)
     fb = f(b)
 
     if fa * fb >= 0:
-        raise ValueError("there is no zero in this interval")
+        raise ValueError("there is no root in this interval")
 
     mid = (a+b) / 2
     fmid = f(mid)
@@ -33,12 +31,9 @@ def next_interval(f, (a,b)):
     else:
         return (mid, b)
 
-def tuple_diff((a,b)):
-    return abs(a - b)
-
 def bisection(f, a, b, delta):
     """
-    Find a zero for `f` in the interval (a, b)
+    Find a root for `f` in the interval (a, b)
     """
 
     # Start with the user's interval
@@ -47,7 +42,7 @@ def bisection(f, a, b, delta):
     # Keep getting more accurate invervals until the differences are
     # smaller than delta
     n = 0
-    while not tuple_diff(interval) < delta:
+    while not abs(sub(*interval)) < delta:
         interval = next_interval(f, interval)
         n += 1
 
