@@ -17,7 +17,7 @@ def diff_quot(fn, xs, ys):
     """
     Perform differential quotients calculation, return the calculated values and the control zipped.
     """
-    values = [(ys[i+1]-ys[i-1])/(xs[i+1]-xs[i-1]) for i in range(1, len(xs) - 1]
+    values = [(ys[i+1]-ys[i-1])/(xs[i+1]-xs[i-1]) for i in range(1, len(xs) - 1)]
     control = map(fn, xs)
 
     return zip(values, control)
