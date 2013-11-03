@@ -54,9 +54,9 @@ delta_x_k = 2*math.pi/2**5
 #Intervall fuer normale Funktion
 interval = numpy.arange(-math.pi, math.pi+delta_x_k, delta_x_k)
 #Intervall fuer diff_quotient der 1ten Ableitung
-interval_diff = numpy.arange(-math.pi+delta_x_k, math.pi, delta_x_k)
+interval_diff = interval[1:-1]
 #Intervall fuer diff_quotient der 2ten Ableitung
-interval_diff_2te_Ableitung = numpy.arange(-math.pi+delta_x_k*2, math.pi-delta_x_k, delta_x_k)
+interval_diff_2te_Ableitung = interval_diff[1:-1]
 # 1. Ableitung von cos soll durch diff_quotient angenaehert werden
 ys = map(math.cos, interval)
 res1, abs_fehler = diff_quot(cos_1_ableitung, interval, ys)
