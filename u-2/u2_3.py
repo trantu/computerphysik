@@ -106,7 +106,8 @@ print("\tbisection (%g, %g) %g" % (a, b, n))
 print("\tfixed point iter %g, %d" % fixed_point_iteration(gi, 0.0, 0.00001))
 print("\tNewton iter %g, %d" % newton(g, 0.0, 0.00001))
 
-deltas = [2**-x for x in range(1, 21)]
+rng = range(1, 21)
+deltas = [2**-x for x in rng]
 
 for (fn, fni, t) in [(f, fi, u'$f(x)$'), (g, gi, u'$f(x)$')]:
     steps_bisection = [n for (_, n) in map(lambda d: bisection(fn, -1.0, 1.0, d), deltas)]
@@ -115,12 +116,20 @@ for (fn, fni, t) in [(f, fi, u'$f(x)$'), (g, gi, u'$f(x)$')]:
     steps_newton = [n for (_, n) in map(lambda d: newton(fn, 0.0, d), deltas)]
 
     plot.title(u'n gegen $\Delta$ bei %s' % t)
-    plot.loglog(deltas, steps_bisection)
-    plot.loglog(deltas, steps_fixed_point)
-    plot.loglog(deltas, steps_newton)
-   
+    plot.loglog(steps_bisection)
+    plot.loglog(steps_fixed_point)
+    plot.loglog(steps_newton)
+
+    # Don't show too much above the values
+    upper = max(
+        max(steps_bisection),
+        max(steps_fixed_point),
+        max(steps_newton))
+
+    plot.axis([0, 21, 0, upper])
+    plot.xticks(rng, rng)
     plot.ylabel(u'n')
-    plot.xlabel(u'$\Delta$')
-    plot.legend((u'Bisektion', u'Fixpunkt', u'Newton'))
+    plot.xlabel(u'$\Delta = 2^x$')
+    plot.legend((u'Bisektion', u'Fixpunkt', u'Newton'), loc='upper left')
 
     plot.show()
