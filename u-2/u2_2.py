@@ -1,7 +1,8 @@
-'''
-Created on Nov 1, 2013
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-@author: tran
+'''
+Tu Tran, Carlos Martín Nieto
 '''
 import math
 import numpy
@@ -12,9 +13,14 @@ def cos_1_ableitung(x):
 def cos_2_ableitung(x):
     return -1*math.cos(x);
 
-def diff_quot(fn,xs, ys):
-    res = [((ys[i+1]-ys[i-1])/(xs[i+1]-xs[i-1]),fn(xs[i])) for i in range(1,len(xs)-1)]
-    return res
+def diff_quot(fn, xs, ys):
+    """
+    Perform differential quotients calculation, return the calculated values and the control zipped.
+    """
+    values = [(ys[i+1]-ys[i-1])/(xs[i+1]-xs[i-1]) for i in range(1, len(xs) - 1]
+    control = map(fn, xs)
+
+    return zip(values, control)
 
 def delta_X(k):
     return 2*math.pi/2**k
