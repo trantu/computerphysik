@@ -1,8 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 '''
-Tu Tran, Carlos Martín Nieto
+Created on Nov 1, 2013
+
+@author: tran
 '''
 import math
 import numpy
@@ -13,65 +12,71 @@ def cos_1_ableitung(x):
 def cos_2_ableitung(x):
     return -1*math.cos(x);
 
-def diff_quot(fn, xs, ys):
-    """
-    Perform differential quotients calculation, return the calculated values and the control zipped.
-    """
-    values = [(ys[i+1]-ys[i-1])/(xs[i+1]-xs[i-1]) for i in range(1, len(xs) - 1)]
-    control = map(fn, xs)
-
-    return zip(values, control)
+def diff_quot(fn,xs, ys):
+    res = [((ys[i+1]-ys[i-1])/(xs[i+1]-xs[i-1]),fn(xs[i])) for i in range(1,len(xs)-1)]
+    absolute_fehler = [abs(a-b) for (a,b) in res]
+    return (res,absolute_fehler)
 
 def delta_X(k):
     return 2*math.pi/2**k
-
+    
 def k(f, f_ableitung):
-    delta_x = map(delta_X,range(100))
-    print delta_x
-    counter = 0 
+    rg = range(10)
+    rg.reverse()
+    delta_x = map(delta_X,rg)
+    #print delta_x
+    counter = len(rg)-1 
+    
     for i in delta_x:
         #print i
-        xs = numpy.arange(0.0,100+i,i)
+        xs = numpy.arange(0.0,20+i,i)
         ys = map(f, xs)
-        abs_fails = [abs(a-b) for (a,b) in diff_quot(f_ableitung,xs, ys)]
-        print abs_fails
+        (res,abs_fails) = diff_quot(f_ableitung, xs, ys) 
+        #print abs_fails
         for j in abs_fails:
-            print "j = %g" %j
+            print "fehler = %g" %j
             if j > 0.01:
                 print "Fehler = %g , Delta_x = %g" %(j,i)
                 return counter
-        counter += 1           
+        counter -= 1           
     return counter
-#print res[counter]
 print "k = %i" % k(math.cos,cos_1_ableitung)
 
 '''
-Fehler = 0.36338 , Delta_x = 1.5708
-k = 2
+Ausgabe:
+Ab k = 4 mit Delta_x = 0.392699 wird der Fehler bei 0.0180345 groesser sein als 0.01. 
+Wenn k >= 5 wird der Fehler kleiner sein als 0.01, deswegen waehlen wir k = 5 fuer delta_x = 0.196349540849
 '''
-# k = 3 => weil damit kleiner als delta_x
-
-delta_x_k = 2*math.pi/2**4
-
+# k = 5
+delta_x_k = 2*math.pi/2**5
+#Intervall fuer normale Funktion
 interval = numpy.arange(-math.pi,math.pi+delta_x_k,delta_x_k)
+#Intervall fuer diff_quotient
+interval_diff = numpy.arange(-math.pi+delta_x_k,math.pi,delta_x_k)
+
+# 1. Ableitung von cos soll durch diff_quotient angenaehert werden
 ys = map(math.cos, interval)
-res1 = diff_quot(math.sin,interval, ys)
+(res1,abs_fehler) = diff_quot(cos_1_ableitung,interval, ys)
+print res1
+res_a1 = [a for (a,b) in res1]
+res_b1 = [a for (a,b) in res1]
 
-(vals, _) = zip(*res1)
-vals = list(vals)
+plot.subplot(221)
+plot.plot(interval_diff, res_b1)
 
-plot.plot(interval, ys)
-plot.plot(interval[1:-1], vals)
+plot.subplot(222)
+plot.plot(interval_diff, res_a1)
 
-# We need to restrict the inverval more, as we always skip the first
-# and last values.
-vals = [a for (a, b) in diff_quot(math.sin,interval[1:-1], vals)]
-plot.plot(interval[2:-2], vals)
+# 2. Ableitung von cos soll durch diff_quotient angenaehert werden
+ys = map(cos_1_ableitung, interval)
+(res2,abs_fehler2) = diff_quot(cos_2_ableitung,interval, ys)
 
-plot.plot(interval, map(lambda x: -math.cos(x), interval))
+res_a2 = [a for (a,b) in res2]
+res_b2 = [b for (a,b) in res2]
 
-plot.legend(("$\cos(x)$", "$\cos'(x)$", "$\cos''(x)$", "$-cos(x)$"))
-plot.xlabel("x")
-plot.ylabel("y")
-
+plot.subplot(223)
+plot.plot(interval_diff, res_b2)
+plot.subplot(224)
+plot.plot(interval_diff, res_a2)
 plot.show()
+
