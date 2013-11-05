@@ -4,6 +4,7 @@
 \usepackage{amssymb}
 \usepackage[ngerman]{babel}
 \usepackage{hyperref}
+\usepackage{multirow}
 
 %Compiler
 \usepackage{ifxetex}
@@ -479,4 +480,213 @@ Ist nicht nur die rechte Seite eines LGS fehlerbehaftet, sonder auch die Koeffiz
 \[
 \frac{\|\Delta\vec{x}\|}{\|\Delta\vec{x}\|} \leq \frac{\text{cond}(A)}{1-\text{cond}(A) \frac{\|\Delta A\|}{\|A\|}} \left(\frac{\|\Delta A\|}{\|A\|} + \frac{\|\Delta \vec{b} \|}{\|\vec{b}\|}\right)
 \]
+
+\section{Iterative Verfarhen}
+\label{sec:iterative-verfahren}
+
+Idee: LGS $Ax = b$ ist äquivalent zu einem vektoriellen Nullstellenproblem $Ax - b = \vec{0}$. Anstelle des Nullstellenrproblems betrachtet man das Fixpunktproblem!
+
+Zerlegung der Matrix $A = I + A - I$ ($I$ ist die Einheitsmatrix). Aus $Ax - b = \vec{0}$ wird
+
+
+\begin{align*}
+  \vec{0} &= (I + A - I)x - b \to Ix = (I - A)x + b\\
+  x &= (I-A)x + b
+\end{align*}
+
+vektorielle Fixpunktgleichung, kann als Iterationsgleichung interpretiert werden. Startwert $x^{(0)} \to x^{(1)} = (I-A)x^{(0)} + b$ und allgemein
+
+\[
+x^{(n+1)} = (I-A)x^{(n)} + b
+\]
+
+Fixpunkt der Iterationsgleichung $\hat{=}$ Lösung des LGS.
+
+\paragraph{Beispiel}
+
+$A =
+\begin{pmatrix}
+  4 & -1 & 1\\
+  -2 & 5 & 1\\
+  1 & -1 & 5
+\end{pmatrix}
+$, $b =
+\begin{pmatrix}
+  5\\ 11\\ 12
+\end{pmatrix}
+$
+
+
+\begin{align*}
+  x^{(n+1)} &= \left[
+    \begin{pmatrix}
+      1 & 0 & 0\\ 0 & 1 & 0\\ 0 & 0 & 1
+    \end{pmatrix}
+    -
+    \begin{pmatrix}
+      4 & -1 & 1\\ -2 & 5 & 1\\ 1 & -1 & 5
+    \end{pmatrix}
+  \right]x^{(n)} +
+  \begin{pmatrix}
+    5 \\ 11\\ 12
+  \end{pmatrix}\\
+  x^{(n+1)} &=
+  \begin{pmatrix}
+    -3 & 1 & -1\\ 2 & -4 & -1\\ -1 & 2 & -4
+  \end{pmatrix} x^{(n)} +
+  \begin{pmatrix}
+    5 \\ 11\\ 12
+  \end{pmatrix}
+\end{align*}
+
+%% FIXME: multirow
+\begin{tabular}{c|c|c|c|c|}
+  i & 0 & 1 & 2 & 3\\\hline
+  \multirow{3}{*}{$x^{(i)}$} & 0 & 5 & -11 & 22\\\cline{2-5}
+  & 0 & 11 & -35 & 148\\\cline{2-5}
+  & 0 & 12 & -19 & 29
+\end{tabular}\\
+
+Ansatz nicht konvergent! Betracthe alternive additive Zerlegung $A = A_1 + A_2$
+
+\subsection{Jacobi Verfahren (Gesamtschritt)}
+\label{sec:jacobi-gesamt}
+
+Betrachte Zerlegung
+
+
+\begin{align*}
+  A &= L
+  \begin{pmatrix}
+    0 & 0 & 0 & \cdot\\
+    a_{21} & 0 & 0 & \cdot\\
+    a_{31} & a_{32} & 0 & \cdot\\
+    \cdot & \cdot & \cdot & \cdot
+  \end{pmatrix}
+  + D
+  \begin{pmatrix}
+    a_11 & 0 & 0 & \cdot\\
+    0 & a_{22} & 0 & \cdot\\
+    0 & 0 & a_{33} & \cdot\\
+    \cdot &\cdot &\cdot &\cdot
+  \end{pmatrix}
+  + R
+  \begin{pmatrix}
+    0 & a_{12} & a_{13} & \cdot\\
+    0 & 0 & a_{23} & \cdot\\
+    0 & 0 & 0 & \cdot\\
+    \cdot &\cdot &\cdot &\cdot
+  \end{pmatrix}\\
+  Ax-b = 0 &= (L + D + R)x-b \to Dx = -(L+R)x+b\\
+  x &= \{\text{FP-Gl}\}-D^{-1}(L+R)x + D^{-1}b \to \{\text{It-Gl}\}x^{(n+1)} = -D(L+R)x^{(n)}  D^{-1} b
+\end{align*}
+
+Bsp
+
+\[
+A =
+\begin{pmatrix}
+  4 & -1 & 1\\ -2 & 5 & 1\\ 1 & -2 & 5
+\end{pmatrix}
+ \to L =
+ \begin{pmatrix}
+   0  & 0 & 0\\ -2 & 0 & 0\\ 1 & -2 & 0
+ \end{pmatrix}
+ ,\ D=
+ \begin{pmatrix}
+   4 & 0 & 0\\ 0 & 5 & 0\\ 0 & 0 & 5
+ \end{pmatrix}
+ ,\ R=
+ \begin{pmatrix}
+   0 & -1 & -1\\ 0 & 0 & 1\\ 0 & 0 & 0
+ \end{pmatrix}
+\]
+
+
+\begin{align*}
+  x^{(n+1)} &= -
+  \begin{pmatrix}
+    0.25 & 0 & 0\\ 0 & 0.2 & 0\\ 0 & 0 & 0.2
+  \end{pmatrix}
+  \left[
+    \begin{pmatrix}
+      0 & -1 & 1\\ -2 & 0 & 1\\ 1 & -2 & 0
+    \end{pmatrix} -
+    \begin{pmatrix}
+      5\\ 11\\ 12
+    \end{pmatrix}
+  \right]\\
+  &=
+  \begin{pmatrix}
+    0 & 0.25 & -0.25\\ 0.4 & 0 & -0.2\\ -0.2 & 0.4 & 0
+  \end{pmatrix} x^{(n)} +
+  \begin{pmatrix}
+    1.25\\ 2.2\\ 2.4
+  \end{pmatrix}
+\end{align*}
+
+\begin{tabular}{c|c|c|c|c|c|c|}
+  i & 0 & 1 & 2 & 3 & 4 & 5\\\hline
+  \multirow{3}{*}{$x^{(i)}$} & 0 & 1.25 & 1.2 & 1.0475 & 1.0065 & 0.9973\\\cline{2-7}
+  & 0 & 2.2 & 2.22 & 2.74 & 2.0094 & 1.9986\\\cline{2-7}
+  & 0 & 2.4 & 3.03 & 3.048 & 3.0201 & 3.0024
+\end{tabular}
+
+\subsection{Einzelschrittverfahren (Gauß-Seidel Verfahren)}
+\label{sec:gauss-seidel}
+
+Jakobi-Verfarhen in Komponenten:
+
+%% FIMXE: function numbering per subsection?
+
+\begin{align}
+  x_1^{(n+1)} &= 0.25\cdot x_2^{(n)} - 0.25 \cdot x_3^{(n)} + 1.25\\
+  x_2^{(n+1)} &= 0.4\cdot x_1^{(n)} - 0.2\cdot x_3^{(n)} + 2.2\\
+  x_3^{(n+1)} &= -0.2\cdot x_1^{(n)} + 0.4 \cdot x_2^{(n)} + 2.4
+\end{align}
+
+Wenn man annimmt, dass $x^{(n+1)}$ komponentenweise näher am Lösungsvektor liegt, sollte man in Gl (2)(3.4) $x_1^{(n+1)}$ benutzen und in Gl (3)(3.5) $x_1^{(n+1)}$ und $x_2^{(n+1)}$, wie man hierunter sieht.
+
+\begin{align}
+  x_1^{(n+1)} &= 0.25\cdot x_2^{(n)} - 0.25 \cdot x_3^{(n)} + 1.25\\
+  x_2^{(n+1)} &= 0.4\cdot x_1^{(n+1)} - 0.2\cdot x_3^{(n)} + 2.2\\
+  x_3^{(n+1)} &= -0.2\cdot x_1^{(n+1)} + 0.4 \cdot x_2^{(n+1)} + 2.4
+\end{align}
+
+In Matrix-Schreibweise
+
+\begin{align*}
+  x^{(n+1)} &=
+  \begin{pmatrix}
+    0 & 0.25 & -0.25\\ 0 & 0 & -0.2\\ 0 & 0 & 0
+  \end{pmatrix} x^{(n)} +
+  \begin{pmatrix}
+    0 & 0 & 0\\ 0.4 & 0 & 0\\ -0.2 & 0.4 & 0
+  \end{pmatrix} +
+  \begin{pmatrix}
+    1.25\\ 2.2\\ 2.4
+  \end{pmatrix}
+  \intertext{oder:}
+  x^{(n+1)} &= D^{-1} \left[ Rx^{(n)} +  Lx^{(n+1)} -b \right]\\
+  Dx^{(n+1)} &= -Rx^{(n)} - Lx^{(n+1)} + b & \text{It.-Gl. Gauß-Seidel}\\
+  \to (D+L) x^{(n+1)} &= - Rx^{(n)} + b\\
+  \to x^{(n+1)} &= -(D+L)^{-1} Rx^{(n)} + (D+L)^{-1}b % box
+\end{align*}
+
+\paragraph{In der Praxis}
+
+wird nicht das Inverse der Matrix $(D+L)$ berechnet, sondern das Gl.-Syst\@. $(D+L)x^{(n+1)} = -Rx^{(n)}+ b$ wird gelöst (durch Vorwärtseinsetzen)!
+
+Zurück zum Beispiel
+
+\begin{center}
+  \begin{tabular}{c|c|c|c|c|c|}
+    & 0 & 1 & 2 & 3 & 4\\\hline
+    & 0 & 1.25 & 1.1175 & 1.006 & 1.001\\\hline
+    & 0 & 2.7 & 2.001 & 2.007 & 2.0002\\\hline
+    & 0 & 3.23 & 2.977 & 3.002 & 2.9998
+  \end{tabular}
+\end{center}
+Konvergiert (etwas) schneller als Gesamtschrittverfahren.
+
 \end{document}
