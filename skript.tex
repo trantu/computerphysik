@@ -539,14 +539,15 @@ $
   \end{pmatrix}
 \end{align*}
 
-%% FIXME: multirow
-\begin{tabular}{c|c|c|c|c|}
-  i & 0 & 1 & 2 & 3\\\hline
-  \multirow{3}{*}{$x^{(i)}$} & 0 & 5 & -11 & 22\\\cline{2-5}
-  & 0 & 11 & -35 & 148\\\cline{2-5}
-  & 0 & 12 & -19 & 29
-\end{tabular}\\
 
+\begin{center}
+  \begin{tabular}{c|c|c|c|c|}
+    i & 0 & 1 & 2 & 3\\\hline
+    \multirow{3}{*}{$x^{(i)}$} & 0 & 5 & -11 & 22\\\cline{2-5}
+    & 0 & 11 & -35 & 148\\\cline{2-5}
+    & 0 & 12 & -19 & 29
+  \end{tabular}\\
+\end{center}
 Ansatz nicht konvergent! Betracthe alternive additive Zerlegung $A = A_1 + A_2$
 
 \subsection{Jacobi Verfahren (Gesamtschritt)}
@@ -688,5 +689,66 @@ Zurück zum Beispiel
   \end{tabular}
 \end{center}
 Konvergiert (etwas) schneller als Gesamtschrittverfahren.
+
+\subsection{Konvergenz von linearen Iterationverfahren}
+
+Gegeben sei eine lineare Matrix-Fixpunkt-Iterationsgleichung $x^{(n+1)} = Bx^{(n)}$ wobei $B$ eine $m \times m$-Matrix, $b \in \R^n$. $\overline{x}$ sei ein Fixpunt mit $\overline{x} = B\overline{x}  b$.
+
+Sei $\|\cdot\|$ ine Matrixnorm (siehe letzte VL), dann gilt: \begin{itemize}
+\item[] $\overline{x}$ ist ein anziehenden Fixpunkt, falls $\|B\| < 1$
+\item[] $\overline{x}$ ist ein abstoßenden Fixpunkt, falls $\|B\| > 1$
+\end{itemize}
+
+Für anziehenden Fixpunkt: Fixpunktiteration konvergiert für \underline{alle} Startwerte.
+
+\paragraph{Bemerkungen}
+
+\begin{itemize}
+\item für Gesamtschrittverfahren (Jakobi) gilt $B = -D^{-1}(L+R)$, für die $\infty$-Norm (Zeilensummennorm) gilt (im Hinterkopft behalten, dass $A = D+L+R$):
+\begin{align*}
+  \|B\|_\infty &= \max\limits_{i=1,m} \sum_{j\neq i} \frac{|a_{ij}|}{|a_ii|} = \max\limits_{i=1,m} \underbrace{\frac{1}{|a_{ii}|}}_{\text{aus $D^{-1}$}} \sum_{j\neq i} \underbrace{|a_{ij}|}_{\text{aus $(L+R)$}} < 1\\
+&\iff |a_{ii}| > \sum_{j\neq i} |a_{ij}| \text{ für \underline{alle} $i$}\\
+&\hat{=} \text{ "`Zeilensummenkriterium"'}
+\end{align*}
+
+So eine Matrix heißt "`diagonaldominant"'
+
+\item Im Einzelschrittverfahren ist $B = -(D+L)^{-1} R$ und man kann zeigen, dass $\| (D+L)^{-1} R \|_\infty \leq \|D^{-1} (L+R)\|_\infty$. \underline{Also}: konvergiert das Gesamtschrittverfahren, so konvergiert auch das Einzelschrittverfahren (Inverse ist nicht immer richtig).
+\end{itemize}
+
+\section{Nichtlineare Gleichungsssyteme | Newton Verfahren}
+\label{sec:nichtlineare}
+
+Häufig: $n$ nicht-lineare Gleichungen mit $n$ Unbekannten.\\
+Gegeben: vektorielle Funktion $f\colon \R^n \to \R^n$.\\
+Gesucht: Vektor $\overline{x} \in \R^n$ mit $f(\overline{x}) = \vec{0}$.
+
+\begin{align*}
+  f(x) &= f(x_1,\dots,x_n) =
+  \begin{pmatrix}
+    f_1(x_1,\dots,x_n)\\ f_2(x_1,\dots,x_n)\\ \vdots \\ f_3(x_1,\dots,x_n)
+  \end{pmatrix} =
+  \begin{pmatrix}
+    0\\ 0\\ \vdots\\ 0
+  \end{pmatrix}
+\end{align*}
+
+Es gibt kein einfaches Verfarhen, um zu prüfen, ob Gl.-Syst\@. lösbar ist! Wie viele Lösungen? $\to$ verallgemenere Newton-Verfahren auf $n$ Dimensionen!
+
+\begin{align*}
+  g\colon \R \to \R &\implies g(x) \tilde{=} g(x_0) + (x-x_0)g'(x_0)
+  \overset{!}{=} 0\\
+  f\colon \R^n \to \R^n &\implies f(x) \tilde{=} f\left(x^{(0)}\right) + D\left[ f\left(x^{(0)}\right)\right] \left(x-x^{(0)}\right)\overset{!}{=} 0
+\end{align*}
+
+Lösen des linearen Gl.-Syst\@.
+
+\begin{align*}
+  x &= x^{(0)} - \left[ D\left[f\left(x^{(0)}\right)\right]\right]^{-1} f\left(x^{(0)}\right)
+\intertext{oder als Iterationsgleichung}
+x^{(n+1)} &= x^{(n)} - \left[ D\left[f\left(x^{(n)}\right)\right]\right]^{-1} f\left(x^{(n)}\right)
+\end{align*}
+
+Noch mal: nide die inverse einer Matrix berechnen!
 
 \end{document}
