@@ -749,6 +749,128 @@ Lösen des linearen Gl.-Syst\@.
 x^{(n+1)} &= x^{(n)} - \left[ D\left[f\left(x^{(n)}\right)\right]\right]^{-1} f\left(x^{(n)}\right)
 \end{align*}
 
-Noch mal: nide die inverse einer Matrix berechnen!
+Noch mal: nie die inverse einer Matrix berechnen!
+
+%% 20131107
+
+Die Jacobi Matrix der partiellen Ableitungen:
+
+\[
+D\left[f(x)\right] = \frac{\partial f_i(x)}{\partial x_j} =
+\begin{pmatrix}
+  \frac{\partial f_i}{\partial x_1} & \frac{\partial f_i}{\partial x_2} & \dots & \frac{\partial f_i}{\partial x_n}\\
+  \vdots \\
+  \frac{\partial f_n}{\partial x_1} & & \dots & \frac{\partial f_n}{\partial x_n}
+\end{pmatrix}
+\]
+
+\paragraph{Bsp}
+
+\begin{align*}
+  f(x_1,x_2) =
+  \begin{pmatrix}
+    2x_1 + 4x_2\\ 4x_1 + 8x^3_2
+  \end{pmatrix} \to D[f] =
+  \begin{pmatrix}
+    2 & 4\\ 4 & 24x^2_2
+  \end{pmatrix}
+\end{align*}
+
+wähle als Startwert
+\begin{align*}
+  x^{(0)} &=
+  \begin{pmatrix}
+    4\\ 2
+  \end{pmatrix} \to D[f(x_0)] =
+  \begin{pmatrix}
+    2 & 4\\ 4 & 96
+  \end{pmatrix}\\
+    f(x^{(0)}) &=
+    \begin{pmatrix}
+      16\\ 80
+    \end{pmatrix}\\
+    D[f(x^{(0)}](x-x^{(0)}) &\overset{!}{=} -f(x^{(0)})\\
+    \begin{pmatrix}
+      2 & 4\\ 4 & 96
+    \end{pmatrix} (x-x^{(0)}) &=
+    \begin{pmatrix}
+      -16\\ -80
+    \end{pmatrix}
+\end{align*}
+
+\begin{tabular}{c|c|c|c|c}
+  & $n=1$ & 2 & 3 & 4\\\hline
+  \multirow{2}{*}{$x^{(n)}$} & -2.91 & -2.30 & -2.-5 & -2.008\\
+  & 1.45 & 1.15 & 1.03 & 1.009
+\end{tabular}
+
+Iteration konvergiert schnell gegen $\overline{x} =
+\begin{pmatrix}
+  -2 \\ 1
+\end{pmatrix}
+$, eine von 3 Lösungen.
+
+\paragraph{Satz}
+
+Das Newton-Vefahren konvergiert quadratisch, wenn:
+\begin{itemize}
+\item $x^{(0)}$ nahe genug an $\overline{x}$ liegt
+\item $D\left[f(\overline{x})\right]$ regulär ist
+\item $f$ dreimal stetig differenzierbar ist
+\end{itemize}
+
+\paragraph{Achtung}
+
+Nicht immer konvergiert das Newton-Verfahren gegen einie Nullstelle. Bsp:
+
+\[
+f =
+\begin{pmatrix}
+  x_1^3-x_2-1\\ x_1^2-x_2
+\end{pmatrix}
+\]
+
+Startwert $x^{(0)} =
+\begin{pmatrix}
+  -1\\ 0
+\end{pmatrix}
+$ konvergiert gegen $\overline{x} =
+\begin{pmatrix}
+  0\\ -0.5
+\end{pmatrix}
+$ aber $f(\overline{x}) =
+\begin{pmatrix}
+  -0.5\\ 0.5
+\end{pmatrix}
+$! Grund:
+
+\begin{align*}
+  D[f] &=
+  \begin{pmatrix}
+    3x_1^2-1\\ 2x_1-1
+  \end{pmatrix}
+  \intertext{und}
+  D[f(\overline{x})] &=
+  \begin{pmatrix}
+    0 & -1\\ 0 & -1
+  \end{pmatrix}
+\end{align*}
+
+$\implies$ Lösung der Iterations-Gleichung checken auf $f(\overline{x}) = 0$.
+
+\paragraph{Bemerkung}
+
+in der Praxis werden partielle Ableitungen durch differenzen angenährt:
+
+\[
+D[f(x)]_{ij} = \frac{f_i(x + he_j) - f_i(x)}{h}
+\]
+
+mit $e_j$ Einheitsvektor in $j$-Richtung.
+
+\subsection{Vereinfachtes Newton-Verfahen}
+\label{sec:vereinnewt}
+
+Rechenaufwan pro Schritt minimiert, wenn $D[f(x^{(0)}]$ benutzt wird. Konvergenz nur noch linear!
 
 \end{document}
