@@ -120,7 +120,7 @@ Für $A =
 \begin{pmatrix}
   1 & 2 & 3\\
   6 & -2 & 2\\
-  2 & 1 & -4
+  -3 & 1 & -4
 \end{pmatrix}
 $ führen wir durch
 
@@ -390,7 +390,7 @@ Beispiele sind
 
 \begin{itemize}
 \item Summenorm (1-Norm) $\|\vec{x}\| = \sum_{i=1}^n |x_i|$
-  \item Maximumnorm ($\infty$-Norm) $\|\vec{x}\|_{\infty} = \max_{i=1,\dots,n} |x_i|$
+  \item Maximumnorm ($\infty$-Norm) $\|\vec{x}\|_{\infty} = \max\limits_{i=1,\dots,n} |x_i|$
 \item euklidische Norm (2-Norm) $\|\vec{x}\|_2 = \sqrt{\sum_{i=1}^n x_i^2}$
 \end{itemize}
 
@@ -404,12 +404,12 @@ D.h\@. falls es eine Vektorfolge in einer Norm $a$ konvergiert, so konvergiert s
 \begin{itemize}
 \item Spaltensumme (1-Norm) $\|A\|_1 = \max_{j=1,\dots,n} \sum_{i=1}^n |a_{ij}|$
 \item Spektralnorm (2-Norm) $\|A\|_2 = \sqrt{S(A^TA)}$, mit $S(A) = \max\{\lambda\}$ "`Spektralradius von $A$"', $\lambda\colon$ Eigenwerte von $A$.
-\item Zeilensummennorm ($\infty$-Norm) $\|A\|_\infty = \max\limits_{i=1,\dots,n} \sum_{i=1}^n |a_{ij}|$
+\item Zeilensummennorm ($\infty$-Norm) $\|A\|_\infty = \max\limits_{i=1,\dots,n} \displaystyle\sum_{j=1}^n |a_{ij}|$
 \end{itemize}
 
 \paragraph{Bemerkung}
 
-Matrixnormen erfüllen alle Eigenschaften der zugrundelegenden Vektornormen. Insbesondere auch die Äquivalentz
+Matrixnormen erfüllen alle Eigenschaften der zugrundelegenden Vektornormen. Insbesondere auch die Äquivalenz
 
 \[
 \|A\vec{x}\|_v \leq \|A\|_v\|\vec{x}|_v
@@ -419,7 +419,7 @@ Dann sagt man die Norm ist kompatibel
 
 \paragraph{Satz}
 
-Sei $\|\cdot\|$ eine Norm, $A$ eine reguläre $n\times n$-Matrix die Vektoren $\vec{x}, \vec{x'}, \vec{b}, \vec{b'} \in \R^n$ so dass $A\vec{x} = \vec{b} und A\vec{x'} = \vec{b'}$.
+Sei $\|\cdot\|$ eine Norm, $A$ eine reguläre $n\times n$-Matrix die Vektoren $\vec{x}, \vec{x'}, \vec{b}, \vec{b'} \in \R^n$ so dass $A\vec{x} = \vec{b}$ und $A\vec{x'} = \vec{b'}$.
 
 Dann gilt
 
