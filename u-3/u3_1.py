@@ -11,61 +11,42 @@ def mround ( x,N ) :
     if ( x==0 ) :
         return x
     return round ( x, int ( N - math.ceil ( math.log10 ( abs ( x )))))
+
 def alpha(a,pivot):
     return -1*(a/pivot)
 
-def tausch_Zeilen(m,z1,z2):
-    for i in range(4):
-        wert1 = m[z1,i]
-        m[z1,i] = m[z2,i]
-        m[z2,i] = wert1
-    return m
+def swap(m, a, b):
+    temp = matrix(m[a])
+    m[a] = m[b]
+    m[b] = temp
+
 # first, d is ignored
 def gauss_alg(F, d):
     zeilen,spalten = shape(F)
     # nicht moeglich zu eliminieren
-    if (zeilen != spalten | zeilen == 0 | spalten == 0):
+    if zeilen != spalten or zeilen == 0 or spalten == 0:
         raise ValueError("ungleiche Anzahl zwischen Zeilen und Spalten")
+
     # axis = 1 -> vertical
     #F = concatenate((F, d.T), axis=1)
     for s in range(spalten):
         for z in range(s,zeilen):
             pivot = F[z,z]
             #Zeilenvertauschen
-            if(pivot == 0):
+            if pivot == 0:
                 for ii in range(z+1,zeilen):
-                    if(F[ii,s] != 0):
-                        F = tausch_Zeilen(F, z, ii)
-                        break
+                    if F[ii,s] != 0:
+                        swap(F, z, ii)
+                        break # back to second loop
                     
             pivot = F[z,z]
             #print pivot
             for zz in range(z+1,zeilen):    
-                if(F[zz,s] != 0):
+                if F[zz,s] != 0:
                     #print F[z,:]
                     #print F[z+1,:]
                     alp = alpha(F[zz,s], pivot)
-                    #print alp
-                    for i in range(spalten):
-                        F[zz,i]= (alp* F[z,i])+F[zz,i]
-        '''
-        if(F[2,0] != 0):
-            alp = alpha(F[2,0], pivot)
-            for i in range(4):
-                F[2,i]= (alp* F[0,i])+F[2,i]
-        # Addition mit 2. Zeile
-        pivot = F[1,1]
-        if(pivot == 0 and F[2,1] != 0):
-                F = tausch_Zeilen(F, 1, 2)
-                print 'tausch'
-        pivot = F[1,1]
-        if(F[2,1] != 0):
-            alp = alpha(F[2,1], pivot)
-            print alp
-            for i in range(1,4):
-                F[2,i]= (alp* F[1,i])+F[2,i]
-        '''
-        
+                    F[zz] = (alp * F[z]) + F[zz]
     return F
 '''
 Test
