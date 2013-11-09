@@ -5,6 +5,7 @@
 
 from numpy import matrix, zeros, eye
 from math import sqrt
+from functools import reduce
 
 def alpha(a, pivot):
     return -1*(a/pivot)
@@ -21,7 +22,7 @@ def gauss_alg(F, d):
     if zeilen != spalten or zeilen == 0 or spalten == 0:
         raise ValueError("ungleiche Anzahl zwischen Zeilen und Spalten")
 
-    L = []
+    Ls = []
 
     # axis = 1 -> vertical
     #F = concatenate((F, d.T), axis=1)
@@ -39,17 +40,31 @@ def gauss_alg(F, d):
             pivot = F[z,z]
             for zz in range(z+1,zeilen):
                 if F[zz,s] != 0:
-                    #print F[z,:]
-                    #print F[z+1,:]
                     alp = alpha(F[zz,s], pivot)
                     F[zz] = (alp * F[z]) + F[zz]
                     l = eye(zeilen, spalten)
                     l[zz] = (alp * l[z]) + l[zz]
-                    L.append(l)
+                    Ls.append(l)
 
-    LL = reduce(lambda acc, x: x.dot(acc), L)
+    # L3(L2(L1))
+    L = reduce(lambda acc, x: x.dot(acc), Ls)
 
-    return F, LL
+    return F, L
+
+def backwards_substitution(R, y):
+    xs = [0] * len(y)
+
+    for i in reversed(range(len(y))):
+        print "setting xs[%d] = %f" % (i, y[i,0])
+        xs[i] = y[i,0]
+        for j in reversed(range(i+1, len(y))):
+            print "(%d,%d)" % (i, j)
+            print "%f * %f" % (R[i,j], xs[j])
+            xs[i] -= R[i,j] * xs[j]
+        print "dividing xs[%d] (%f) / R[%d,%d] (%f)" % (i, xs[i], i, i, R[i,i])
+        xs[i] = xs[i] / R[i,i]
+    #xs.reverse()
+    return xs
 
 def cholesky(A):
     n, m = A.shape
@@ -75,21 +90,44 @@ A = matrix([[64, -40, 16],
             [-40, 29, -4],
             [16,  -4, 62]], dtype=float)
 
-R = cholesky(A)
+CR = cholesky(A)
 
-print "R =\n", R
+print "Cholesky R =\n", CR
 
-if (R.transpose().dot(R) == A).all():
+if (CR.transpose().dot(CR) == A).all():
     print "\nCalculations correct: R^T * R = A ✔"
 else:
     print "Oh no! R^T * R != A"
 
 F, L = gauss_alg(matrix(A), None)
 
-print F, L
+print "\nLR partition, L:\n", L
 
-# print "control"
+if (L.dot(A) == F).all():
+    print "\nLR partition correct: LA = F ✔"
+else:
+    print "Oh no! LA != F"
 
-# F, L = gauss_alg(matrix('1 2 3; 6 -2 2; -3 1 -4', dtype=float), None)
+R = L.dot(A)
 
-# print L
+b = matrix('-8; 15; 34', dtype=float)
+
+# Transformed solution
+Lb = L.dot(b)
+
+xs = backwards_substitution(R, Lb)
+print xs
+
+print "control"
+
+A = matrix('1 2 3; 6 -2 2; -3 1 -4', dtype=float)
+F, L = gauss_alg(matrix(A, dtype=float), None)
+
+print L
+Lb = L.dot(matrix('12; -16; 2', dtype=float))
+
+print "Lb\n", Lb
+
+R = L.dot(A)
+xs = backwards_substitution(R, Lb)
+print xs
