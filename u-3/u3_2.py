@@ -3,64 +3,30 @@
 
 # Carlos Martín Nieto, Tu Tran
 
-from numpy import matrix, zeros, eye
+import numpy as np
+from numpy import matrix, zeros, eye, dot
 from math import sqrt
 from functools import reduce
+from matutils import alpha, swap, gauss_triangulation, backwards_substitution
+from u3_1 import gauss_alg
 
-def alpha(a, pivot):
-    return -1*(a/pivot)
+def flip(fn):
+    return lambda a, b: fn(b, a)
 
-def swap(m, a, b):
-    temp = matrix(m[a])
-    m[a] = m[b]
-    m[b] = temp
-
-# first, d is ignored
-def gauss_alg(F, d):
-    zeilen,spalten = F.shape
-    # nicht moeglich zu eliminieren
-    if zeilen != spalten or zeilen == 0 or spalten == 0:
-        raise ValueError("ungleiche Anzahl zwischen Zeilen und Spalten")
+def lr_partition(A):
+    n, m = A.shape
 
     Ls = []
 
-    # axis = 1 -> vertical
-    #F = concatenate((F, d.T), axis=1)
-    for s in range(spalten):
-        for z in range(s,zeilen):
-            pivot = F[z,z]
-
-            #Zeilenvertauschen
-            if pivot == 0:
-                for ii in range(z+1,zeilen):
-                    if F[ii,s] != 0:
-                        swap(F, z, ii)
-                        break # back to second loop
-
-            pivot = F[z,z]
-            for zz in range(z+1,zeilen):
-                if F[zz,s] != 0:
-                    alp = alpha(F[zz,s], pivot)
-                    F[zz] = (alp * F[z]) + F[zz]
-                    l = eye(zeilen, spalten)
-                    l[zz] = (alp * l[z]) + l[zz]
-                    Ls.append(l)
+    for ins in gauss_triangulation(A):
+        if ins[0] == 'div':
+            _, alpha, a, b = ins
+            l = matrix(eye(n,m), dtype=float)
+            l[b] = (alpha * l[a]) + l[b]
+            Ls.append(l)
 
     # L3(L2(L1))
-    L = reduce(lambda acc, x: x.dot(acc), Ls)
-
-    return F, L
-
-def backwards_substitution(R, y):
-    """ Perform backwards subtitution on solution y and right-matrix R """
-    xs = [0] * len(y)
-
-    for i in reversed(range(len(y))):
-        xs[i] = y[i,0]
-        xs[i] -= sum([R[i,j] * xs[j] for j in range(i+1, len(y))])
-        xs[i] /= R[i,i]
-
-    return matrix(xs).transpose()
+    return reduce(flip(dot), Ls)
 
 def cholesky(A):
     n, m = A.shape
@@ -95,11 +61,12 @@ if (CR.transpose().dot(CR) == A).all():
 else:
     print "Oh no! R^T * R != A"
 
-F, L = gauss_alg(matrix(A), None)
+F = gauss_alg(matrix(A), None)
+L = lr_partition(A)
 
 print "\nLR partition, L:\n", L
 
-if (L.dot(A) == F).all():
+if np.allclose(L.dot(A),F):
     print "\nLR partition correct: LA = F ✔"
 else:
     print "Oh no! LA != F"
@@ -114,6 +81,11 @@ Lb = L.dot(b)
 
 xs = backwards_substitution(R, Lb)
 print "x = \n", xs
+
+if np.allclose(dot(A, xs), b):
+    print "\nLR partition worked: Ax = b ✔"
+else:
+    print "Oh no! Ax != b"
 
 # print "\n*** Control: solution from the lecture ***"
 
