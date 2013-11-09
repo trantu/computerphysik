@@ -52,19 +52,15 @@ def gauss_alg(F, d):
     return F, L
 
 def backwards_substitution(R, y):
+    """ Perform backwards subtitution on solution y and right-matrix R """
     xs = [0] * len(y)
 
     for i in reversed(range(len(y))):
-        print "setting xs[%d] = %f" % (i, y[i,0])
         xs[i] = y[i,0]
-        for j in reversed(range(i+1, len(y))):
-            print "(%d,%d)" % (i, j)
-            print "%f * %f" % (R[i,j], xs[j])
-            xs[i] -= R[i,j] * xs[j]
-        print "dividing xs[%d] (%f) / R[%d,%d] (%f)" % (i, xs[i], i, i, R[i,i])
-        xs[i] = xs[i] / R[i,i]
-    #xs.reverse()
-    return xs
+        xs[i] -= sum([R[i,j] * xs[j] for j in range(i+1, len(y))])
+        xs[i] /= R[i,i]
+
+    return matrix(xs).transpose()
 
 def cholesky(A):
     n, m = A.shape
@@ -108,26 +104,25 @@ if (L.dot(A) == F).all():
 else:
     print "Oh no! LA != F"
 
-R = L.dot(A)
+# Let's solve with b = [-8; 15; 34]
 
+R = L.dot(A)
 b = matrix('-8; 15; 34', dtype=float)
 
 # Transformed solution
 Lb = L.dot(b)
 
 xs = backwards_substitution(R, Lb)
-print xs
+print "x = \n", xs
 
-print "control"
+# print "\n*** Control: solution from the lecture ***"
 
-A = matrix('1 2 3; 6 -2 2; -3 1 -4', dtype=float)
-F, L = gauss_alg(matrix(A, dtype=float), None)
+# A = matrix('1 2 3; 6 -2 2; -3 1 -4', dtype=float)
+# F, L = gauss_alg(matrix(A, dtype=float), None)
 
-print L
-Lb = L.dot(matrix('12; -16; 2', dtype=float))
+# print L
+# Lb = L.dot(matrix('12; -16; 2', dtype=float))
 
-print "Lb\n", Lb
-
-R = L.dot(A)
-xs = backwards_substitution(R, Lb)
-print xs
+# R = L.dot(A)
+# xs = backwards_substitution(R, Lb)
+# print "x = \n", xs
