@@ -34,17 +34,14 @@ def show_solution(A, b, bp, ls):
         dx = abs(xc - x)
 
         # Calcualte the errors
-        cond = frobenius(A) * frobenius(inv(A))
-        abserr = frobenius(inv(A)) * frobenius(db)
+        Ainv = inv(A)
+        cond = frobenius(A) * frobenius(Ainv)
+        abserr = frobenius(Ainv) * frobenius(db)
         relerr = cond * (frobenius(db) / frobenius(b))
 
         print "\t Expected max error %f" % abserr
-        print x
-        print xc
-        print dx
         print "\t║𝚫x║₂ = %f" % frobenius(dx)
-        print "\t Exptected rel error %f" % relerr
-        print "\t frob(x) = %f", frobenius(x)
+        print "\t Expected rel error %f" % relerr
         print "\t║𝚫x║₂/║x║₂ = %f" % (frobenius(dx) / frobenius(x))
         print ""
 
