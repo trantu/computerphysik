@@ -35,7 +35,7 @@ def show_solution(A, b, bp, ls):
 
         # Calcualte the errors
         cond = frobenius(A) * frobenius(inv(A))
-        abserr = frobenius(A) * frobenius(db)
+        abserr = frobenius(inv(A)) * frobenius(db)
         relerr = cond * (frobenius(db) / frobenius(b))
 
         print "\t Expected max error %f" % abserr
