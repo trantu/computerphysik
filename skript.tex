@@ -6,6 +6,7 @@
 \usepackage{hyperref}
 \usepackage{multirow}
 \usepackage{cancel}
+\usepackage{gnuplottex}
 
 %Compiler
 \usepackage{ifxetex}
@@ -1062,5 +1063,57 @@ Man benötigt zur Auswertung des Newton Polynoms nur $n$ Punktoperationen!
 \end{itemize}
 
 was das Polynom anders geschrieben ist.
+
+\paragraph{Problem bei Polynom-Interpolation}
+
+gegeben eine Funktion $f(x) = \frac{1}{1+x^2}$.
+
+\begin{tabular}{c|c|c|c|c|c|c|c|c}
+  $x_i$ & -3  & -2  & -1  &  0 & 1 & 2 & 3 &\\\hline
+  $f_i$ & 0.1 & 0.2 & 0.5 & 1  &  &  &  &
+\end{tabular}
+% \begin{gnuplot}[terminal=cairolatex]
+%   plot 1/(1+x^2)
+% \end{gnuplot}
+[Graph]
+
+gerade Funktion: $p(x) = 1-0.64x^2 + 0.15x^4 - 0.06x^6$
+
+Polyno weist an den Rändern des Stützstellenintervalls Überschwinger auf. Erhöhung von $n$ verbessert die Situtation nicht. Außerdem divergiert Polynom außerhalb des Intervalls $\implies$ Interpolationspolynome nicht für Extrapolation geeignet.
+
+\section{Spline Interpolation}
+\label{sec:spline}
+
+Ausgangsüberlegung: gute Näherung einer Funktion $\implies$ viele Stützstellen. Aber: Polynom hoher Ordnung $\implies$ viele Schwingungen + starke Divergenz.
+
+\paragraph{Idee}
+
+teile Intervall in Teilintervale auf, benutze jeweils Polynome niedriger Ordnung!
+
+\paragraph{Einfachste Stufe}
+
+Gerade, die durch die Datenpunkte durchgeht. Eine lineare Spline Interpolation. "`Kniche"' häufig störend in Anwendungen $\to$ fordere stetige erste und zweite Ableitungen $\to$ "`kubische Splines"'
+
+\paragraph{Def}
+
+eine Funktion $s(x)\colon [a,b] \to \R$ heißt kubischer Spline zu den Stützstellen $a=x_0~<~x_1\dots < x_n=b$ falls gilt:
+\begin{itemize}
+\item $s''(x)$ existiert und ist stetig
+\item $s(x)$ ist auf den Intervallen $[x_i,x_{i+1}]$ jeweils ein Polynom dritten Grades.
+\item interpolierender Spline zu den Werten $f_0\dots f_n$: $s(x_i) = f_i$ für $i=0,\dots,n$
+\item periodischer Spline: zusätzlich $s(a) = s(b)$ und $s'(a) = s'(b)$ und $s''(a) = s''(b)$ oder
+\item natürlicher Spline: zusätzlich $s''(a) = s''(b) = 0$
+\end{itemize}
+
+\paragraph{Bestimmung der Koeffizienten}
+
+ein Polynom dritten Grades hat vier Koeffizienten $\hat{=}$ Freiheitsgrade; für $n$ Intervalle haben wir also $4n$ Koeffizienten!
+
+\begin{itemize}
+\item Pro Intervall 2 Interpolationsbedingungen (rechts und links) $\to 2n$.
+\item An den Stützstellen $x_1,\dots,x_{n-1}$ sollen 1\@. und 2\@. Ableitungen gleich sein.
+\end{itemize}
+
+Deswegen 2 zusätzliche Bedingungen, zusammen \underline{$4n-2$ Bed.}
 
 \end{document}
