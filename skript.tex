@@ -966,7 +966,7 @@ $l_0(x)$ ist Null an allen Stützstellen außer an $x_0$, und $l_0(x_0) = 1$. (a
 
 jedes $l_i(\star)$ ist ein Polynom dritten Grades $\to p(x_0)$ auch dritten Grad. Berechnung von $p(x)$ durch Summation von $l_i(x)$ immer noch zu aufwändig $\hat{=}$ es gibt schnellere Methode!
 
-\paragraph{Newtonsche Interpolationaformel}
+\paragraph{Newtonsche Interpolationsformel (dividierte Differenzen)}
 
 Gegeben Wertpaare $(x_i,f_i)$ für $i=0,\dots,n$. Berechnung von "`dividierende Differenzen"':
 
@@ -984,8 +984,8 @@ Gegeben Wertpaare $(x_i,f_i)$ für $i=0,\dots,n$. Berechnung von "`dividierende 
 
 im Schema für $n=2$.
 
-\begin{tabular}{cccccccc}
-  $x_i$ & $f_i$  & $f(x_i)$\\
+\begin{tabular}{c|c|cccccc}
+  $x_i$ & $f_i$  & $f(x_i)$\\\cline{1-3}
   $x_0$ & $f(x_0)$\\
   & & $f(x_0,x_1) = \frac{f(x_1) - f(x_0)}{x_1 - x_0}$\\
   $x_1$ & $f(x_1)$ & & $f(x_0, x_1, x_2) = \frac{f(x_2,x_1) - f(x_0,x_1)}{x_2-x_0}$\\
@@ -993,10 +993,74 @@ im Schema für $n=2$.
   $x_2$ & $f(x_2)$
 \end{tabular}
 
+\paragraph{Bem.}
+
+\begin{itemize}
+\item $x_i$ müssen nicht nach Größe sortiert sein
+\item neue Wertepaare angefügt werden
+\end{itemize}
+
+für unser Beispiel
+
+\begin{tabular}{c|c|c|cccccc}
+  $i$ & $x_i$ & $f(x_i)$ & $f(x_i,x_{i+1})$ & $f(x_i,x_{i+1},x_{x+2})$ & $f(x_i,x_{i+1},x_{x+2},x_{i+3})$\\\hline
+  0 &  -1 & 5\\
+  & & & $f(x_0,x_1) = \frac{-2-5}{0-(-1)} = -7$\\
+  1 & 0 & -2 & & $f(x_0,x_1,x_2) = \frac{11-(-7)}{1-(-1)} = 9$\\
+  & & & $f(x_1,x_2) = \frac{9-(-2)}{1-0} = 11$ & & $\frac{-12-9}{2-(-1)} = -7$\\
+  2 & 1 & 9 & & $f(x_1,x_2,x_3) = \frac{-13-11}{2-0} = -12$\\
+  & & & $f(x_2,x_3) = \frac{-4 -9}{2-1} = -13$\\
+  3 & 2 & 4
+\end{tabular}
+
 \paragraph{Interpolationsformel}
 
-\[
-p(x) = \sum_{i=0}^n f(x_0,\dots,x_i)\prod_{j=0}^{i-1} (x-x_j)
-\]
+\begin{align*}
+  p(x) =& \sum_{i=0}^n f(x_0,\dots,x_i)\prod_{j=0}^{i-1} (x-x_j)\\
+  =& \underbrace{f(x_0)}_{i=0} + \underbrace{f(x_0,x_1)(x-x_0)}_{i=1}\\
+&+ \underbrace{f(x_0,x_1,x_2)(x-x_0)(x-x_1)}_{i=2} + \underbrace{f(x_0,x_1,x_2,x_3)(x-x_0)(x-x_1)(x-x_3)}_{i=3}
+\end{align*}
+
+Nur die divedierten Differenzen im oberen schrägen Zeile tragen bei!
+
+Für unser Beispiel:
+
+\begin{align*}
+  &= 5 + (-7)(x-(-1)) + 9(x-(-1))(x-(x-0)+(-7)(x+1)x(x-1)\\
+  &= 5 -7x - 7 + 9x^2 + 9x -7(x^3 - x)\\
+  &= \boxed{-7x^3 + 9x^2 + 9x - 2}
+\end{align*}
+
+Umformung von $p(x)$ durch Ausklammern:
+
+\begin{align*}
+  p(x) &= f(x_0) + (x-x_0)\left[ f(x_0,x_1) + (x-x_1)\left[ f(x_0,x_1,x_2) + (x-x_2)f(x_0,x_1,x_2,x_3) \right] \right]
+\end{align*}
+
+\paragraph{Iterative Auswertung des Newton Polynoms (Horner Schema)}
+
+\begin{itemize}
+\item[] $r_n = f(x_0,x_1,\dots,x_n)$
+\item[] für $k = n-1$ bis $0$
+  \begin{itemize}
+  \item[] $r_k = r_{k+1} (x-x_k)+f(x_0,\dots,x_k)$
+  \end{itemize}
+\item[] ende für
+\item[] $p(x) = r_0$
+\end{itemize}
+
+Man benötigt zur Auswertung des Newton Polynoms nur $n$ Punktoperationen!
+
+\paragraph{Bsp}
+($n=3$)
+
+\begin{itemize}
+\item $r_3 = f(x_0,x_1,x_2,x_3) = -7$
+\item $r_2 = r_3(x-x_2) + f(x_0,x_1,x_2) = -7(x-1)+9$
+\item $r_1 = r_2(x-x_1) + f(x_0,x_1) = [-7(x-1)+0] x -7$
+\item $r_0 = r_1(x-x_0) + f(x_0) = [(-7(x-1) + 9)x-7](x+1)+5$
+\end{itemize}
+
+was das Polynom anders geschrieben ist.
 
 \end{document}
