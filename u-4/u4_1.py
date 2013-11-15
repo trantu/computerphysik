@@ -9,6 +9,7 @@ import math
 import copy
 from numpy import * 
 from copy import deepcopy
+import matplotlib.pyplot as plt
 
 def tausch_Zeilen(m, a, b):
     temp = matrix(m[a])
@@ -19,14 +20,6 @@ def mround ( x,N ) :
     if ( x== 0.0 ) :
         return x
     return round ( x, int ( N - math.ceil ( math.log10 ( abs ( x )))))
-
-def eliminable(A,b):
-    zeilen,spalten = shape(A)
-    if (zeilen != spalten or zeilen == 0 or spalten == 0):
-        raise ValueError("ungleiche Anzahl zwischen Zeilen und Spalten")
-    for i in range(zeilen):
-        if mean(A[i,:]) == 0.0:
-            raise ValueError("eine Zeile Null")
         
 def konvergiert(xk,xk_1):
     diff = xk_1-xk
@@ -39,8 +32,26 @@ def konvergiert(xk,xk_1):
         return 0
     else:
         return 1
+def solve (F, d):
+    A = deepcopy(F)
+    b = deepcopy(d)
+    zeilen,_ = shape(A)
+    for i in range(zeilen):
+        for j in range(zeilen):
+            if j == i:
+                A[i,j] = b[i]/A[i,j]
+                for ii in range(i+1,zeilen):
+                    A[ii,j] = A[ii,j]*A[i,j]
+                break
+            b[i] = b[i] - A[i,j]
+            A[i,j] = 0.0
+    #print 'Result: [X1 X2 X3]'
+    #print diag(A)
+    return transpose(matrix(diag(A)))
 
 def gauss_seidel_alg(A,b,x_ini):
+    print '### Gauss-Seidel ###'
+    d = deepcopy(b)
     L = deepcopy(A)
     U = deepcopy(A)
     D = deepcopy(A)
@@ -60,18 +71,17 @@ def gauss_seidel_alg(A,b,x_ini):
                 
     #gauss Seidel Teil
     L_D = D+L
-    L_D_inverse = L_D**(-1)
+    #L_D_inverse = L_D**(-1)
     x_i = deepcopy(x_ini)
     x_i_plus = deepcopy(x_ini)
     nb_iteration = 0
     while 1:
-        x_i_plus = L_D_inverse*(b-U*x_i)
-        if konvergiert(x_i, x_i_plus) or nb_iteration > 500:
-            
+        #vorwaerst einsetzen
+        x_i_plus = solve(L_D,-U*x_i+d)
+        if konvergiert(x_i, x_i_plus) or nb_iteration > 500:            
             break
         x_i = x_i_plus
         nb_iteration = nb_iteration +1
-    
     for k in range(zeilen):
         x_i[k] = mround(x_i[k],4)
     print 'Loesung'
@@ -81,21 +91,25 @@ def gauss_seidel_alg(A,b,x_ini):
     return x_i, nb_iteration
     
 '''
+x_ini = matrix('0;0')
 A = matrix('16 3;7 -11',dtype = float)
 b = matrix('11; 13',dtype = float)
-c = matrix('1;1;0',dtype = float)
 '''
 A = matrix('3.5 3 0; -1 4 4; 0 3 4.5',dtype = float)
 A[2,0] = 1/3.
 A[0,2] = -0.5
 b = matrix('7.5; -6.5; 1',dtype = float)
+
 x_ini = matrix('0;0;0')
 print 'Aufgabe 4.1.1'
 gauss_seidel_alg(A, b,x_ini)
+#solve(A,b)
 #konvergiert(b, c)
+
 
 #TODO Testvektor xk wird nach Abschluss der Iteration aktulisiert
 def Jacobi(A,b,x_ini):
+    print '#### Jacobi ####'
     d = deepcopy(b)
     L = deepcopy(A)
     U = deepcopy(A)
@@ -115,12 +129,12 @@ def Jacobi(A,b,x_ini):
                 L[i,j] = 0
                 
     #jacobi teil
-    D_inverse = D**(-1)
+    #D_inverse = D**(-1)
     x_i = deepcopy(x_ini)
     x_i_plus = deepcopy(x_ini)
     nb_iteration = 0
     while 1:
-        x_i_plus = D_inverse*((-L-U)*x_i+d)
+        x_i_plus = solve(D,((-L-U)*x_i+d))
         if konvergiert(x_i, x_i_plus) or nb_iteration > 500:
             break
         x_i = x_i_plus
@@ -136,15 +150,15 @@ def Jacobi(A,b,x_ini):
 
 print 'Aufgabe 4.1.2'
 Jacobi(A, b,x_ini)
-#Man sieht bei Jacobi gibt es mehr Iterationen
+#Man sieht in diesem Beispiel bei Jacobi gibt es mehr Iterationen im Vergleich zu Gauss-Seidel (4 Fach mehr)
 
-# Aufgabe 4.1.3: TODO
+# Aufgabe 4.1.3: Die Konvergenz ist nur garantiert, wenn die Matrix entweder diagonaldominant, symmetrisch oder positiv definit ist.
+
 print 'Aufgabe 4.1.4:'
 A4 = matrix('5 3 -1 2; -3 7 6 -2; 4 4 3 -3; -5 2 2 4',dtype = float)
 b4 = matrix('8; 1; 7; 2',dtype = float)
 x_ini4 = matrix('0;0;0;0')
 gauss_seidel_alg(A4, b4, x_ini4)
-print 'Jacobi:'
 Jacobi(A4, b4, x_ini4)
 # Die Gleichung laesst sich von Gauss-Seidel-Verfahren loesen, bei Jacobi kovergieren die Werte nicht trotz der vielen Iteration.
 def gauss_seidel_alg_relax(A,b,x_ini,nr_of_relax):
@@ -170,26 +184,34 @@ def gauss_seidel_alg_relax(A,b,x_ini,nr_of_relax):
     x_i = deepcopy(x_ini)
     x_i_plus = deepcopy(x_ini)
     nb_iteration = 0
+    list_iter = []
     for w in relax:
         L_D = (1/w)*D+L
         L_D_inverse = L_D**(-1)
         while 1:
-            x_i_plus = L_D_inverse*(b-((1/w)*D-D-U)*x_i)
-            if konvergiert(x_i, x_i_plus) or nb_iteration > 100000:               
+            x_i_plus = solve(L+(1/w)*D,((1/w)*D-D-U)*x_i+b)
+            if konvergiert(x_i, x_i_plus) or nb_iteration > 1000:               
                 break
             x_i = x_i_plus
             nb_iteration = nb_iteration +1
         
         for k in range(zeilen):
             x_i[k] = mround(x_i[k],4)
+        list_iter.append(nb_iteration)
         print 'Loesung'
         print x_i
         print 'Anzahl der Iteration'
         print nb_iteration
         print 'Relax w: %f' %w
-    return x_i, nb_iteration
+    return x_i, nb_iteration,list_iter,relax
 
-nr_of_relax = 30
-print 'Aufgabe 4.1.4:'
-gauss_seidel_alg_relax(A4, b4, x_ini4, nr_of_relax)
-# w<=1 dann konvergieren die Werte
+nr_of_relax = 50
+print 'Aufgabe 4.1.5:'
+x_i, nb_iteration,list_iter,relax = gauss_seidel_alg_relax(A4, b4, x_ini4, nr_of_relax)
+# je kleiner w ist, desto konvergieren die Werte schneller
+
+#TODO Plot
+plt.plot(relax,list_iter)
+plt.xlabel("$\omega$ - Werte")
+plt.ylabel("Anzahl der Iteration")
+plt.show()
