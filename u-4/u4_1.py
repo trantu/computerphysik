@@ -76,17 +76,17 @@ def gauss_seidel_alg(A,b,x_ini):
     x_i_plus = deepcopy(x_ini)
     nb_iteration = 0
     while 1:
+        nb_iteration = nb_iteration +1
         #vorwaerst einsetzen
         x_i_plus = solve(L_D,-U*x_i+d)
         if konvergiert(x_i, x_i_plus) or nb_iteration > 500:            
             break
         x_i = x_i_plus
-        nb_iteration = nb_iteration +1
     for k in range(zeilen):
         x_i[k] = mround(x_i[k],4)
-    print 'Loesung'
+    print 'Loesung: '
     print x_i
-    print 'Anzahl der Iteration'
+    print 'Anzahl der Iteration: '
     print nb_iteration
     return x_i, nb_iteration
     
@@ -134,23 +134,23 @@ def Jacobi(A,b,x_ini):
     x_i_plus = deepcopy(x_ini)
     nb_iteration = 0
     while 1:
+        nb_iteration = nb_iteration +1
         x_i_plus = solve(D,((-L-U)*x_i+d))
         if konvergiert(x_i, x_i_plus) or nb_iteration > 500:
             break
         x_i = x_i_plus
-        nb_iteration = nb_iteration +1
     
     for k in range(zeilen):
         x_i[k] = mround(x_i[k],4)
-    print 'Loesung'
+    print 'Loesung:'
     print x_i
-    print 'Anzahl der Iteration'
+    print 'Anzahl der Iteration:'
     print nb_iteration
     return x_i, nb_iteration
 
-print 'Aufgabe 4.1.2'
+print 'Aufgabe 4.1.2:'
 Jacobi(A, b,x_ini)
-#Man sieht in diesem Beispiel bei Jacobi gibt es mehr Iterationen im Vergleich zu Gauss-Seidel (4 Fach mehr)
+#Man sieht in diesem Beispiel bei Jacobi gibt es mehr Iterationen im Vergleich zu Gauss-Seidel
 
 # Aufgabe 4.1.3: Die Konvergenz ist nur garantiert, wenn die Matrix entweder diagonaldominant, symmetrisch oder positiv definit ist.
 
@@ -181,26 +181,26 @@ def gauss_seidel_alg_relax(A,b,x_ini,nr_of_relax):
                 L[i,j] = 0
                 
     #gauss Seidel Teil
-    x_i = deepcopy(x_ini)
-    x_i_plus = deepcopy(x_ini)
-    nb_iteration = 0
     list_iter = []
     for w in relax:
-        L_D = (1/w)*D+L
-        L_D_inverse = L_D**(-1)
+        #L_D = (1/w)*D+L
+        #L_D_inverse = L_D**(-1)
+        x_i = deepcopy(x_ini)
+        x_i_plus = deepcopy(x_ini)
+        nb_iteration = 0
         while 1:
+            nb_iteration = nb_iteration +1
             x_i_plus = solve(L+(1/w)*D,((1/w)*D-D-U)*x_i+b)
-            if konvergiert(x_i, x_i_plus) or nb_iteration > 1000:               
+            if konvergiert(x_i, x_i_plus) or nb_iteration > 250:               
                 break
             x_i = x_i_plus
-            nb_iteration = nb_iteration +1
         
         for k in range(zeilen):
             x_i[k] = mround(x_i[k],4)
         list_iter.append(nb_iteration)
-        print 'Loesung'
+        print 'Loesung: '
         print x_i
-        print 'Anzahl der Iteration'
+        print 'Anzahl der Iteration: '
         print nb_iteration
         print 'Relax w: %f' %w
     return x_i, nb_iteration,list_iter,relax
@@ -208,9 +208,8 @@ def gauss_seidel_alg_relax(A,b,x_ini,nr_of_relax):
 nr_of_relax = 50
 print 'Aufgabe 4.1.5:'
 x_i, nb_iteration,list_iter,relax = gauss_seidel_alg_relax(A4, b4, x_ini4, nr_of_relax)
-# je kleiner w ist, desto konvergieren die Werte schneller
+# bei w = 0.88 ist werden 39 Iterationen benoetigt, also am wernigstens. Ab w > 1 scheinen die Werte nicht konvergieren
 
-#TODO Plot
 plt.plot(relax,list_iter)
 plt.xlabel("$\omega$ - Werte")
 plt.ylabel("Anzahl der Iteration")
