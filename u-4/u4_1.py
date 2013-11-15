@@ -127,7 +127,8 @@ def Jacobi(A,b,x_ini):
             else:
                 U[i,j] = 0
                 L[i,j] = 0
-                
+    print 'Convergence'
+    print D**(-1)*(D-A)            
     #jacobi teil
     #D_inverse = D**(-1)
     x_i = deepcopy(x_ini)
@@ -149,6 +150,7 @@ def Jacobi(A,b,x_ini):
     return x_i, nb_iteration
 
 print 'Aufgabe 4.1.2:'
+
 Jacobi(A, b,x_ini)
 #Man sieht in diesem Beispiel bei Jacobi gibt es mehr Iterationen im Vergleich zu Gauss-Seidel
 
@@ -160,7 +162,15 @@ b4 = matrix('8; 1; 7; 2',dtype = float)
 x_ini4 = matrix('0;0;0;0')
 gauss_seidel_alg(A4, b4, x_ini4)
 Jacobi(A4, b4, x_ini4)
-# Die Gleichung laesst sich von Gauss-Seidel-Verfahren loesen, bei Jacobi kovergieren die Werte nicht trotz der vielen Iteration.
+# Die Gleichung laesst sich von Gauss-Seidel-Verfahren loesen, bei Jacobi scheinen die Werte nicht trotz der vielen Iteration kovergieren.
+'''
+weil der Spektralradius >= 1 ist
+Durch D**(-1)*(D-A) erhaelt man p(D**(-1)*(D-A)) >= 1
+[[ 0.         -0.6         0.2        -0.4       ]
+ [ 0.42857143  0.         -0.85714286  0.28571429]
+ [-1.33333333 -1.33333333  0.          1.        ]
+ [ 1.25       -0.5        -0.5         0.        ]]
+'''
 def gauss_seidel_alg_relax(A,b,x_ini,nr_of_relax):
     relax = [(2./nr_of_relax)*i for i in range(1,nr_of_relax)]
     L = deepcopy(A)
@@ -209,7 +219,6 @@ nr_of_relax = 50
 print 'Aufgabe 4.1.5:'
 x_i, nb_iteration,list_iter,relax = gauss_seidel_alg_relax(A4, b4, x_ini4, nr_of_relax)
 # bei w = 0.88 ist werden 39 Iterationen benoetigt, also am wernigstens. Ab w > 1 scheinen die Werte nicht konvergieren
-
 plt.plot(relax,list_iter)
 plt.xlabel("$\omega$ - Werte")
 plt.ylabel("Anzahl der Iteration")
