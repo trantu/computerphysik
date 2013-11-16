@@ -9,6 +9,7 @@ from numpy import vectorize, matrix, allclose
 from numpy.linalg import solve
 from math import sqrt
 from itertools import starmap
+import sys
 
 def phi(x, y):
     return x**4 - x**2 + y**4 - 0.2 * y**3 - y**2 + 0.2 * x * y**3
@@ -73,8 +74,8 @@ min3 = extrema[2]
 min4 = extrema[3]
 maxi = extrema[4]
 
-def Zuordnung(x, y):
-    p = newton(x, y, delta)
+def Zuordnung(x, y, f=newton):
+    p = f(x, y, delta)
     if norm2(p - min1) < delta:
         return 1
     if norm2(p - min2) < delta:
@@ -108,13 +109,24 @@ def iteration(x, y, f, e, d):
 
     while not norm2(f(point[0,0], point[1,0])) < d:
         point = iteration_step(point, e, f)
-        print point, norm2(f(point[0,0], point[1,0]))
 
     return point
 
-## \epsilon ist mit -D[f(x0)]^-1 ähnlich zum vereinfachtes Newton.
-def find_min(x, y):
-    Dinv = -np.linalg.inv(DF(x, y))
-    return iteration(x, y, F, Dinv, 0.001)
+## \epsilon = -D[f(x0)]^-1 ist ähnlich zum vereinfachtes Newton.
+Dinv = -np.linalg.inv(DF(-1.0, 1.0))
+def find_min(x, y, d):
+    sys.stdout.write("%f, %f           \r" % (x, y))
+    return iteration(x, y, F, Dinv, d)
 
-print find_min(1.0, 1.0)
+def Zuordnung2(x, y):
+    return Zuordnung(x, y, f=find_min)
+
+print find_min(1.0, 1.0, delta)
+
+x = np.arange ( -1.0 ,1.01 ,0.02)
+y = np.arange ( -1.0 ,1.01 ,0.02)
+x, y = np.meshgrid (x , y )
+Zuordnungvec = vectorize(Zuordnung2)
+plt.imshow(Zuordnungvec(x, y), extent = [-1, 1, 1, -1])
+plt.colorbar()
+plt.show()
