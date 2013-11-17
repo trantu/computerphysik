@@ -11,12 +11,7 @@ from numpy import *
 from copy import deepcopy
 import matplotlib.pyplot as plt
 
-
-def tausch_Zeilen(m, a, b):
-    temp = matrix(m[a])
-    m[a] = m[b]
-    m[b] = temp
-    
+# Es ist round    
 def mround ( x,N ) :
     if ( x== 0.0 ) :
         return x
@@ -33,6 +28,7 @@ def konvergiert(xk,xk_1):
         return 0
     else:
         return 1
+# Vorwaerst einsetzen, von links nach rechts
 def solve (F, d):
     A = deepcopy(F)
     b = deepcopy(d)
@@ -46,8 +42,6 @@ def solve (F, d):
                 break
             b[i] = b[i] - A[i,j]
             A[i,j] = 0.0
-    #print 'Result: [X1 X2 X3]'
-    #print diag(A)
     return transpose(matrix(diag(A)))
 
 def gauss_seidel_alg(A,b,x_ini):
@@ -72,7 +66,6 @@ def gauss_seidel_alg(A,b,x_ini):
                 
     #gauss Seidel Teil
     L_D = D+L
-    #L_D_inverse = L_D**(-1)
     x_i = deepcopy(x_ini)
     x_i_plus = deepcopy(x_ini)
     nb_iteration = 0
@@ -91,11 +84,6 @@ def gauss_seidel_alg(A,b,x_ini):
     print nb_iteration
     return x_i, nb_iteration
     
-'''
-x_ini = matrix('0;0')
-A = matrix('16 3;7 -11',dtype = float)
-b = matrix('11; 13',dtype = float)
-'''
 A = matrix('3.5 3 0; -1 4 4; 0 3 4.5',dtype = float64)
 A[2,0] = 1/3.
 A[0,2] = -0.5
@@ -104,11 +92,7 @@ b = matrix('7.5; -6.5; 1',dtype = float64)
 x_ini = matrix('0;0;0')
 print 'Aufgabe 4.1.1'
 gauss_seidel_alg(A, b,x_ini)
-#solve(A,b)
-#konvergiert(b, c)
 
-
-#TODO Testvektor xk wird nach Abschluss der Iteration aktulisiert
 def Jacobi(A,b,x_ini):
     print '#### Jacobi ####'
     d = deepcopy(b)
@@ -131,7 +115,6 @@ def Jacobi(A,b,x_ini):
     print 'Convergence'
     print D**(-1)*(D-A)            
     #jacobi teil
-    #D_inverse = D**(-1)
     x_i = deepcopy(x_ini)
     x_i_plus = deepcopy(x_ini)
     nb_iteration = 0
@@ -163,8 +146,9 @@ b4 = matrix('8; 1; 7; 2',dtype = float64)
 x_ini4 = matrix('0;0;0;0')
 gauss_seidel_alg(A4, b4, x_ini4)
 Jacobi(A4, b4, x_ini4)
-# Die Gleichung laesst sich von Gauss-Seidel-Verfahren loesen, bei Jacobi scheinen die Werte nicht trotz der vielen Iteration kovergieren.
 '''
+Die Gleichung laesst sich von Gauss-Seidel-Verfahren loesen, bei Jacobi scheinen die Werte nicht trotz der vielen Iteration kovergieren.
+
 weil der Spektralradius >= 1 ist
 Durch D**(-1)*(D-A) erhaelt man p(D**(-1)*(D-A)) >= 1
 [[ 0.         -0.6         0.2        -0.4       ]
@@ -194,8 +178,6 @@ def gauss_seidel_alg_relax(A,b,x_ini,nr_of_relax):
     #gauss Seidel Teil
     list_iter = []
     for w in relax:
-        #L_D = (1/w)*D+L
-        #L_D_inverse = L_D**(-1)
         x_i = deepcopy(x_ini)
         x_i_plus = deepcopy(x_ini)
         nb_iteration = 0
@@ -228,6 +210,7 @@ w von 0 gegen 1 -> schnellere Konvergenz
 w von 1 gegen 2 -> schnellere Konvergenz
 w von 2 gegen 1 -> langsamere Konvergenz
 '''
+
 plt.plot(relax,list_iter)
 plt.xlabel("$\omega$ - Werte")
 plt.ylabel("Anzahl der Iteration")
