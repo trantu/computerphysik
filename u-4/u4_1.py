@@ -11,6 +11,7 @@ from numpy import *
 from copy import deepcopy
 import matplotlib.pyplot as plt
 
+
 def tausch_Zeilen(m, a, b):
     temp = matrix(m[a])
     m[a] = m[b]
@@ -19,7 +20,7 @@ def tausch_Zeilen(m, a, b):
 def mround ( x,N ) :
     if ( x== 0.0 ) :
         return x
-    return round ( x, int ( N - math.ceil ( math.log10 ( abs ( x )))))
+    return round ( x, N)
         
 def konvergiert(xk,xk_1):
     diff = xk_1-xk
@@ -95,10 +96,10 @@ x_ini = matrix('0;0')
 A = matrix('16 3;7 -11',dtype = float)
 b = matrix('11; 13',dtype = float)
 '''
-A = matrix('3.5 3 0; -1 4 4; 0 3 4.5',dtype = float)
+A = matrix('3.5 3 0; -1 4 4; 0 3 4.5',dtype = float64)
 A[2,0] = 1/3.
 A[0,2] = -0.5
-b = matrix('7.5; -6.5; 1',dtype = float)
+b = matrix('7.5; -6.5; 1',dtype = float64)
 
 x_ini = matrix('0;0;0')
 print 'Aufgabe 4.1.1'
@@ -157,8 +158,8 @@ Jacobi(A, b,x_ini)
 # Aufgabe 4.1.3: Die Konvergenz ist nur garantiert, wenn die Matrix entweder diagonaldominant, symmetrisch oder positiv definit ist.
 
 print 'Aufgabe 4.1.4:'
-A4 = matrix('5 3 -1 2; -3 7 6 -2; 4 4 3 -3; -5 2 2 4',dtype = float)
-b4 = matrix('8; 1; 7; 2',dtype = float)
+A4 = matrix('5 3 -1 2; -3 7 6 -2; 4 4 3 -3; -5 2 2 4',dtype = float64)
+b4 = matrix('8; 1; 7; 2',dtype = float64)
 x_ini4 = matrix('0;0;0;0')
 gauss_seidel_alg(A4, b4, x_ini4)
 Jacobi(A4, b4, x_ini4)
@@ -201,7 +202,7 @@ def gauss_seidel_alg_relax(A,b,x_ini,nr_of_relax):
         while 1:
             nb_iteration = nb_iteration +1
             x_i_plus = solve(L+(1/w)*D,((1/w)*D-D-U)*x_i+b)
-            if konvergiert(x_i, x_i_plus) or nb_iteration > 250:               
+            if konvergiert(x_i, x_i_plus) or nb_iteration > 500:               
                 break
             x_i = x_i_plus
         
@@ -218,7 +219,15 @@ def gauss_seidel_alg_relax(A,b,x_ini,nr_of_relax):
 nr_of_relax = 50
 print 'Aufgabe 4.1.5:'
 x_i, nb_iteration,list_iter,relax = gauss_seidel_alg_relax(A4, b4, x_ini4, nr_of_relax)
-# bei w = 0.88 ist werden 39 Iterationen benoetigt, also am wernigstens. Ab w > 1 scheinen die Werte nicht konvergieren
+''' Man sieht an dem Diagram, dass es w = 0.933333 kurz bis zu der 1 sehr schnell konvergiert. 
+Und dann kurz nach der 1 w=1.066667 scheint es schwer zu konvergieren. Danach sinkt die Zahl der Iteration,
+wenn w immer in die Richtung von 2 laeuft.
+Fazit: 
+w von 1 gegen 0 -> langsamere Konvergenz 
+w von 0 gegen 1 -> schnellere Konvergenz
+w von 1 gegen 2 -> schnellere Konvergenz
+w von 2 gegen 1 -> langsamere Konvergenz
+'''
 plt.plot(relax,list_iter)
 plt.xlabel("$\omega$ - Werte")
 plt.ylabel("Anzahl der Iteration")
