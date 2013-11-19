@@ -24,6 +24,7 @@
 
 \newcommand{\bO}{\ensuremath{\mathcal{O}}}%
 \newcommand{\R}{\ensuremath{\mathbb{R}}}%
+\newcommand{\rharp}[1]{\ensuremath{\overset{\rightharpoonup}{#1}}}%
 
 \title{Computergestützte Methoden der exakten Naturwissenschaften }
 \subtitle{Computerphysik}
@@ -1115,5 +1116,178 @@ ein Polynom dritten Grades hat vier Koeffizienten $\hat{=}$ Freiheitsgrade; für
 \end{itemize}
 
 Deswegen 2 zusätzliche Bedingungen, zusammen \underline{$4n-2$ Bed.}
+
+%% 20131119
+
+\paragraph{lineare Ausgleichrechnungen}
+
+$f = \sum_{i=1}^{m} a_i f_i (x)$ für $(x_j, y_j)$ für $j = 1\dots n$
+(wobei, $n > m$).
+
+Fehlerfunktional
+
+\begin{align*}
+  A_{ij} &= f_i(x_i)\\
+  E &= \sum_{i=1}^{n} (y_i - f(x_i))^2\\
+  &= \sum_{i=1}^{n} (y_i) = \sum_{j=1}^{m} a_j f_j (x_i)^2 = (\overset{\rightharpoonup}{y} - \overset{\leftrightarrow}{A} \vec{a})
+\end{align*}
+
+Fehlergleich. System
+\[
+\overset{\leftrightarrow}{A} \vec{a} =  y \iff E = 0
+\]
+
+Normalgleicungen 
+
+\[
+\frac{\partial (\{a_m\})}{\partial a_i} = 0
+\]
+
+mit $i=1,\dots,m$
+
+$\to$ Normalgleichungssytem
+
+\[
+\boxed{A^T A a = A^T y}
+\]
+
+\paragraph{Herleitung}
+
+\begin{align*}
+  E(\{a_m\}) &= (\overset{\rightharpoonup}{y} - \overset{\leftrightarrow}{A} \vec{a})^2 = \sum_{i,j,k} (y_i - A_{ij} a_j)(y_i-A_{ik} a_k)\\
+&= y_i^2 - A_{ij} a_j y_i - y_i A_{ik} a_k + A_{ij} a_j A_{ik} a_k\\
+&= y_i^2 - 2A_{ij} a_j y_i + A_{ij} a_j - A_{ik} a_k\\
+\frac{\partial E}{\partial a_l} &= -2A_{il} y_i + A_{il} A_{ik} a_k + A_{ij} a_j A_{il}\\
+&= -2A_{il} y_i + 2A_{il} A_{ik} a_k = 0 \to A_{il} A_{ik} a_k = A_{il}y_i\\
+\leftrightarrow& A^T_{li} A_{ik} a_k = A^T_{li} y_i \leftrightarrow \boxed{\underbrace{\overset{\leftrightarrow}{A}^T\overset{\leftrightarrow}{A}}_{m\times m} \underbrace{\rharp{a}}_{m} = \underbrace{\overset{\leftrightarrow}{A}^T}_{\text{$m$ Komp}} \underbrace{\rharp{y}}_{\text{$n$ Komp}}}
+\end{align*}
+
+\paragraph{Bem}
+
+Fehlergl.Syst. hat ?$n$ gleich. (= Wertpaare), aber nur $m$ Unbekannte (= Anpassungparameter). 
+
+$n > m \to$ Fehl.Gl.Syst. überbestimmt $\hat{=}$ i.A\@. keine Lösung!
+\begin{itemize}
+\item Man bezeichnet $r = Aa-y$ als Residuumsvektor, i.A\@. $\vec{r} \neq 0$! Im Fall $\vec{r} = 0$ ist $\overset{\rightharpoonup}{a}$ Lösung des Gehlergleichungssystems und es liegt eine perfekte Modellanapassung vor ($\hat{=}$ also Interpolation). Typischerweise der Fall wen $m = n$.
+
+(außer wenn Anpassfunktion oder Wertepaare redundant sind\dots)
+\item Lösung des Ausgleichungsproblems: Fehlerfunktional minimal bzgl\@. $\rharp{a}$
+
+$\hat{=}$ Lösung des Normalgleich.Systems
+
+$\hat{=}$ lineares Gl.Syst. mit sym. Matrixe $A^TA$ und Vektor $A^Ty\to$ Cholesky Dokomposition einsetzbar.
+
+\fbox{Lösungsvektor $\rharp{a}$}
+
+\begin{align*}
+  B_{ik} = A^T_{ij} A_{jk} \overset{!}{=} A^T_{kj} A_{ji} = A_{jk} A^T_{ij} = A^T_{ij} A_{jk}
+\end{align*}
+\end{itemize}
+
+\paragraph{Zurück zum Beispiel}
+
+\[
+f_1(x) = x, \quad f_2(x) = 1
+\]
+
+\begin{tabular}{c|cccc}
+  $x^i$ & 1 & 2 & 3 & 4\\\hline
+  $y^i$ & 6 & 6.8 & 10 & 10.5
+\end{tabular}
+
+\begin{align*}
+  A &=
+  \begin{pmatrix}
+    f_1(x_1) & f_2(x_1)\\
+    f_1(x_2) & f_2(x_2)\\
+    f_1(x_3) & f_2(x_3)\\
+    f_1(x_4) & f_2(x_4)
+  \end{pmatrix} =
+  \begin{pmatrix}
+    11 & 1\\
+    2 & 1\\
+    3 & 1\\
+    4 & 1
+  \end{pmatrix}\\
+  A^TA &=
+  \begin{pmatrix}
+    1 & 2 & 3 & 4\\
+    1 & 1 & 1 & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+    1 & 1\\ 2 & 1\\ 3 & 1\\ 4 & 1
+  \end{pmatrix} =
+  \begin{pmatrix}
+    30 & 10\\
+    10 & 4
+  \end{pmatrix}\\
+  A^T y &=
+  \begin{pmatrix}
+    1 & 2 & 3 & 4\\
+    1 & 1 & 1 & 1
+  \end{pmatrix} =
+  \begin{pmatrix}
+    6\\ 6.8\\ 10\\ 10.5
+  \end{pmatrix} =
+  \begin{pmatrix}
+    91.6\\ 33.3
+  \end{pmatrix}
+  \intertext{und}
+  A^TAa = A^Ty &\hat{=} \begin{pmatrix}
+    30 & 10\\
+    10 & 4
+  \end{pmatrix}
+  \begin{pmatrix}
+    a_1\\ a_2
+  \end{pmatrix} =
+  \begin{pmatrix}
+    91.6\\ 33.3
+  \end{pmatrix}
+\end{align*}
+
+Das gleiche Gl.System wie letzte VL!
+
+Nicht-linearer Funktionasansatz $f_1(x) = x^2$, $f_2(x) = 1$ aber \underline{lineare} Ausgleichsrechnung!
+
+\begin{align*}
+  A &=
+  \begin{pmatrix}
+    1 & 1\\ 4 & 1\\ 9 & 1\\ 16 & 1
+  \end{pmatrix}, \quad
+    A^TA =
+    \begin{pmatrix}
+      1 & 4 & 9 & 16\\
+      1 & 1 & 1 & 1
+    \end{pmatrix}
+    \begin{pmatrix}
+      1 & 1\\ 4 & 1\\ 9 & 1\\ 16 & 1
+    \end{pmatrix} =
+    \begin{pmatrix}
+      354 & 30\\
+      30 & 4
+    \end{pmatrix}\\
+A^Ty &=   \begin{pmatrix}
+    1 & 1\\ 4 & 1\\ 9 & 1\\ 16 & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+    6\\ 6.8\\ 10\\ 10.5
+  \end{pmatrix} =
+  \begin{pmatrix}
+    291.2\\ 33.3
+  \end{pmatrix}
+\end{align*}
+
+Ausgleichsproblem immer noch linear
+
+\[
+A^TA\rharp{a} = A^T \rharp{y} \to
+\begin{array}{c}
+  a_1 = 1.296\\
+  a_2 = -5.59
+\end{array}
+\quad f(x) = a_1x^2 + a_2
+\]
+
+für unser Bieispiel: linearer Fit "`besser"' $\hat{=}$ $|r|$ kleiner!
 
 \end{document}
