@@ -7,6 +7,7 @@
 \usepackage{multirow}
 \usepackage{cancel}
 \usepackage{gnuplottex}
+\usepackage{dsfont}
 
 %Compiler
 \usepackage{ifxetex}
@@ -23,7 +24,7 @@
 % /Compiler
 
 \newcommand{\bO}{\ensuremath{\mathcal{O}}}%
-\newcommand{\R}{\ensuremath{\mathbb{R}}}%
+\newcommand{\R}{\ensuremath{\mathds{R}}}%
 \newcommand{\rharp}[1]{\ensuremath{\overset{\rightharpoonup}{#1}}}%
 
 \title{Computergestützte Methoden der exakten Naturwissenschaften }
@@ -1289,5 +1290,93 @@ A^TA\rharp{a} = A^T \rharp{y} \to
 \]
 
 für unser Bieispiel: linearer Fit "`besser"' $\hat{=}$ $|r|$ kleiner!
+
+%% should be 4.4
+\section{Nicht-lineare Ausgleichsprobleme, Gauß-Newton Verfahren}
+
+\paragraph{Bspl (unecht)}
+
+betrachte alte Wertepaare
+\begin{tabular}{c|cccc}
+  $x_i$ & 1 & 2 & 3 & 4\\\hline
+  $y_i$ & 6 & 6.8 & 10 & 10.5
+\end{tabular} und die Funktion $f(x) = ae^{bx}$ mit Anpassungsparametern $a$ und $b$. $f(x)$ hängt nichtlinear von $b$ ab!
+
+\paragraph{Trick}
+
+betrachte
+\begin{align*}
+  \ln f(x) &= \ln a  \ln e^{bx}\\
+  &= \ln a + bx
+\end{align*}
+
+und logarithmische Funnktionswerte
+
+\begin{tabular}{c|cccc}
+  $x_i$ & 1 & 2 & 3 & 4\\
+  $y_i$ & 1.72 & 1.52 & 2.30 & 2.35
+\end{tabular}
+
+$\to$ lineares Problem in logarithmischen Skalierung
+
+\begin{align*}
+  f(x) = ax^b \to \boxed{\ln f = c + bx}
+\end{align*}
+
+ähnlich:
+
+\begin{align*}
+f(x) = ax^b \to \ln f &= \ln a + b \ln\\
+&= c + b \tilde{x}
+\end{align*}
+
+\paragraph{Def allgemeines Ausgleichungsproblem}
+
+gegeben Ansatzfkt. $f_a(a_1,\dots a_m, x)$ und Wertepaare $(x_i, y_i)$ mit $i = 1\dots n$ Fehlerfunktional $E(a_1,\dots a_m) = \sum_{i=1}^n (y_i - f_a(a_1,\dots a_m, x_i))^2$. Ausgleichsproblem: Minimiere $E$ im erlaubten Parameterraum.
+
+Bermerkung
+\begin{itemize}
+\item lineares Problem im allgem. Fall enthalten.
+\item im Prinzip kann man das nicht-lineare Gl.Systl. $\frac{\partial E}{\partial a_i} = 0$ mit dem Newton-Verfahren lösen; Nachteil: instabil und 2. partielle Ableitung werden benötigt!
+\end{itemize}
+
+\paragraph{$\to$ Gauß-Newton Verfahren}
+
+definiere Vektor $\vec{g}(a_1,\dots a_m) =
+\begin{pmatrix}
+  y_1 - f_a(a_1, \dots a_m,x_1)\\
+  \vdots\\
+  y_n - f_a(a_1, \dots a_m, x_n)
+\end{pmatrix}$ mit $g\colon \R^m \to \R^n$
+
+Fehlerfunktional $E(\rharp{a}) = g^2$, $E\colon \R^m \to \R$
+
+Problem: finde \rharp{a} so dass $E(\vec{a}) = \vec{g}(a)^2$ minimal wird $\hat{=}$ Quadratmittelproblem.
+
+(also: nicht-lin\@. Ausgl\@. rechn\@. $\hat{=}$ Quadratmittelproblem)
+
+\paragraph{Idee}
+
+\begin{itemize}
+\item Ersetze $g(\vec{a})$ in $E$ durch Linearisierung.
+\item minimiere den linearen Ausdruck ($\hat{=}$ lineare Ausgleichungsrech.)
+\item iteriere diesen Prozess, starte mit Schätzwert $\vec{a}^{(0)}\dots$ (wie beim Newton-Verfarhen\dots)
+\end{itemize}
+
+Starte mit Schätzwert $\vec{a}^{(0)}$. Linearisiertes Ausgleichsproblem definiert durch
+
+\[
+E(\vec{a}) = \left(g\left(\vec{a}^{(0)}\right) + D\left[ g\left(\vec{a}^{(0)}\right) \right] \left(\vec{a} - \vec{a}^{(0)}\right)\right)^2
+\]
+
+Berechne $\delta^{(n)} = a^{(n-1)} - a^{(n)}$ als Lösung des lin. Ausgl.Probml.
+
+\[
+\min\limits_{\delta^{(0)}} \left(g\left(\vec{a}^{(0)}\right) + D\left[ g\left(\vec{a}^{(0)}\right) \right] \delta^{(0)} \right)^2
+\]
+
+Setze $a^{(n+1)} = a^{(n)} + \delta^{(n)}$
+
+Zu lösen $D^T \left[ g\right(a^{(n)}\left) \right] D\left[g\left(a^{(n)}\right)\right] \delta^{(n)} = - D^T\left[g\left(a^{(n)}\right)\right] g\left(a^{(n)}\right)$
 
 \end{document}
