@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+# Carlos Martín, Tu Tran
+
 from mpl_toolkits . mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +11,7 @@ from numpy import vectorize, matrix, allclose
 from numpy.linalg import solve
 from math import sqrt
 from itertools import starmap
-import sys
+import operator
 
 def phi(x, y):
     return x**4 - x**2 + y**4 - 0.2 * y**3 - y**2 + 0.2 * x * y**3
@@ -29,9 +31,12 @@ x = np.arange ( -1.0 ,1.01 ,0.05)
 y = np.arange ( -1.0 ,1.01 ,0.05)
 x, y = np.meshgrid (x , y )
 
-#a = Axes3D(plt.figure())
-#a.plot_wireframe(x, y, np.vectorize(phi)(x, y))
-#plt.show()
+a = Axes3D(plt.figure())
+a.plot_wireframe(x, y, np.vectorize(phi)(x, y))
+plt.rc('text', usetex=True)
+plt.title(ur'$\phi$ in $(1, -1) \times (1, -1)$')
+plt.savefig('fig1.png')
+plt.show()
 
 def norm2(A):
     n, m = A.shape
@@ -49,11 +54,10 @@ def newton(x, y, d):
     point = matrix([[x],
                     [y]], dtype=float)
 
+    # Stop when the norm2 gets smaller than the specified delta
     while not ((norm2(point) < d) or (norm2(F(point[0,0], point[1,0])) < d)):
         last_point = point
         point = newton_next(F, DF, last_point)
-        #print point[0,0], point[1,0], norm2(point), norm2(F(point[0,0], point[1,0])), F(point[0,0], point[1,0])
-
         
     return point
 
@@ -65,15 +69,18 @@ guesses = [(1.0,  1.0),
            (-1.0, -1.0),
            (0.01,   0.01)]
 
+# Let's get where each of the gueses end up
 delta = 0.001
 extrema = [newton(x, y, delta) for (x, y) in guesses]
 
+# and assign them to known minima and the maximum
 min1 = extrema[0]
 min2 = extrema[1]
 min3 = extrema[2]
 min4 = extrema[3]
 maxi = extrema[4]
 
+## If we get close, consider we're there
 def Zuordnung(x, y, f=newton):
     p = f(x, y, delta)
     if norm2(p - min1) < delta:
@@ -94,34 +101,38 @@ x = np.arange ( -1.0 ,1.01 ,0.02)
 y = np.arange ( -1.0 ,1.01 ,0.02)
 x, y = np.meshgrid (x , y )
 Zuordnungvec = vectorize(Zuordnung)
-#plt.imshow(Zuordnungvec(x, y), extent = [-1, 1, 1, -1])
-#plt.colorbar()
-#plt.show()
+plt.imshow(Zuordnungvec(x, y), extent = [-1, 1, 1, -1])
+plt.title(u'Extemum gegen Anfangspunkt')
+plt.colorbar()
+plt.savefig('fig2.png')
+plt.show()
 
-def iteration_step(xy, e, F):
+
+## Second form of iteration (each step)
+def iteration_step(xy, e, F, op):
     x = xy[0,0]
     y = xy[1,0]
 
-    return xy + e * F(x, y)
+    ## This lets us do xy + e... or xy - e...
+    return op(xy, e * F(x, y))
 
-def iteration(x, y, f, e, d):
+## Iteration from 4.2.4
+def iteration(x, y, f, e, d, op=operator.add):
     point = matrix([[x], [y]], dtype=float)
 
     while not norm2(f(point[0,0], point[1,0])) < d:
-        point = iteration_step(point, e, f)
+        point = iteration_step(point, e, f, op)
 
     return point
 
-## \epsilon = -D[f(x0)]^-1 ist ähnlich zum vereinfachtes Newton.
+## Setting epsilon to -D[f(x0)]^-1 makes this function behave much
+## like the Newton method seen above
 Dinv = -np.linalg.inv(DF(-1.0, 1.0))
 def find_min(x, y, d):
-    sys.stdout.write("%f, %f           \r" % (x, y))
     return iteration(x, y, F, Dinv, d)
 
 def Zuordnung2(x, y):
     return Zuordnung(x, y, f=find_min)
-
-print find_min(1.0, 1.0, delta)
 
 x = np.arange ( -1.0 ,1.01 ,0.02)
 y = np.arange ( -1.0 ,1.01 ,0.02)
@@ -129,4 +140,12 @@ x, y = np.meshgrid (x , y )
 Zuordnungvec = vectorize(Zuordnung2)
 plt.imshow(Zuordnungvec(x, y), extent = [-1, 1, 1, -1])
 plt.colorbar()
+plt.title('Minima mit der zweiten Iteration')
+plt.savefig('fig3.png')
 plt.show()
+
+## 4.2.6: Das 2D-Newtonverfahren sucht Extrema, während das
+## Algorithmus aus 4.2.4 ist nur für Minimasuche geeignet. Eine
+## Vermutung, sie für Maximasuche anzupassen war, das Vorzeichen zu
+## ändern. Dies hat aber nur zu immer größeren Zahlen und Overflows
+## geführt.

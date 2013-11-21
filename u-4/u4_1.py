@@ -214,4 +214,5 @@ w von 2 gegen 1 -> langsamere Konvergenz
 plt.plot(relax,list_iter)
 plt.xlabel("$\omega$ - Werte")
 plt.ylabel("Anzahl der Iteration")
+plt.savefig('fig0.png')
 plt.show()
