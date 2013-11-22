@@ -3,7 +3,7 @@
 
 import numpy as np
 from numpy import linspace
-from math import pi, sin, factorial
+from math import pi, sin, cos, factorial
 import matplotlib.pyplot as plt
 from functools import reduce
 import operator
@@ -61,9 +61,9 @@ def f_derived(n):
 
     Only works for the sinus we do have here, really."""
     def base(n, x):
-        return 2**n * pi**n * sin(2*pi*x)
+        return 2**n * pi**n * cos(2*pi*x)
 
-    if (n / 2.0) % 2 == 0:
+    if (n / 2) % 2 == 0:
         return lambda x: -base(n, x)
     else:
         return lambda x: base(n, x)
@@ -96,7 +96,7 @@ Es = []
 ## Let's calculate the guesses
 for (n, _) in functions:
     xs = linspace(0, 1, n)
-    fd = f_derived(n+1)
+    fd = f_derived(n)
     errors = []
     for p in points:
         fres = max([fd(e) for e in linspace(0, 1, 500)])
