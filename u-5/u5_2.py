@@ -6,6 +6,7 @@ from numpy import linspace
 from math import pi, sin, factorial
 import matplotlib.pyplot as plt
 from functools import reduce
+import operator
 
 def div_diff(xs, starting_values):
     """Calculate the Newton dividing differences.
@@ -55,14 +56,17 @@ def gen_sin_newton(n):
 
     return lambda x: horner(float(x), xs, diffs)
 
-def sin_derived(n):
+def f_derived(n):
     """Return the n-th derivation of sinus.
 
     Only works for the sinus we do have here, really."""
+    def base(n, x):
+        return 2**n * pi**n * sin(2*pi*x)
+
     if (n / 2.0) % 2 == 0:
-        return lambda x: -sin(x)
+        return lambda x: -base(n, x)
     else:
-        return sin
+        return lambda x: base(n, x)
 
 def cubic_splines(xs, ys):
     if len(xs) != len(ys):
@@ -88,13 +92,23 @@ for (n, my_sin) in functions:
 ## Plot the results
 plt.semilogy(*zip(*Es))
 
+Es = []
 ## Let's calculate the guesses
-points = linspace(0, 1, 500)
 for (n, _) in functions:
-    my_sin = sin_derived(n+1)
+    xs = linspace(0, 1, n)
+    fd = f_derived(n+1)
+    errors = []
+    for p in points:
+        fres = max([fd(e) for e in linspace(0, 1, 500)])
+        prod = reduce(operator.mul, [abs(p - xs[i]) for i in range(n)], 1)
+        errors.append((fres/factorial(n+1)) * prod)
 
-plt.xlabel(u'Interpolationspunkte')
+    Es.append((n, max(errors)))
+
+plt.semilogy(*zip(*Es))
+
+plt.xlabel(u'Anzahl der Interpolationspunkte')
 plt.ylabel(u'Maximaler Feheler')
-plt.legend((u'Newton', ))
-plt.title(ur'Interpolation von $\sin(2\pi x)$')
+plt.legend((u'Newton', u'Abschätzung'))
+plt.title(ur'Interpolationsfehler von $\sin(2\pi x)$')
 plt.show()
