@@ -68,17 +68,67 @@ def f_derived(n):
     else:
         return lambda x: base(n, x)
 
-def cubic_splines(xs, ys):
+def moments(xs, ys):
     if len(xs) != len(ys):
         raise ValueError, "len(xs) != len(ys)"
 
     n = len(xs) - 1 # degrees of freedom
-    _, diffs = div_diff(xs, ys)
-    print diffs
+    #_, diffs = div_diff(xs, ys)
+    #print diffs
 
     def mu(i):
-        return (xs[i] - xs[i-1])/(xs[i+1] - x[i-1])
+        return (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
 
+    A = np.matrix(np.zeros((n+1, n+1)))
+    A[0,0] = 1
+    A[n,n] = 1
+    for i in range(1, n):
+        A[i,i-1] = mu(i-1)
+        A[i,i] = 2
+        A[i,i+1] = 1 - mu(i)
+
+    b = np.matrix(np.zeros((n+1, 1)))
+    for i in range(1, n-1):
+        (d, _) = div_diff(xs[i-1:i+2], ys[i-1:i+2])
+        b[i,0] = d[-1]
+
+    #print "solving", A, b
+    return np.linalg.solve(A, b)
+
+def cubic_splines(M, xs, ys, x):
+    def h(i):
+        return xs[i] - xs[i-1]
+
+    def C(i):
+        first = (ys[i] - ys[i-1]) / h(i)
+        second = (h(i)/6.0) * (M[i,0] - M[i-1,0])
+        return first - second
+
+    def D(i):
+        first = (ys[i] - ys[i-1]) / 2.0
+        second = (h(i)**2/12.0) * (M[i,0] - M[i-1,0])
+        return first - second
+
+    def s(x, i):
+        first = M[i-1,0] * (((xs[i] - x)**3) / (6*h(i)))
+        second = M[i,0] * ((x - xs[i-1])**3) / (6*h(i))
+        third = C(i) * (x - ((xs[i-1]+xs[i])/2.0))
+        fourth = D(i)
+        #print 'first', first, 'second', second, 'third', third, 'fourth', fourth
+        return first + second + third + fourth
+
+    # find what interval x is in
+    i = -1
+    for ii in range(1, n):
+        if x >= xs[ii-1] and x <= xs[ii]:
+            i = ii
+            break
+
+    if i == -1:
+        raise ValueError, ("No such interval for %f" % x)
+
+    return s(x, i)
+        
 
 # Create out own sinus function
 functions = [(n, gen_sin_newton(n)) for n in range(5, 20, 2)]
@@ -90,6 +140,28 @@ for (n, my_sin) in functions:
     Es.append((n, max([abs(sin(x) - my_sin(x)) for x in points])))
 
 ## Plot the results
+plt.semilogy(*zip(*Es))
+
+# Let's do cublic splines
+Es = []
+for n in range(5, 20, 2):
+    xs = linspace(0, 1, n)
+    print "xs", xs
+    #xs = [2*pi*x for x in linspace(0, 1, n)]
+    #print "xs", xs
+    ys = [sin(2*pi*x) for x in xs]
+    #ys = [sin(x) for x in xs]
+    M = moments(xs, ys)
+    #print "M", M
+    errors = []
+    points = linspace(0, 1, 500)
+    for p in points:
+        print "spline", cubic_splines(M, xs, ys, p)
+        print "sin", sin(2*pi*p)
+        errors.append(abs(cubic_splines(M, xs, ys, p) - sin(2*pi*p)))
+    Es.append((n, max([e.max() for e in errors])))
+
+print "Es", Es
 plt.semilogy(*zip(*Es))
 
 Es = []
@@ -109,6 +181,6 @@ plt.semilogy(*zip(*Es))
 
 plt.xlabel(u'Anzahl der Interpolationspunkte')
 plt.ylabel(u'Maximaler Feheler')
-plt.legend((u'Newton', u'Abschätzung'))
+plt.legend((u'Newton', u'splines', u'Abschätzung'))
 plt.title(ur'Interpolationsfehler von $\sin(2\pi x)$')
 plt.show()
