@@ -80,6 +80,7 @@ class CubicSpline:
         self.xs = xs
         self.ys = ys
         self.moments()
+        self.lists()
 
     def moments(self):
         xs = self.xs
@@ -90,7 +91,7 @@ class CubicSpline:
         mu = [0] * (n+1)
         for i in range(1, n):
             mu[i] = (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
-            mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
+        mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
 
         A = np.matrix(np.zeros((n-1, n-1)))
         #print "n", n, "A", A
@@ -109,49 +110,35 @@ class CubicSpline:
 
         [self.M] = np.linalg.solve(A, b).flatten().tolist()
 
-    def __call__(self, x):
-        xs = self.xs
-        ys = self.ys
-        n = len(xs)
-        # Add x_{n+1} and y)_{n+1} to get the edge cases
-        #xs2 = xs + [xs[-1] + xs[1] + xs[0]]
-        #ys2 = ys + [ys[-1]]
-
+    def lists(self):
         M = [0.0] + self.M + [0.0]
-        #M.insert(0, 0.0)
-        #M.append(0.0)
-
         h = [xs[i] - xs[i-1] for i in range(n)]
+        self.h = h
+        self.M = M
 
         C = [0] * (n)
         for i in range(n):
             first = (ys[i] - ys[i-1]) / h[i]
             second = (h[i]/6.0) * (M[i] - M[i-1])
             C[i] = first - second
-
-        # def C(i):
-            # first = (ys[i] - ys[i-1]) / h[i]
-            # second = (h[i]/6.0) * (M[i] - M[i-1])
-            # return first - second
+        self.C = C
 
         D = [0] * n
         for i in range(n):
             first = (ys[i] + ys[i-1]) / 2.0
             second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
             D[i] = first - second
+        self.D = D
 
-        # def D(i):
-        #     first = (ys[i] + ys[i-1]) / 2.0
-        #     second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
-        #     return first - second
+    def __call__(self, x):
+        h = self.h
+        C = self.C
+        D = self.D
+        xs = self.xs
+        ys = self.ys
+        M = self.M
+        n = len(xs)
 
-        def s(x, i):
-            first = M[i-1] * (((xs[i] - x)**3) / (6*h[i]))
-            second = M[i] * (((x - xs[i-1])**3) / (6*h[i]))
-            third = C[i] * (x - ((xs[i-1]+xs[i])/2.0))
-            fourth = D[i]
-        #print 'first', first, 'second', second, 'third', third, 'fourth', fourth
-            return first + second + third + fourth
 
         # find what interval x is in
         i = -1
@@ -163,7 +150,12 @@ class CubicSpline:
         if i == -1:
             raise ValueError, ("No such interval for %f" % x)
 
-        return s(x, i)
+        # s(x) in the i-th interval
+        first = M[i-1] * (((xs[i] - x)**3) / (6*h[i]))
+        second = M[i] * (((x - xs[i-1])**3) / (6*h[i]))
+        third = C[i] * (x - ((xs[i-1]+xs[i])/2.0))
+        fourth = D[i]
+        return first + second + third + fourth
         
 
 ns = range(5, 20, 2)
@@ -213,5 +205,5 @@ plt.semilogy(ns, Es)
 plt.xlabel(u'Anzahl der Interpolationspunkte')
 plt.ylabel(u'Maximaler Feheler')
 plt.legend((u'Newton', u'splines', u'Abschätzung'))
-plt.title(ur'Interpolationsfehler von $\sin(2\pi x)$')
+plt.title(ur'Interpolationsfehler von $f(x) = \sin(2\pi x)$')
 plt.show()
