@@ -166,37 +166,38 @@ class CubicSpline:
         return s(x, i)
         
 
+ns = range(5, 20, 2)
 ## Calculate the maximum error for each of the interpolations
 Es = []
-for n in range(5, 20, 2):
+for n in ns:
     xs = linspace(0, 1, n)
     ys = [sin(2*pi*x) for x in xs]
     my_sin = NewtonInterpolation(xs, ys) # our sin() for this round
     error = max([abs(sin(2*pi*x) - my_sin(x)) for x in linspace(0, 1, 500)])
-    Es.append((n, error))
+    Es.append(error)
 
 print "N Es", Es
 
 ## Plot the results
-plt.semilogy(*zip(*Es))
+plt.semilogy(ns, Es)
 
 # Let's do cublic splines
 Es = []
-for n in range(5, 20, 2):
+for n in ns:
     xs = linspace(0, 1, n)
     print "xs", xs
     ys = [sin(2*pi*x) for x in xs]
     my_sin = CubicSpline(xs, ys)
     error = max([abs(my_sin(p) - sin(2*pi*p)) for p in linspace(0, 1, 500)])
-    Es.append((n, error))
+    Es.append(error)
 
 print "Es", Es
-plt.semilogy(*zip(*Es))
+plt.semilogy(ns, Es)
 
 points = linspace(0, 1, 500)
 Es = []
 ## Let's calculate the guesses
-for n in range(5, 20, 2):
+for n in ns:
     xs = linspace(0, 1, n)
     fd = f_derived(n)
     errors = []
@@ -205,9 +206,9 @@ for n in range(5, 20, 2):
         prod = reduce(operator.mul, [abs(p - xs[i]) for i in range(n)], 1)
         errors.append((fres/factorial(n+1)) * prod)
 
-    Es.append((n, max(errors)))
+    Es.append(max(errors))
 
-plt.semilogy(*zip(*Es))
+plt.semilogy(ns, Es)
 
 plt.xlabel(u'Anzahl der Interpolationspunkte')
 plt.ylabel(u'Maximaler Feheler')
