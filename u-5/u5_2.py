@@ -69,78 +69,86 @@ def f_derived(n):
     else:
         return lambda x: base(n, x)
 
-def moments(xs, ys):
-    if len(xs) != len(ys):
-        raise ValueError, "len(xs) != len(ys)"
 
-    n = len(xs) - 1 # degrees of freedom
-    #_, diffs = div_diff(xs, ys)
-    #print diffs
+class CubicSpline:
+    def __init__(self, xs, ys):
+        if len(xs) != len(ys):
+            raise ValueError, "len(xs) != len(ys)"
 
-    mu = [0] * (n+1)
-    print "len", len(mu)
-    for i in range(1, n):
-        mu[i] = (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
-    mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
+        self.xs = xs
+        self.ys = ys
+        self.moments()
 
-    A = np.matrix(np.zeros((n-1, n-1)))
-    print "n", n, "A", A
-    for i in range(n-1):
-        print "i", i
-        if i != 0:
-            A[i,i-1] = mu[i+1]
-        A[i,i] = 2
-        if i != n-2:
-            A[i,i+1] = 1.0 - mu[i+1]
+    def moments(self):
+        xs = self.xs
+        ys = self.ys
 
-    b = np.matrix(np.zeros((n-1, 1)))
-    for i in range(1, n-1):
-        (d, _) = div_diff(xs[i-1:i+2], ys[i-1:i+2])
-        b[i,0] = 6*d[-1]
+        n = len(xs) - 1 # degrees of freedom
 
-    #print "solving", A, b
-    return np.linalg.solve(A, b)
+        mu = [0] * (n+1)
+        for i in range(1, n):
+            mu[i] = (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
+            mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
 
-def cubic_splines(M, xs, ys, x):
-    # Add x_{n+1} and y)_{n+1} to get the edge cases
-    xs2 = xs + [xs[-1] + xs[1] + xs[0]]
-    ys2 = ys + [ys[-1]]
+        A = np.matrix(np.zeros((n-1, n-1)))
+        print "n", n, "A", A
+        for i in range(n-1):
+            print "i", i
+            if i != 0:
+                A[i,i-1] = mu[i+1]
+            A[i,i] = 2
+            if i != n-2:
+                A[i,i+1] = 1.0 - mu[i+1]
 
-    [M] = M.flatten().tolist()
-    M.insert(0, 0.0)
-    M.append(0.0)
+        b = np.matrix(np.zeros((n-1, 1)))
+        for i in range(1, n-1):
+            (d, _) = div_diff(xs[i-1:i+2], ys[i-1:i+2])
+            b[i,0] = 6*d[-1]
 
-    h = [xs[i] - xs[i-1] for i in range(n)]
+        [self.M] = np.linalg.solve(A, b).flatten().tolist()
 
-    def C(i):
-        first = (ys[i] - ys[i-1]) / h[i]
-        second = (h[i]/6.0) * (M[i] - M[i-1])
-        return first - second
+    def __call__(self, x):
+        xs = self.xs
+        ys = self.ys
+        M = deepcopy(self.M)
+        # Add x_{n+1} and y)_{n+1} to get the edge cases
+        xs2 = xs + [xs[-1] + xs[1] + xs[0]]
+        ys2 = ys + [ys[-1]]
 
-    def D(i):
-        first = (ys[i] + ys[i-1]) / 2.0
-        second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
-        return first - second
+        M.insert(0, 0.0)
+        M.append(0.0)
 
-    def s(x, i):
-        first = M[i-1] * (((xs[i] - x)**3) / (6*h[i]))
-        second = M[i] * (((x - xs[i-1])**3) / (6*h[i]))
-        third = C(i) * (x - ((xs[i-1]+xs[i])/2.0))
-        fourth = D(i)
+        h = [xs[i] - xs[i-1] for i in range(n)]
+
+        def C(i):
+            first = (ys[i] - ys[i-1]) / h[i]
+            second = (h[i]/6.0) * (M[i] - M[i-1])
+            return first - second
+
+        def D(i):
+            first = (ys[i] + ys[i-1]) / 2.0
+            second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
+            return first - second
+
+        def s(x, i):
+            first = M[i-1] * (((xs[i] - x)**3) / (6*h[i]))
+            second = M[i] * (((x - xs[i-1])**3) / (6*h[i]))
+            third = C(i) * (x - ((xs[i-1]+xs[i])/2.0))
+            fourth = D(i)
         #print 'first', first, 'second', second, 'third', third, 'fourth', fourth
-        return first + second + third + fourth
+            return first + second + third + fourth
 
-    # find what interval x is in
-    i = -1
-    for ii in range(1, n):
-        if x >= xs[ii-1] and x <= xs[ii]:
-            i = ii
-            break
+        # find what interval x is in
+        i = -1
+        for ii in range(1, n):
+            if x >= xs[ii-1] and x <= xs[ii]:
+                i = ii
+                break
 
-    if i == -1:
-        raise ValueError, ("No such interval for %f" % x)
+        if i == -1:
+            raise ValueError, ("No such interval for %f" % x)
 
-    return s(x, i)
+        return s(x, i)
         
 
 points = linspace(0, 2*pi, 500)
@@ -163,14 +171,15 @@ for n in range(5, 20, 2):
     #print "xs", xs
     ys = [sin(2*pi*x) for x in xs]
     #ys = [sin(x) for x in xs]
-    M = moments(xs, ys)
+    my_sin = CubicSpline(xs, ys)
+    #M = moments(xs, ys)
     #print "M", M
     errors = []
     points = linspace(0, 1, 500)
     for p in points:
-        print "spline", cubic_splines(M, xs, ys, p)
+        print "spline", my_sin(p)
         print "sin", sin(2*pi*p)
-        errors.append(abs(cubic_splines(M, xs, ys, p) - sin(2*pi*p)))
+        errors.append(abs(my_sin(p) - sin(2*pi*p)))
     Es.append((n, max([e.max() for e in errors])))
 
 print "Es", Es
