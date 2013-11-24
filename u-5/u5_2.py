@@ -93,7 +93,6 @@ class CubicSpline:
         A = np.matrix(np.zeros((n-1, n-1)))
         #print "n", n, "A", A
         for i in range(n-1):
-            print "i", i
             if i != 0:
                 A[i,i-1] = mu[i+1]
             A[i,i] = 2
@@ -102,7 +101,7 @@ class CubicSpline:
 
         b = np.matrix(np.zeros((n-1, 1)))
         (d, dd) = div_diff(xs, ys)
-        print "d", d, "dd", dd
+        #print "d", d, "dd", dd
         for i in range(0, n-1):
             b[i,0] = 6.0*dd[2][i]
 
@@ -181,24 +180,15 @@ Es = []
 for n in range(5, 20, 2):
     xs = linspace(0, 1, n)
     print "xs", xs
-    #xs = [2*pi*x for x in linspace(0, 1, n)]
-    #print "xs", xs
     ys = [sin(2*pi*x) for x in xs]
-    #ys = [sin(x) for x in xs]
     my_sin = CubicSpline(xs, ys)
-    #M = moments(xs, ys)
-    #print "M", M
-    errors = []
-    points = linspace(0, 1, 500)
-    for p in points:
-        #print "spline", my_sin(p)
-        #print "sin", sin(2*pi*p)
-        errors.append(abs(my_sin(p) - sin(2*pi*p)))
-    Es.append((n, max([e.max() for e in errors])))
+    error = max([abs(my_sin(p) - sin(2*pi*p)) for p in linspace(0, 1, 500)])
+    Es.append((n, error))
 
 print "Es", Es
 plt.semilogy(*zip(*Es))
 
+points = linspace(0, 1, 500)
 Es = []
 ## Let's calculate the guesses
 for n in range(5, 20, 2):
