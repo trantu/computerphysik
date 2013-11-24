@@ -3,6 +3,7 @@
 
 # Carlos Martín Nieto, Tu Tran
 
+from __future__ import division
 import time
 import math
 import copy
@@ -12,6 +13,7 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 from numpy import linspace
 from math import pi, sin, factorial
+
 
 def polyInter_coeff(fs,xs):
     fsc = deepcopy(fs)
@@ -91,8 +93,6 @@ def newton_inter(xs, ys, x):
 class CubicSpline:
     def __init__(self, xs, ys):
         if len(xs) != len(ys):
-            print 'xs ', xs
-            print 'fs',ys
             raise ValueError, "len(xs) != len(ys)"
 
         self.xs = xs
@@ -104,16 +104,13 @@ class CubicSpline:
         ys = self.ys
 
         n = len(xs) - 1 # degrees of freedom
-
         mu = [0] * (n+1)
         for i in range(1, n):
             mu[i] = (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
             mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
 
         A = np.matrix(np.zeros((n-1, n-1)))
-        #print "n", n, "A", A
         for i in range(n-1):
-            print "i", i
             if i != 0:
                 A[i,i-1] = mu[i+1]
             A[i,i] = 2
@@ -121,24 +118,20 @@ class CubicSpline:
                 A[i,i+1] = 1.0 - mu[i+1]
 
         b = np.matrix(np.zeros((n-1, 1)))
+        
         (d, dd) = div_diff(xs, ys)
-        print "d", d, "dd", dd
+        #print "d", d, "dd", dd
         for i in range(0, n-1):
             b[i,0] = 6.0*dd[2][i]
-
+            
         [self.M] = np.linalg.solve(A, b).flatten().tolist()
 
     def __call__(self, x):
         xs = self.xs
         ys = self.ys
         n = len(xs)
-        # Add x_{n+1} and y)_{n+1} to get the edge cases
-        #xs2 = xs + [xs[-1] + xs[1] + xs[0]]
-        #ys2 = ys + [ys[-1]]
 
         M = [0.0] + self.M + [0.0]
-        #M.insert(0, 0.0)
-        #M.append(0.0)
 
         h = [xs[i] - xs[i-1] for i in range(n)]
 
@@ -148,10 +141,6 @@ class CubicSpline:
             second = (h[i]/6.0) * (M[i] - M[i-1])
             C[i] = first - second
 
-        # def C(i):
-            # first = (ys[i] - ys[i-1]) / h[i]
-            # second = (h[i]/6.0) * (M[i] - M[i-1])
-            # return first - second
 
         D = [0] * n
         for i in range(n):
@@ -159,17 +148,12 @@ class CubicSpline:
             second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
             D[i] = first - second
 
-        # def D(i):
-        #     first = (ys[i] + ys[i-1]) / 2.0
-        #     second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
-        #     return first - second
 
         def s(x, i):
             first = M[i-1] * (((xs[i] - x)**3) / (6*h[i]))
             second = M[i] * (((x - xs[i-1])**3) / (6*h[i]))
             third = C[i] * (x - ((xs[i-1]+xs[i])/2.0))
             fourth = D[i]
-        #print 'first', first, 'second', second, 'third', third, 'fourth', fourth
             return first + second + third + fourth
 
         # find what interval x is in
@@ -231,17 +215,18 @@ def main():
         return (test_xs,l)
 
     def poly_cspline(anzahl):
+        anzahl = anzahl/len(xs)
         print '### 5.1.4 ###'
         #Es = []
         lists = []
         x_list = []
-        for n in range(2, 15,2):
+        for n in range(3, 14):
             xss = xs.tolist()[0][0:n]
             fss = fs.tolist()[0][0:n]
             cs = CubicSpline(array(xss), array(fss))
             #print "M", M
             #errors = []
-            points = linspace(xss[n-1], xss[n], anzahl, endpoint=False)
+            points = linspace(n-1, n, anzahl, endpoint=False)
             x_list.extend(points)
             for p in points:
                 lists.append(cs(p))
@@ -281,33 +266,81 @@ def main():
         plt.plot(np.arange(anzahl),time_polyInt,'.r')
         plt.plot(np.arange(anzahl),time_lagr,'.g')
         plt.plot(np.arange(anzahl),time_newton,'.b')   
-        plt.legend((u'Polynominterpolation',u'Lagrange-Interpolation',u'Newton-Interpolation'))
+        plt.plot(np.arange(anzahl),time_spline,'.k') 
+        plt.legend((u'Polynominterpolation',u'Lagrange-Interpolation',u'Newton-Interpolation',u'Spline'))
+        
+    def _5_1_6(number=50.):
+        print '### 5.1.6 mit Newton-Interpolation###'
+        
+        l = []
+        anzahl = 14/number
+        print anzahl
+        test_xs = np.arange(0,14,anzahl)
+        print test_xs
+        test_copy = [test_xs[i] for i in range(len(test_xs)) if i % 2 == 0]
+        
+        print test_copy
+        for k in test_copy:
+            poly = newton_inter(xs.tolist()[0], fs.tolist()[0], k)
+            l.append(poly)
+            
+        plt.plot(xs.tolist()[0],fs.tolist()[0],'.-r')
+        test_xs,interp_ys = polyNewt(number)
+        plt.plot(test_xs,interp_ys,'+g')        
+        plt.plot(test_copy,l,'.k')
+        plt.legend((u'Gegeben',u'mit allen n-Werten',u'nur mit geraden n'))
+        return (test_copy,l)
     
-    
-    plt.plot(xs.tolist()[0],fs.tolist()[0])
+    def run_methods(case,number=100):
+        if case != 6 and case != 7: 
+            plt.plot(xs.tolist()[0],fs.tolist()[0],'+-r')
+            if case == 1 or case == 5:
+                test_xs,interp_ys = polyInter(100.)
+                plt.plot(test_xs,interp_ys,'ob')
+            if case == 2 or case == 5:
+                test_xs,interp_ys = polyLag(100.)
+                plt.plot(test_xs,interp_ys,'oy')
+            if case == 3 or case == 5:   
+                test_xs,interp_ys = polyNewt(100.)
+                plt.plot(test_xs,interp_ys,'og')
+            if case == 4 or case == 5:    
+                # hier ist die Anzahl der x-werte zwischen x{i-1} und x{i}
+                test_xs,interp_ys = poly_cspline(20)
+                plt.plot(test_xs,interp_ys,'o-k')
+        elif case == 6:
+            compare_speed(number)
+        else:
+            _5_1_6(number)
+        plt.xlabel(u'Interpolationspunkte')
+        plt.ylabel(u'P(x)')
+        #plt.legend((u'Gegeben',u'Polynominterpolation',u'Lagrange-Interpolation',u'Newton-Interpolation',u'Cubic Spline'))
     '''
-    polyInter(30.)
-    polyLag(30.)
-    polyNewt(30.)
-    # hier ist die Anzahl der x-werte zwischen x{i-1} und x{i}
-    poly_cspline(20)
-    plt.xlabel(u'Interpolationspunkte')
-    plt.ylabel(u'P(x)')
+    Bitte jedes Verfahren nach folgenden Cases ausfuehren:
+    1: Polynominterpolation
+    2: Lagrange-Interpolation
+    3: Newton-Interpolation
+    4: Spline-Interpolation
+    5: Alle Methoden
+    6: Speed-Test run_methods(case,anzahl)
+    7: Aufgabe 5.1.6 
     '''
-    # hier ist die Anzahl der x-werte zwischen x{i-1} und x{i}
-    
-    plt.plot(zip(*poly_cspline(20)))
-    #compare_speed(300.)
+    run_methods(7,30)
+    #compare_speed(100.)
     '''
     Aufgabe 5.1.5:
-    Vergleich der Zeitmessung zwischen vier Verfahren bei der Anzahl der Elementen n = 0..500 (Siehe Diagramm):
+    Vergleich der Zeitmessung zwischen vier Verfahren bei der Anzahl der Elementen n = 0..100 (Siehe Diagramm):
     
     1) Normale Polynominterpolation: am schnellstens, sehr leichter Anstieg der Zeit
     2) Lagrange-Interpolation: am langsamstens, schneller Anstieg der Zeit als die anderen
     3) Newton-Interpolation: zweit schnellstes Verfahren nach Poly.interp.
-    4) Kubisches Spline: TODO
+    4) Kubisches Spline: wird sehr langsam. Es haengt vllt davon ab, dass die Momente immer wieder berechnet werden.
     '''
-    
+    '''
+    Aufgabe 5.1.6:
+    Beobachtung: da die Datenpunkte nur teilweise angezeigt weden, sind einige Ecken nicht mehr kurvig aussehen, gar nicht mehr zu sehen.
+    Der Kurvenverlauf trotz Datenpunktenverlust ist immer noch zu erkennen, dass er gefittet ist, weil die Datenpunkte nur abwechselnd gezeigt
+    werden. Jedoch je mehr Datenpunkte da sind, desto genauer ist der Fit trotz Datenpunktenverlust. 
+    '''
 if __name__ == '__main__':
     main()
     plt.show()
