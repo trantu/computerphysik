@@ -176,8 +176,6 @@ for n in ns:
     error = max([abs(sin(2*pi*x) - my_sin(x)) for x in linspace(0, 1, 500)])
     Es.append(error)
 
-print "N Es", Es
-
 ## Plot the results
 plt.semilogy(ns, Es)
 
@@ -191,22 +189,24 @@ for n in ns:
     error = max([abs(my_sin(p) - sin(2*pi*p)) for p in linspace(0, 1, 500)])
     Es.append(error)
 
-print "Es", Es
 plt.semilogy(ns, Es)
 
-points = linspace(0, 1, 500)
-Es = []
-## Let's calculate the guesses
-for n in ns:
-    xs = linspace(0, 1, n)
-    fd = f_derived(n)
-    errors = []
-    for p in points:
-        fres = max([fd(e) for e in linspace(0, 1, 500)])
-        prod = reduce(operator.mul, [abs(p - xs[i]) for i in range(n)], 1)
-        errors.append((fres/factorial(n+1)) * prod)
+# 5.2.3 Bestimmung des Maximalfehlers durch $\frac{f^{n+1}(\xi)}{(n+1)!} \prod^n_{i=0}(x-x_i)$.
+#
+# Wir befinden uns im Intervall [0,1], also sind x wie x_i immer <= 1,
+# womit (x - x_i) auch immer <= 1 ist und genau so ist der Produkt <=
+# 1. Das können wir also aus der Formel weglassen. Die (n+1)-te
+# Ableitung von sin() (mit (n+1) eine ungerade Zahl, wie es in diesem
+# Fall immer ist) ist abs(2**(n+1) * pi**(n+1) * cos(2*pi*x)). Der
+# Cosinus ist wiederum maximal eins und wir können ihn ignorieren.
+#
+# Es bleibt also 2**(n+1) * pi**(n+1) / (n + 1)! als maximaler Fehler
+# für ein bestimmtes n. Hier haben wir n als Grad des Polynoms
+# benutzt, im Programm ist aber n die Anzahl der Stützpunkte. Also
+# wird im Code n geschrieben, statt (n+1) wie auf der mathematische
+# Formel.
 
-    Es.append(max(errors))
+Es = [(2**n * pi**n) / factorial(n) for n in ns]
 
 plt.semilogy(ns, Es)
 
