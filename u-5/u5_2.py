@@ -7,6 +7,7 @@ from math import pi, sin, cos, factorial
 import matplotlib.pyplot as plt
 from functools import reduce
 import operator
+from copy import deepcopy
 
 def div_diff(xs, starting_values):
     """Calculate the Newton dividing differences.
@@ -76,42 +77,54 @@ def moments(xs, ys):
     #_, diffs = div_diff(xs, ys)
     #print diffs
 
-    def mu(i):
-        return (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
-
-    A = np.matrix(np.zeros((n+1, n+1)))
-    A[0,0] = 1
-    A[n,n] = 1
+    mu = [0] * (n+1)
+    print "len", len(mu)
     for i in range(1, n):
-        A[i,i-1] = mu(i-1)
-        A[i,i] = 2
-        A[i,i+1] = 1 - mu(i)
+        mu[i] = (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
+    mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
 
-    b = np.matrix(np.zeros((n+1, 1)))
+    A = np.matrix(np.zeros((n-1, n-1)))
+    print "n", n, "A", A
+    for i in range(n-1):
+        print "i", i
+        if i != 0:
+            A[i,i-1] = mu[i+1]
+        A[i,i] = 2
+        if i != n-2:
+            A[i,i+1] = 1.0 - mu[i+1]
+
+    b = np.matrix(np.zeros((n-1, 1)))
     for i in range(1, n-1):
         (d, _) = div_diff(xs[i-1:i+2], ys[i-1:i+2])
-        b[i,0] = d[-1]
+        b[i,0] = 6*d[-1]
 
     #print "solving", A, b
     return np.linalg.solve(A, b)
 
 def cubic_splines(M, xs, ys, x):
-    def h(i):
-        return xs[i] - xs[i-1]
+    # Add x_{n+1} and y)_{n+1} to get the edge cases
+    xs2 = xs + [xs[-1] + xs[1] + xs[0]]
+    ys2 = ys + [ys[-1]]
+
+    [M] = M.flatten().tolist()
+    M.insert(0, 0.0)
+    M.append(0.0)
+
+    h = [xs[i] - xs[i-1] for i in range(n)]
 
     def C(i):
-        first = (ys[i] - ys[i-1]) / h(i)
-        second = (h(i)/6.0) * (M[i,0] - M[i-1,0])
+        first = (ys[i] - ys[i-1]) / h[i]
+        second = (h[i]/6.0) * (M[i] - M[i-1])
         return first - second
 
     def D(i):
-        first = (ys[i] - ys[i-1]) / 2.0
-        second = (h(i)**2/12.0) * (M[i,0] - M[i-1,0])
+        first = (ys[i] + ys[i-1]) / 2.0
+        second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
         return first - second
 
     def s(x, i):
-        first = M[i-1,0] * (((xs[i] - x)**3) / (6*h(i)))
-        second = M[i,0] * ((x - xs[i-1])**3) / (6*h(i))
+        first = M[i-1] * (((xs[i] - x)**3) / (6*h[i]))
+        second = M[i] * (((x - xs[i-1])**3) / (6*h[i]))
         third = C(i) * (x - ((xs[i-1]+xs[i])/2.0))
         fourth = D(i)
         #print 'first', first, 'second', second, 'third', third, 'fourth', fourth
