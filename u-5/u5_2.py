@@ -91,7 +91,7 @@ class CubicSpline:
             mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
 
         A = np.matrix(np.zeros((n-1, n-1)))
-        print "n", n, "A", A
+        #print "n", n, "A", A
         for i in range(n-1):
             print "i", i
             if i != 0:
@@ -101,40 +101,54 @@ class CubicSpline:
                 A[i,i+1] = 1.0 - mu[i+1]
 
         b = np.matrix(np.zeros((n-1, 1)))
-        for i in range(1, n-1):
-            (d, _) = div_diff(xs[i-1:i+2], ys[i-1:i+2])
-            b[i,0] = 6*d[-1]
+        (d, dd) = div_diff(xs, ys)
+        print "d", d, "dd", dd
+        for i in range(0, n-1):
+            b[i,0] = 6.0*dd[2][i]
 
         [self.M] = np.linalg.solve(A, b).flatten().tolist()
 
     def __call__(self, x):
         xs = self.xs
         ys = self.ys
-        M = deepcopy(self.M)
+        n = len(xs)
         # Add x_{n+1} and y)_{n+1} to get the edge cases
-        xs2 = xs + [xs[-1] + xs[1] + xs[0]]
-        ys2 = ys + [ys[-1]]
+        #xs2 = xs + [xs[-1] + xs[1] + xs[0]]
+        #ys2 = ys + [ys[-1]]
 
-        M.insert(0, 0.0)
-        M.append(0.0)
+        M = [0.0] + self.M + [0.0]
+        #M.insert(0, 0.0)
+        #M.append(0.0)
 
         h = [xs[i] - xs[i-1] for i in range(n)]
 
-        def C(i):
+        C = [0] * (n)
+        for i in range(n):
             first = (ys[i] - ys[i-1]) / h[i]
             second = (h[i]/6.0) * (M[i] - M[i-1])
-            return first - second
+            C[i] = first - second
 
-        def D(i):
+        # def C(i):
+            # first = (ys[i] - ys[i-1]) / h[i]
+            # second = (h[i]/6.0) * (M[i] - M[i-1])
+            # return first - second
+
+        D = [0] * n
+        for i in range(n):
             first = (ys[i] + ys[i-1]) / 2.0
             second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
-            return first - second
+            D[i] = first - second
+
+        # def D(i):
+        #     first = (ys[i] + ys[i-1]) / 2.0
+        #     second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
+        #     return first - second
 
         def s(x, i):
             first = M[i-1] * (((xs[i] - x)**3) / (6*h[i]))
             second = M[i] * (((x - xs[i-1])**3) / (6*h[i]))
-            third = C(i) * (x - ((xs[i-1]+xs[i])/2.0))
-            fourth = D(i)
+            third = C[i] * (x - ((xs[i-1]+xs[i])/2.0))
+            fourth = D[i]
         #print 'first', first, 'second', second, 'third', third, 'fourth', fourth
             return first + second + third + fourth
 
@@ -177,8 +191,8 @@ for n in range(5, 20, 2):
     errors = []
     points = linspace(0, 1, 500)
     for p in points:
-        print "spline", my_sin(p)
-        print "sin", sin(2*pi*p)
+        #print "spline", my_sin(p)
+        #print "sin", sin(2*pi*p)
         errors.append(abs(my_sin(p) - sin(2*pi*p)))
     Es.append((n, max([e.max() for e in errors])))
 
