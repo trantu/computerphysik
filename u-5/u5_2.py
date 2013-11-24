@@ -46,15 +46,15 @@ def newton_inter(xs, ys, x):
     # and use the Horner schema to interpolate
     return horner(x, xs, diffs)
 
-def gen_sin_newton(n):
-    """Return a function which interpolates sinus"""
+class NewtonSinus:
+    """A function which interpolates sinus with 'n' interpolation points"""
+    def __init__(self, n):
+        self.n = n
+        self.xs = [2*pi*x for x in linspace(0, 1, n)]
+        (self.diffs, _) = div_diff(self.xs, map(sin, self.xs))
 
-    xs = [2*pi*x for x in linspace(0, 1, n)]
-    ys = [sin(x) for x in xs]
-
-    (diffs, _) = div_diff(xs, ys)
-
-    return lambda x: horner(float(x), xs, diffs)
+    def __call__(self, x):
+        return horner(float(x), self.xs, self.diffs)
 
 def f_derived(n):
     """Return the n-th derivation of sinus.
@@ -130,13 +130,12 @@ def cubic_splines(M, xs, ys, x):
     return s(x, i)
         
 
-# Create out own sinus function
-functions = [(n, gen_sin_newton(n)) for n in range(5, 20, 2)]
 points = linspace(0, 2*pi, 500)
 
 ## Calculate the maximum error for each of the interpolations
 Es = []
-for (n, my_sin) in functions:
+for n in range(5, 20, 2):
+    my_sin = NewtonSinus(n) # our sin() for this round
     Es.append((n, max([abs(sin(x) - my_sin(x)) for x in points])))
 
 ## Plot the results
@@ -166,7 +165,7 @@ plt.semilogy(*zip(*Es))
 
 Es = []
 ## Let's calculate the guesses
-for (n, _) in functions:
+for n in range(5, 20, 2):
     xs = linspace(0, 1, n)
     fd = f_derived(n)
     errors = []
