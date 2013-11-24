@@ -47,12 +47,14 @@ def newton_inter(xs, ys, x):
     # and use the Horner schema to interpolate
     return horner(x, xs, diffs)
 
-class NewtonSinus:
+class NewtonInterpolation:
     """A function which interpolates sinus with 'n' interpolation points"""
-    def __init__(self, n):
-        self.n = n
-        self.xs = [2*pi*x for x in linspace(0, 1, n)]
-        (self.diffs, _) = div_diff(self.xs, map(sin, self.xs))
+    def __init__(self, xs, ys):
+        if len(xs) != len(ys):
+            raise ValueError, "len(xs) != len(ys)"
+
+        self.xs = xs
+        (self.diffs, _) = div_diff(xs, ys)
 
     def __call__(self, x):
         return horner(float(x), self.xs, self.diffs)
@@ -164,13 +166,16 @@ class CubicSpline:
         return s(x, i)
         
 
-points = linspace(0, 2*pi, 500)
-
 ## Calculate the maximum error for each of the interpolations
 Es = []
 for n in range(5, 20, 2):
-    my_sin = NewtonSinus(n) # our sin() for this round
-    Es.append((n, max([abs(sin(x) - my_sin(x)) for x in points])))
+    xs = linspace(0, 1, n)
+    ys = [sin(2*pi*x) for x in xs]
+    my_sin = NewtonInterpolation(xs, ys) # our sin() for this round
+    error = max([abs(sin(2*pi*x) - my_sin(x)) for x in linspace(0, 1, 500)])
+    Es.append((n, error))
+
+print "N Es", Es
 
 ## Plot the results
 plt.semilogy(*zip(*Es))
