@@ -47,12 +47,14 @@ def newton_inter(xs, ys, x):
     # and use the Horner schema to interpolate
     return horner(x, xs, diffs)
 
-class NewtonSinus:
+class NewtonInterpolation:
     """A function which interpolates sinus with 'n' interpolation points"""
-    def __init__(self, n):
-        self.n = n
-        self.xs = [2*pi*x for x in linspace(0, 1, n)]
-        (self.diffs, _) = div_diff(self.xs, map(sin, self.xs))
+    def __init__(self, xs, ys):
+        if len(xs) != len(ys):
+            raise ValueError, "len(xs) != len(ys)"
+
+        self.xs = xs
+        (self.diffs, _) = div_diff(xs, ys)
 
     def __call__(self, x):
         return horner(float(x), self.xs, self.diffs)
@@ -69,130 +71,139 @@ def f_derived(n):
     else:
         return lambda x: base(n, x)
 
-def moments(xs, ys):
-    if len(xs) != len(ys):
-        raise ValueError, "len(xs) != len(ys)"
 
-    n = len(xs) - 1 # degrees of freedom
-    #_, diffs = div_diff(xs, ys)
-    #print diffs
+class CubicSpline:
+    def __init__(self, xs, ys):
+        if len(xs) != len(ys):
+            raise ValueError, "len(xs) != len(ys)"
 
-    mu = [0] * (n+1)
-    print "len", len(mu)
-    for i in range(1, n):
-        mu[i] = (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
-    mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
+        self.xs = xs
+        self.ys = ys
+        self.moments()
+        self.lists()
 
-    A = np.matrix(np.zeros((n-1, n-1)))
-    print "n", n, "A", A
-    for i in range(n-1):
-        print "i", i
-        if i != 0:
-            A[i,i-1] = mu[i+1]
-        A[i,i] = 2
-        if i != n-2:
-            A[i,i+1] = 1.0 - mu[i+1]
+    def moments(self):
+        xs = self.xs
+        ys = self.ys
 
-    b = np.matrix(np.zeros((n-1, 1)))
-    for i in range(1, n-1):
-        (d, _) = div_diff(xs[i-1:i+2], ys[i-1:i+2])
-        b[i,0] = 6*d[-1]
+        n = len(xs) - 1 # degrees of freedom
 
-    #print "solving", A, b
-    return np.linalg.solve(A, b)
+        mu = [0] * (n+1)
+        for i in range(1, n):
+            mu[i] = (xs[i] - xs[i-1])/(xs[i+1] - xs[i-1])
+        mu[n] = (xs[n] - xs[n-1])/(xs[n] - xs[1] - xs[0] - xs[n-1])
 
-def cubic_splines(M, xs, ys, x):
-    # Add x_{n+1} and y)_{n+1} to get the edge cases
-    xs2 = xs + [xs[-1] + xs[1] + xs[0]]
-    ys2 = ys + [ys[-1]]
+        A = np.matrix(np.zeros((n-1, n-1)))
+        #print "n", n, "A", A
+        for i in range(n-1):
+            if i != 0:
+                A[i,i-1] = mu[i+1]
+            A[i,i] = 2
+            if i != n-2:
+                A[i,i+1] = 1.0 - mu[i+1]
 
-    [M] = M.flatten().tolist()
-    M.insert(0, 0.0)
-    M.append(0.0)
+        b = np.matrix(np.zeros((n-1, 1)))
+        (d, dd) = div_diff(xs, ys)
+        #print "d", d, "dd", dd
+        for i in range(0, n-1):
+            b[i,0] = 6.0*dd[2][i]
 
-    h = [xs[i] - xs[i-1] for i in range(n)]
+        [self.M] = np.linalg.solve(A, b).flatten().tolist()
 
-    def C(i):
-        first = (ys[i] - ys[i-1]) / h[i]
-        second = (h[i]/6.0) * (M[i] - M[i-1])
-        return first - second
+    def lists(self):
+        M = [0.0] + self.M + [0.0]
+        h = [xs[i] - xs[i-1] for i in range(n)]
+        self.h = h
+        self.M = M
 
-    def D(i):
-        first = (ys[i] + ys[i-1]) / 2.0
-        second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
-        return first - second
+        C = [0] * (n)
+        for i in range(n):
+            first = (ys[i] - ys[i-1]) / h[i]
+            second = (h[i]/6.0) * (M[i] - M[i-1])
+            C[i] = first - second
+        self.C = C
 
-    def s(x, i):
+        D = [0] * n
+        for i in range(n):
+            first = (ys[i] + ys[i-1]) / 2.0
+            second = ((h[i]**2)/12.0) * (M[i] + M[i-1])
+            D[i] = first - second
+        self.D = D
+
+    def __call__(self, x):
+        h = self.h
+        C = self.C
+        D = self.D
+        xs = self.xs
+        ys = self.ys
+        M = self.M
+        n = len(xs)
+
+
+        # find what interval x is in
+        i = -1
+        for ii in range(1, n):
+            if x >= xs[ii-1] and x <= xs[ii]:
+                i = ii
+                break
+
+        if i == -1:
+            raise ValueError, ("No such interval for %f" % x)
+
+        # s(x) in the i-th interval
         first = M[i-1] * (((xs[i] - x)**3) / (6*h[i]))
         second = M[i] * (((x - xs[i-1])**3) / (6*h[i]))
-        third = C(i) * (x - ((xs[i-1]+xs[i])/2.0))
-        fourth = D(i)
-        #print 'first', first, 'second', second, 'third', third, 'fourth', fourth
+        third = C[i] * (x - ((xs[i-1]+xs[i])/2.0))
+        fourth = D[i]
         return first + second + third + fourth
-
-    # find what interval x is in
-    i = -1
-    for ii in range(1, n):
-        if x >= xs[ii-1] and x <= xs[ii]:
-            i = ii
-            break
-
-    if i == -1:
-        raise ValueError, ("No such interval for %f" % x)
-
-    return s(x, i)
         
 
-points = linspace(0, 2*pi, 500)
-
+ns = range(5, 20, 2)
 ## Calculate the maximum error for each of the interpolations
 Es = []
-for n in range(5, 20, 2):
-    my_sin = NewtonSinus(n) # our sin() for this round
-    Es.append((n, max([abs(sin(x) - my_sin(x)) for x in points])))
+for n in ns:
+    xs = linspace(0, 1, n)
+    ys = [sin(2*pi*x) for x in xs]
+    my_sin = NewtonInterpolation(xs, ys) # our sin() for this round
+    error = max([abs(sin(2*pi*x) - my_sin(x)) for x in linspace(0, 1, 500)])
+    Es.append(error)
 
 ## Plot the results
-plt.semilogy(*zip(*Es))
+plt.semilogy(ns, Es)
 
 # Let's do cublic splines
 Es = []
-for n in range(5, 20, 2):
+for n in ns:
     xs = linspace(0, 1, n)
     print "xs", xs
-    #xs = [2*pi*x for x in linspace(0, 1, n)]
-    #print "xs", xs
     ys = [sin(2*pi*x) for x in xs]
-    #ys = [sin(x) for x in xs]
-    M = moments(xs, ys)
-    #print "M", M
-    errors = []
-    points = linspace(0, 1, 500)
-    for p in points:
-        print "spline", cubic_splines(M, xs, ys, p)
-        print "sin", sin(2*pi*p)
-        errors.append(abs(cubic_splines(M, xs, ys, p) - sin(2*pi*p)))
-    Es.append((n, max([e.max() for e in errors])))
+    my_sin = CubicSpline(xs, ys)
+    error = max([abs(my_sin(p) - sin(2*pi*p)) for p in linspace(0, 1, 500)])
+    Es.append(error)
 
-print "Es", Es
-plt.semilogy(*zip(*Es))
+plt.semilogy(ns, Es)
 
-Es = []
-## Let's calculate the guesses
-for n in range(5, 20, 2):
-    xs = linspace(0, 1, n)
-    fd = f_derived(n)
-    errors = []
-    for p in points:
-        fres = max([fd(e) for e in linspace(0, 1, 500)])
-        prod = reduce(operator.mul, [abs(p - xs[i]) for i in range(n)], 1)
-        errors.append((fres/factorial(n+1)) * prod)
+# 5.2.3 Bestimmung des Maximalfehlers durch $\frac{f^{n+1}(\xi)}{(n+1)!} \prod^n_{i=0}(x-x_i)$.
+#
+# Wir befinden uns im Intervall [0,1], also sind x wie x_i immer <= 1,
+# womit (x - x_i) auch immer <= 1 ist und genau so ist der Produkt <=
+# 1. Das können wir also aus der Formel weglassen. Die (n+1)-te
+# Ableitung von sin() (mit (n+1) eine ungerade Zahl, wie es in diesem
+# Fall immer ist) ist abs(2**(n+1) * pi**(n+1) * cos(2*pi*x)). Der
+# Cosinus ist wiederum maximal eins und wir können ihn ignorieren.
+#
+# Es bleibt also 2**(n+1) * pi**(n+1) / (n + 1)! als maximaler Fehler
+# für ein bestimmtes n. Hier haben wir n als Grad des Polynoms
+# benutzt, im Programm ist aber n die Anzahl der Stützpunkte. Also
+# wird im Code n geschrieben, statt (n+1) wie auf der mathematische
+# Formel.
 
-    Es.append((n, max(errors)))
+Es = [(2**n * pi**n) / factorial(n) for n in ns]
 
-plt.semilogy(*zip(*Es))
+plt.semilogy(ns, Es)
 
 plt.xlabel(u'Anzahl der Interpolationspunkte')
 plt.ylabel(u'Maximaler Feheler')
 plt.legend((u'Newton', u'splines', u'Abschätzung'))
-plt.title(ur'Interpolationsfehler von $\sin(2\pi x)$')
+plt.title(ur'Interpolationsfehler von $f(x) = \sin(2\pi x)$')
 plt.show()
