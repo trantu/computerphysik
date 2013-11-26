@@ -1594,4 +1594,52 @@ ist Differnzenfomrel mit Fehlerordnung 2 \underline{explizit}
 
 Sei $D(h)$ ein Formel zur Näherung von $\overline{D}$ mit der Fehlerentwicklung $D(h) = \overline{D} + C_1h + C_2h^2 = C_3h^3 + \dots$ dann hat die Formel $D^\star(h) = 2D(\frac{h}{2}) - D(h)$ und die Fehlerentwicklung $D^\star (h) - \overline{D} = -\frac{C_2}{2}h^2$
 
+Iterative Fortsetzung möglich $\to$ Formel beliebiger Fehlerordnung $k$ können berechnet werden, nicht auf Differenzenformeln beschränkt! Einzige Voraussetzung: Fehlerentwicklung nach Potenzen einer (kleinen) Größe existiert!
+
+\paragraph{Noch allgemeinerer Satz} Sei $D(h)$ eine Formel der Fehlerordnung $k$ zur Näherung von $\overline{D}$ mit Fehlerentwicklung $D(h) - \overline{D} = C_1h^k + C_2h^{k+1} + C_1h^{k+1}+\dots \to$ extrapolierte Formel: 
+
+\begin{align*}
+  D^\star (h) &= \frac{2^k D(\frac{h}{2}) - D(h)}{2^k - 1}\\
+  &= D\left(\frac{h}{2}\right) + \frac{D\left(\frac{h}{2}\right) - D(h)}{2^k -1}
+\intertext{mit Fehlerentwicklung}
+D^\star(h) - \overline{D} &= \frac{-C_2h^{k+1}}{2(2^k - 1)}
+\end{align*}
+
+Dies führt zu einem \paragraph{$h$-Extrapolations-Algorithmus}
+
+Sei $D(h)$ eine Formel zur Näherung von $\overline{D}$ mit $D(h) - \overline{D} = C_1h + C_2h^2  + \dots$ definiere $D_{i,0} = D\left(\frac{h}{2^i}\right)$ für $i=0,1,2,\dots \to D_{i,k} = D_{i+1,k-1} + \frac{D_{i+1,k-1} - D_{i,k-1}}{2^k -1}$ für $k=1,2,\dots n$, $i=0,1,\dots n-k$ sind Näherungen für $\overline{D}$ mit Fehlerberechnung $k+1$.
+
+\section{Numerische Integration}
+
+Gesucht ist eine Näherung von $I = \int\limits_a^b f(x)\, dx;\, f(x)\colon [a,b] \to \R$ numerischer Näherungsverfahren $\hat{=}$ "`Quadraturverfahren"'. Teile Integrationsintervall $[a,b]$ in $n$ Teile auf mit $h=\frac{(b-a)}{n}$ und $x_i = a + h\cdot i$ mit $i=0\dots n$.
+
+\begin{itemize}
+\item Rechtechregel: $RI(h) = h\sum\limits_{i=0}^{n-1}   f\left(x_i+\frac{h}{2}\right)$
+
+\item Trapezregel: $TI(h) = h\left[\frac{f(a) + f(b)}{2} + \sum\limits_{i=1}^{n-1} f(x_i)\right]$
+\item Interpolatorische Quadraturformel: Idee: integriere statt $f$ ein Interpolationspolynom
+\begin{itemize}
+\item Polynom 0. Ordnung $\to$ Rechtechregel
+\item Polynom 1. Ordnung $\to$ Trapezregel
+\item Polynom 2. Ordnung $\to$ Simpsonregel
+  \begin{align*}
+    p(x) = f(a) &+ \frac{f(a + h) - f(a)}{h}(x-a)\\
+    &+ \frac{\frac{f(b) - f(a+h)}{h} - \frac{f(a+h)-f(a)}{h}}{2h}\cdot(x-a)(x-a+h)
+  \end{align*}
+(Newtonsche Form des Interpolationspolynoms)
+
+
+\begin{align*}
+  \int_a^b (x-a)\, dx &= \left.\frac{1}{2} (x-a)^2 \right|_a^b =   \frac{1}{2} (b-a)^2 = 2h^2\\
+\int_a^b (x-a)(x-a+h)\, dx &= \dots = \frac{2}{3}h^3\\
+\end{align*}
+\begin{align*}
+  \to SI = \int_b^a p(x)\, dx &= f(a)2h + \frac{f(a+h) -f(a)}{h}\cdot   2h^2\\
+&+ \frac{f(b)+f(a)-2f(a+h)}{2h^2}\cdot\frac{2}{3}h^3\\
+&= \frac{h}{3}\left[ \cancel{6f(a)} + 6(f(a+h) - \cancel{f(a)} + (f(b) - 2f(a+h)+f(a)) \right]\\
+SI &= \frac{h}{3}\left[ f(b) + f(a) + 4f(a+h) \right]
+\end{align*}
+\end{itemize}
+
+\end{itemize}
 \end{document}
