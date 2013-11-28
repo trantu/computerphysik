@@ -1703,4 +1703,69 @@ also: sowohl Vorfaktoren als auch Potenzen in $h$ der Fehler sind unterschiedlic
 \item im Prinzip Verbesserung auch möglich durch Interpolation mit Polynomen höherer Ordnung, aber: wie bei Interpolation (VL Kap XY) numerische Instabilitäten.
 \item besser: Simpson mit kleinem $h$!
 \end{itemize}
+
+\section*{Besser: Gauß Formel zur Quadratur}
+
+\paragraph{Idee}
+
+bisher: äquidistante Stützstellen, kann höhere Fehlerordnung erreicht werden mit variablem Abstand zwischen Stützstellen?
+
+Wir betrachten das Intervall $[-1,1]$, allgemeine Quadraturformel lässt sich schreiben als
+
+\[
+Q = \sum_{i=1}^n b_i f(x_i)
+\]
+
+mit Gewichten $b_i$ und Stützstellen so gewählt, dass Fehlerordnung $k$ möglichst hoch!
+
+Wähle $n=1$, also $Q = b_1 f(x_1)$, fordere Exaktheit ($Q=I$) für jede Polynomordnung Term für Term.
+
+2 Unbekannte ($b_i$ und $x_i$) also Polynom 1. Ordnung $\left(I = \int\limits_{-1}^1 dx\, p(x)\right)$.
+
+\begin{minipage}{.5\linewidth}
+  \begin{tabular}{c|c|cl}
+    $p(x)$ & I & Q\\\hline
+    1 & 2 & $b_1$ & $\to b_1 = 2$\\
+    x & 0 & $b_1x_1$ & $\to x_1 = 0$
+  \end{tabular}
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+  eine eindeutige Lösung!
+\end{minipage}
+
+Für $n=2$ gibt es 4 Unbekannte, $Q = b_1f(x_1)+b_2f(x_2)$. $I \overset{!}{=} Q$ führt zu nicht-lin.Gl.Syst.
+
+\begin{minipage}{.35\linewidth}
+  \begin{tabular}{c|c|c}
+    $p(x)$ & I & Q\\\hline
+    1 & 2 & $b_1 + b_2$\\
+    x & 0 & $b_1x_1 + b_2x_2$\\
+    $x^2$ & $\frac{2}{3}$ & $b_1x_1^2 + b_2 x_2^2$\\
+    $x^3$ & 0 & $b_1x_1^3 + b_2 x_2^3$
+  \end{tabular}
+\end{minipage}
+\begin{minipage}{.65\linewidth}
+  Aus Symmetriegründen probieren wir $\underbrace{x_1 = -x_2}_{\text{Freiheitsgrad eliminiert}}$
+\end{minipage}
+
+Aus 2. Gleichung $\to (b_1-b_2)x_1 = 0 \to \underbrace{b_1 = b_2}_{\text{Freiheitsgrad eliminiert}}$. [4. Gleighung $\to (b_1-b_2)x_1^3 = 0 \checkmark$]
+
+1. Gleichung: $b_1 + b_2 = 2 \to b_1 = b_2 = 1$
+3. Gleichung: $\frac{2}{3} = b_1x_1^2 + b_2x_2^2 = 2b_1 x_1^2 = 2x_1^2 \to x_1^2 = \frac{1}{3} \to x_{1,2} = \pm \sqrt{\frac{1}{3}}$.
+
+Lösung des Gauß Ansatzes für $n=2$: $b_1 = b_2 = 1$, $x_1 = -\sqrt{\frac{1}{3}},\ x_2 = +\sqrt{\frac{1}{3}}$.
+
+Das allgemeine Gauß Problem ist stets lösbar, die $n$ Stützstellen sind die $n$ Nullstellen des Legendre Polynoms $P_n(x) = \frac{1}{2^n n!}\cdot \frac{d^n}{dx^n} (x^2 - 1)^n$.
+
+Gauß Quadraturformeln für $n=1,2,3$
+
+\begin{itemize}
+\item $I = \int\limits_{-1}^1 dx\, f(x)$
+\item $n=1$: $G_1I = 2f(0)$, $I = \int$
+\item $n=2$: $G_2I = f\left(-\frac{1}{\sqrt{3}}\right) + f\left(\frac{1}{\sqrt{3}}\right)$, $k=4$, vergl\@. RI und TI
+\item $n=3$: $G_3I = \frac{5}{9} f(-\sqrt{0.6}) + \frac{8}{9} f(0) + \frac{5}{9}f\left(+\sqrt{0.6}\right)$, $k=6$, vergl\@. SI
+\end{itemize}
+
+Fehlerordnung $k=2n$. Vorteil von Gauß Quadratur: Gewichte immer positiv und damit numerisch sehr stabil!
+
 \end{document}
