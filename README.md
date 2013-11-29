@@ -9,3 +9,4 @@ Approximation using numeric methods like Newton,Gaus-Seidel, Jacobi
 * u2: 19
 * u3: 18
 * u4: 20
+* u5: 17.5
