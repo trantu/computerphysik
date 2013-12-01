@@ -48,36 +48,22 @@ def jacob_g(xs,aS):
     return jmatrix_g
 
 def g_f(xs,ys,a_s):
-    #print np.exp(-a_s[0] * xs )
     return (ys - (np.exp(-a_s[0] * xs )) * (a_s[2]*np.sin(a_s[1]*xs) + a_s[3]*np.cos(a_s[1]*xs)))
 
 def g_g(xs,ys,a_s):
     return (ys - (np.exp(-a_s[0] * xs)) * a_s[2] * np.sin(a_s[1] * xs))
 
+# Aufgabe 6.2.1
 def gauss_newton(aS,g,jacobi):
-    _,spalten = np.shape(jacobi)
-    #print aS
-    #if((np.shape(g) != np.shape(jacobi)) or len(aS.getT()) != spalten):
-     #   raise ValueError('dimension is not equal')
-    #n = 1
-    #a = aS
-    #while(n < 101):
         
     delta = np.linalg.solve(jacobi.getT() * jacobi , jacobi.getT() * np.matrix(g).getT())
     delta = delta.getT().tolist()[0]
-    
-    
-    #print("Schritt %i delta = %s "%(n, delta))
-    
     aS = aS + delta
-    #print delta
-        #n += 1
     return aS,delta
 
-
+# Aufgabe 6.2.2
 def gauss_newton_modi(aS,g,jacobi,f,xs,ys):
-    _,spalten = np.shape(jacobi)
-        
+    
     delta = np.linalg.solve(jacobi.getT() * jacobi , jacobi.getT() * np.matrix(g).getT())
     delta = delta.getT().tolist()[0]
     np.linalg.norm(delta,2)
@@ -116,12 +102,8 @@ def main():
         c = 0
         while c < 200:
             gg = g_g((np.array(xs)),(np.array(ys)),a)
-            #print np.linalg.norm(gg, 2)
             jacobi = jacob_g(xs, a)
             a,delta = gauss_newton(a, gg, jacobi)
-            #print 'delta: ', delta
-            #print 'a: ', a 
-            #sa = map(op.add, delta, a)
             if(np.linalg.norm(delta,2) < (10**(-6))):
                 break
             c +=1
@@ -129,17 +111,11 @@ def main():
         return a   
     def run_gauss_newton_f(aS, xs, ys):
         a = np.array(aS)
-        #print 'as: ', a
         c = 0
         while c < 200:
             gf = g_f((np.array(xs)),(np.array(ys)),a)
-            #print np.linalg.norm(gf, 2)
             jacobi = jacob_f(xs, a)
             a,delta = gauss_newton(a, gf, jacobi)
-            #print 'f::: ',a
-            #print 'delta: ', delta
-            #print 'a: ', a 
-            #sa = map(op.add, delta, a)
             if(np.linalg.norm(delta,2) < (10**(-6))):
                 break
             c +=1
@@ -157,10 +133,6 @@ def main():
             k,a,delta = gauss_newton_modi(a, gf, jacobi, g_f, np.array(xs), np.array(ys))
             if(np.linalg.norm(delta,2) < (10**(-6))):
                 break                                            
-            #print 'delta: ', delta
-            #sa = map(op.add, delta, a)
-            #if(np.linalg.norm(delta,2) < (10**(-6))):
-             #   break
             c +=1
         print 'Iterationsschritte: ', c
         return a
@@ -186,7 +158,7 @@ def main():
  
     # Running
 
-    print u'Ungedaempten Verfahren'
+    print u'A 6.2.3: Ungedaempten Verfahren'
     as_ = run_gauss_newton_f(a1, xs, ys)
     print 'f an a1: ', as_
     print 'f an a2: ', run_gauss_newton_modi_f(a2, xs, ys)
@@ -195,15 +167,23 @@ def main():
     print 'g an b2: ',run_gauss_newton_g(b2, xs, ys)
     print 'g an b3: ',run_gauss_newton_g(b3, xs, ys)
 
-    print u'Gedaempten Verfahren'
+    print u'A 6.2.3: Gedaempten Verfahren'
     print 'f an a1: ',run_gauss_newton_modi_f(a1, xs, ys)
     print 'f an a2: ',run_gauss_newton_modi_f(a2, xs, ys)
     print 'f an a3: ',run_gauss_newton_modi_f(a3, xs, ys)
     print 'g an b1: ',run_gauss_newton_modi_g(b1, xs, ys)
     print 'g an b2: ',run_gauss_newton_modi_g(b2, xs, ys)
     print 'g an b3: ',run_gauss_newton_modi_g(b3, xs, ys)
-
-    plt.plot(xs, ys, label='Daten')
+    '''
+    # Aufgabe 6.2.1 Bemerkung:
+    Sinnvolle Lösung ...
+    
+    ... fuer ungedaempften Alg : a1, a2, b1 und b2
+    ... fuer gedaempften Alg : a1, a2, a3, b1 und b2
+    '''
+    
+    # Aufgabe 6.2.4
+    plt.plot(xs, ys,'.' ,label='Daten')
     pairs = [
         (xs[:len(xs)/4], ys[:len(ys)/4]),
         (xs[3*len(xs)/4:], ys[3*len(ys)/4:]),
@@ -217,8 +197,8 @@ def main():
         ff = lambda as_, t: f(as_[0], as_[1], as_[2], as_[3], t)
         plt.plot(xs, [ff(as_, t) for t in xs])
 
-        plt.labels()
-
+        #plt.label()
+    plt.show()
     
 if __name__ == '__main__':
     main()
