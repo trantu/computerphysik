@@ -110,7 +110,7 @@ def main():
     ys = data[:,1]
     xs_erstes_viertel = xs[:len(xs)/4]
     
-    def run_gauss_newton_g(aS):
+    def run_gauss_newton_g(aS, xs, ys):
         a = np.array(aS)
         #print 'as: ', a
         c = 0
@@ -127,7 +127,7 @@ def main():
             c +=1
         print 'Iterationsschritte: ', c
         return a   
-    def run_gauss_newton_f(aS):
+    def run_gauss_newton_f(aS, xs, ys):
         a = np.array(aS)
         #print 'as: ', a
         c = 0
@@ -145,12 +145,12 @@ def main():
             c +=1
         print 'Iterationsschritte: ', c
         return a 
-    def run_gauss_newton_modi_f(aS):
+    def run_gauss_newton_modi_f(aS, xs, ys):
         a = np.array(aS)
         #print 'as: ', a
         c = 0
 
-        while c < 9:
+        while c < 100:
             gf = g_f((np.array(xs)),(np.array(ys)),a)
             #print np.linalg.norm(gf, 2)
             jacobi = jacob_f(xs, a)
@@ -158,7 +158,6 @@ def main():
             if(np.linalg.norm(delta,2) < (10**(-6))):
                 break                                            
             #print 'delta: ', delta
-            print 'k: ', k 
             #sa = map(op.add, delta, a)
             #if(np.linalg.norm(delta,2) < (10**(-6))):
              #   break
@@ -166,7 +165,7 @@ def main():
         print 'Iterationsschritte: ', c
         return a
     
-    def run_gauss_newton_modi_g(aS):
+    def run_gauss_newton_modi_g(aS, xs, ys):
         a = np.array(aS)
         #print 'as: ', a
         c = 0
@@ -174,11 +173,10 @@ def main():
         while c < 100:
             gg = g_g((np.array(xs)),(np.array(ys)),a)
             #print np.linalg.norm(gf, 2)
-            jacobi = jacob_f(xs, a)
+            jacobi = jacob_g(xs, a)
             k,a,delta = gauss_newton_modi(a, gg, jacobi, g_g, np.array(xs), np.array(ys))
             if (np.linalg.norm((2**(-k))* delta,2) < 10**(-6)): break                                            
             #print 'delta: ', delta
-            print 'k: ', k 
             #sa = map(op.add, delta, a)
             #if(np.linalg.norm(delta,2) < (10**(-6))):
              #   break
@@ -187,18 +185,40 @@ def main():
         return a
  
     # Running
-    '''
-    print 'f an a1: ',run_gauss_newton_f(a1)
-    print 'f an a2: ',run_gauss_newton_f(a2)
-    print 'f an a3: ',run_gauss_newton_f(a3)
-    print 'g an b1: ',run_gauss_newton_g(b1)
-    print 'g an b2: ',run_gauss_newton_g(b2)
-    print 'g an b3: ',run_gauss_newton_g(b3)
-    '''
-    print 'f an a1: ',run_gauss_newton_f(a3)
-    print run_gauss_newton_modi_f(a3)
-    print 'g an b1: ',run_gauss_newton_g(b1)
-    print run_gauss_newton_modi_g(b1)
+
+    print u'Ungedaempten Verfahren'
+    as_ = run_gauss_newton_f(a1, xs, ys)
+    print 'f an a1: ', as_
+    print 'f an a2: ', run_gauss_newton_modi_f(a2, xs, ys)
+    print 'f an a3: ',run_gauss_newton_f(a3, xs, ys)
+    print 'g an b1: ',run_gauss_newton_g(b1, xs, ys)
+    print 'g an b2: ',run_gauss_newton_g(b2, xs, ys)
+    print 'g an b3: ',run_gauss_newton_g(b3, xs, ys)
+
+    print u'Gedaempten Verfahren'
+    print 'f an a1: ',run_gauss_newton_modi_f(a1, xs, ys)
+    print 'f an a2: ',run_gauss_newton_modi_f(a2, xs, ys)
+    print 'f an a3: ',run_gauss_newton_modi_f(a3, xs, ys)
+    print 'g an b1: ',run_gauss_newton_modi_g(b1, xs, ys)
+    print 'g an b2: ',run_gauss_newton_modi_g(b2, xs, ys)
+    print 'g an b3: ',run_gauss_newton_modi_g(b3, xs, ys)
+
+    plt.plot(xs, ys, label='Daten')
+    pairs = [
+        (xs[:len(xs)/4], ys[:len(ys)/4]),
+        (xs[3*len(xs)/4:], ys[3*len(ys)/4:]),
+        (xs[::5],  ys[::5]),
+        (xs[::20], ys[::20]),
+        (xs[::40], ys[::40])
+        ]
+
+    for (xss, yss) in pairs:
+        as_ = run_gauss_newton_f(a1, xss, yss)
+        ff = lambda as_, t: f(as_[0], as_[1], as_[2], as_[3], t)
+        plt.plot(xs, [ff(as_, t) for t in xs])
+
+        plt.labels()
+
     
 if __name__ == '__main__':
     main()
