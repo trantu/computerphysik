@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Nov 29, 2013
 
 @author: Carlos Matin Nieto, Tu Tran
 '''
-# -*- coding: utf-8 -*-
+
 import numpy as np
 from numpy import * 
 from copy import deepcopy
@@ -185,19 +186,19 @@ def main():
     # Aufgabe 6.2.4
     plt.plot(xs, ys,'.' ,label='Daten')
     pairs = [
-        (xs[:len(xs)/4], ys[:len(ys)/4]),
-        (xs[3*len(xs)/4:], ys[3*len(ys)/4:]),
-        (xs[::5],  ys[::5]),
-        (xs[::20], ys[::20]),
-        (xs[::40], ys[::40])
+        ('erstes Viertel', xs[:len(xs)/4], ys[:len(ys)/4]),
+        ('letztes Viertel', xs[3*len(xs)/4:], ys[3*len(ys)/4:]),
+        (r'$\frac{1}{5}$', xs[::5],  ys[::5]),
+        (r'$\frac{1}{20}$', xs[::20], ys[::20]),
+        (r'$\frac{1}{40}$', xs[::40], ys[::40])
         ]
 
-    for (xss, yss) in pairs:
+    for (lbl, xss, yss) in pairs:
         as_ = run_gauss_newton_f(a1, xss, yss)
         ff = lambda as_, t: f(as_[0], as_[1], as_[2], as_[3], t)
-        plt.plot(xs, [ff(as_, t) for t in xs])
+        plt.plot(xs, [ff(as_, t) for t in xs], label=lbl)
 
-        #plt.label()
+    plt.legend()
     plt.show()
     
 if __name__ == '__main__':
