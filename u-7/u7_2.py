@@ -18,7 +18,7 @@ def rechteckregel(xs, a, b, f):
 
 def trapezregel(xs, a, b, f):
     n = len(xs)
-    h = (b - a)/float(n)
+    h = (b - a)/float(n - 1)
     s = sum([f(xs[i]) for i in range(1, n)])
 
     return h * ((f(a) - f(b)) / 2.0 + s)
@@ -31,7 +31,7 @@ def trapezregel(xs, a, b, f):
 
 def simpsonregel(xs, a, b, f):
     n = len(xs)
-    h = (b - a)/float(n)
+    h = (b - a)/float(n-1) # need the number of intervals
 
     coefficients = [1] + list(islice(cycle([4,2]), 0, n-2)) + [1]
     lst = zip(coefficients, xs)

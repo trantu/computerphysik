@@ -8,6 +8,18 @@ from math import sin, cos
 from numpy import linspace
 import matplotlib.pyplot as plt
 
+ur"""Zweite ableitung
+
+\begin{align*}
+f''(x) &= \frac{1}{2h} ( Df(x+h, h) - Df(x-h, h )\\
+&= \frac{1}{2h} \left[ \frac{f(x+h+h) - f(x+h-h}{2h} + O(h^2) -
+\frac{f(x-h+h) - f(x-h-h)}{2h} + O(h^2) \right] + O(h^2)\\
+&= \frac{1}{2h}\left[ \frac{1}{2h}\left[ f(x+2h) - f(x) - f(x) + f(x-2h)\right] + O(h^2) + O(h^2) \right] + O(h^2)\\
+&= \frac{f(x+2h) - 2f(x) + f(x-2h)}{4h^2} + O(h^2)
+\end{align*}
+
+"""
+
 # did someone say lisp?
 def second((_, x)):
     return x
