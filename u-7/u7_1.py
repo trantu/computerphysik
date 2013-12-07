@@ -1,4 +1,4 @@
-#!/usr/bin/evn python
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
 ## Carlos Martín, Tran Tu
@@ -47,7 +47,7 @@ for (h, i) in hs:
 
 plt.title('Ableitung durch $D_1f$')
 plt.xlabel('x')
-plt.ylabel('y')
+plt.ylabel("$f'(x)$")
 plt.legend(loc='lower left')
 
 plt.figure()
@@ -57,12 +57,12 @@ for (h, i) in hs:
 
 plt.title('Ableitung durch $Df$')
 plt.xlabel('x')
-plt.ylabel('y')
+plt.ylabel("$f'(x)$")
 plt.legend(loc='lower left')
 
-## h-Extrapolation
+## h-Extrapolation (Richardson Extrapolation)
 
-def richardson(x, h, n, fn=Df):
+def richardson(x, h, n, fn):
     D0 = [fn(x, h/2.**i) for i in range(n+1)]
     
     def D(i, k):
@@ -73,6 +73,21 @@ def richardson(x, h, n, fn=Df):
         return tmp + (tmp - D(i, k-1)) / (2.**k - 1)
 
     return D(0, n)
+
+# Show the effects of the Richardson extrapolation
+plt.figure()
+plt.title('$h$-Extrapolation')
+
+plt.plot(xs, map(f_1, xs), label='analytisch')
+for n in range(1, 7):
+    ys = map(lambda x: richardson(x, 2**-1, n, D1f), xs)
+    plt.plot(xs, ys, label='n = %d' % n)
+
+plt.xlabel('x')
+plt.ylabel("$f'(x)$")
+plt.legend()
+
+# That's not very readable, so let's show the errors
 
 hs = [(2**(-k), k) for k in range(11)]
 
@@ -87,15 +102,11 @@ for (h, k) in hs:
     err.append(sum([abs(D1f(x, h) - f_1(x)) for x in xs]))
 plt.semilogy(map(second, hs), err, label='$D_1f$')
 
-err = []
-for (h, k) in hs:
-    err.append(sum([abs(richardson(x, h, 2, fn=Df) - f_1(x)) for x in xs]))
-plt.semilogy(map(second, hs), err, label='Richardson $Df$')
-
-err = []
-for (h, k) in hs:
-    err.append(sum([abs(richardson(x, h, 1, fn=D1f) - f_1(x)) for x in xs]))
-plt.semilogy(map(second, hs), err, label='Richardson $D_1f$')
+for n in range(1, 6):
+    err = []
+    for (h, k) in hs:
+        err.append(sum([abs(richardson(x, h, n, D1f) - f_1(x)) for x in xs]))
+    plt.semilogy(map(second, hs), err, label='Richardson $D_1f$, $n = %d$' % n)
 
 plt.ylabel('Fehler')
 plt.xlabel('k')
