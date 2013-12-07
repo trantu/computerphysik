@@ -1,4 +1,4 @@
-#!/usr/bin/evn python
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
 ## Carlos Martín, Tran Tu
@@ -6,6 +6,9 @@
 from math import cos, pi, sqrt
 from itertools import cycle, islice
 from numpy import linspace
+
+def take(seq, n):
+    return list(islice(seq, 0, n))
 
 def f(x):
     return 1.0 / (2.0 + cos(x))
@@ -33,7 +36,7 @@ def simpsonregel(xs, a, b, f):
     n = len(xs)
     h = (b - a)/float(n-1) # need the number of intervals
 
-    coefficients = [1] + list(islice(cycle([4,2]), 0, n-2)) + [1]
+    coefficients = [1] + take(cycle([4,2]), n-2) + [1]
     lst = zip(coefficients, xs)
     s = map(lambda (c, x): c * f(x), lst)
     return (h/3.0) * sum(s)
