@@ -140,10 +140,13 @@ Bemerkung zu A7.2.5
         * Simpson: hat hoehere Fehler als die anderen Methoden
         * h-Extrapolation:
         * Gauss-Quadratur: hat hoechste Genauigkeit von allen Methoden, ab n = 10 ist der Fehler vernachlaessigbar klein.
-    Aufgrund der Fehler, die sehr klein sind und deswegen als 0 resultieren
+
     Bei x0_2 = pi
         * Trapez: hat eine hohe Genauigkeit wie bei gauss-quadratur Verfahren, viel besser als bei x0_1
         * Simpson: hat hoehere Fehler als die anderen Methoden
         * h-Extrapolation: 
         * Gauss-Quadratur: hat hoechste Genauigkeit von allen Methoden, ab n = 15 ist der Fehler vernachlaessigbar klein. 
+    
+    Aufgrund der Fehler, die sehr klein sind und deswegen als 0 resultieren (bei Trapez und Gauss). Da wird kein ergebnis gezeigt, 
+    deswegen wird eine Zahl dementsprechend gerundet, damit es gezeigt wird.
 '''
