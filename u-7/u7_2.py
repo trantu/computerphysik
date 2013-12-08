@@ -4,15 +4,23 @@
 ## Carlos Martín, Tran Tu
 
 from math import cos, pi, sqrt, log10
-from itertools import cycle, islice
-from numpy import linspace
+
+from itertools import cycle, islice, repeat, izip
+from operator import sub
+
+from numpy import linspace, matrix, zeros
 import matplotlib.pyplot as plt
+
 from scipy.special.orthogonal import p_roots
+
 import numpy as np
 from numpy.core.numeric import dtype
 
 def take(seq, n):
     return list(islice(seq, 0, n))
+
+def avsub(seq):
+    return [abs(sub(*x)) for x in seq]
 
 def f(x):
     return 1.0 / (2.0 + cos(x))
@@ -93,6 +101,47 @@ xs = linspace(a, b, n)
 print '### x0 = pi'
 for (lbl, fn) in funs:
     print '%s: %f' % (lbl, fn(xs, a, b, f))
+
+def romberg(a, b, n):
+    I = matrix(zeros((n, n)), dtype=float)
+    # Fill in the initial column
+    for i in range(n):
+        h = (b / 4.0) * 2**(-i)
+        xs = np.arange(a, b, h)
+        I[i,0] = trapezregel(xs, a, b, f)
+
+    # And now we iterate, column-first
+    for k in range(1, n):
+        for i in range(k, n):
+            I[i,k] = I[i,k-1] + (I[i,k-1] - I[i-1,k-1]) / (4**k - 1)
+
+    return I
+
+# Let's show how Ii,1 and Ii,i differ from the real value
+
+# have a list of the real solution at the ready
+truth = repeat(pi/(3.0 * sqrt(3.0)))
+
+a, b, n = 0, pi/2.0, 20
+I = romberg(a, b, n)
+
+#Ii,i
+diffs = zip([I[i,i] for i in range(n)], truth)
+plt.semilogy(range(n), avsub(diffs), label='$I_{i,i}$')
+
+# I1,i
+diffs = zip([I[1,i] for i in range(1, n)], truth)
+plt.semilogy(range(1, n), avsub(diffs), label="$I_{1,i}$")
+
+# Simpson
+diffs = repeat(abs(simpsonregel(xs, a, b, f) - next(truth)))
+plt.semilogy(range(n), take(diffs, 20), label="Simpson")
+
+#plt.plot(range(5), [I[i,i] for i in range(5)])
+#plt.plot(range(1, 5), [I[i,1] for i in range(1, 5)])
+plt.legend()
+plt.show()
+
 #print 'Gauss-Quadratur', gauss_quadratur(a, b, f, n)
 #Aufgabe 7.2.5
 def a7_2_5():
