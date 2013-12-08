@@ -69,3 +69,29 @@ xs = linspace(a, b, n)
 print '### x0 = pi'
 for (lbl, fn) in funs:
     print '%s: %f' % (lbl, fn(xs, a, b, f))
+
+# Aufgabe 7.2.4    
+from scipy.special.orthogonal import p_roots
+def gauss_quadratur(a,b,f,n):
+    
+    [x,w] = p_roots(n)
+    summe = 0.0
+    print len(x)
+    for i in range (0,len(x)):
+        xu = (b-a)/2 * x[i] + (a+b)/2
+        summe = summe + (w[i] * f(xu))
+    return (b-a)/2 * summe
+    """
+    Bemerkung: 
+    
+    Die Gauß-Quadratur, wie das Verfahren durchgefuehrt wird, ist recht aufwendig, hat aber eine hohe Genauigkeit.
+    Die Nullstellen des Legendre Polynoms werden numerisch bestimmt, dadurch sinkt die Effizienz. 
+    Ein unlineares Gleichungssystem muss gelöst werden, damit optimale xi und ai bestimmt werden. 
+    Falls f(x) an beliebigen Stellen verfuegbar ist, sind die Gauss-Quadraturformeln im allgemeinen 
+    viel effizienter als z.B. das Romberbergg-Verfahren. Fuer die Fehlerschaetzung muss man den Aufwand vergroeßern.
+    """
+# Aufgabe 7.2.4 
+   
+from math import exp,cos    
+
+print gauss_quadratur(-1, 1, exp, 20)
