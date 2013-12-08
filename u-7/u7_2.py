@@ -135,9 +135,8 @@ diffs = zip([I[1,i] for i in range(1, n)], truth)
 plt.semilogy(range(1, n), avsub(diffs), label="$I_{1,i}$")
 
 # Simpson
-diffs = zip([simpsonregel(linspace(a, b, i+1), a, b, f) for i in range(1, n, 2)], truth)
-
-plt.semilogy(range(1, n, 2), avsub(diffs), label="Simpson")
+diffs = zip([simpsonregel(linspace(a, b, i+1), a, b, f) for i in range(2, n, 2)], truth)
+plt.semilogy(range(2, n, 2), avsub(diffs), label="Simpson")
 
 #plt.plot(range(5), [I[i,i] for i in range(5)])
 #plt.plot(range(1, 5), [I[i,1] for i in range(1, 5)])
