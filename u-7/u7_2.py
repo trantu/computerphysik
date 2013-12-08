@@ -3,7 +3,7 @@
 
 ## Carlos Martín, Tran Tu
 
-from math import cos, pi, sqrt, log10
+from math import cos, pi, sqrt, log10, ceil
 
 from itertools import cycle, islice, repeat, izip
 from operator import sub
@@ -140,7 +140,7 @@ plt.semilogy(range(2, n, 2), avsub(diffs), label="Simpson")
 
 #plt.plot(range(5), [I[i,i] for i in range(5)])
 #plt.plot(range(1, 5), [I[i,1] for i in range(1, 5)])
-plt.legend()
+plt.legend(loc='lower left')
 plt.show()
 
 #print 'Gauss-Quadratur', gauss_quadratur(a, b, f, n)
@@ -166,7 +166,10 @@ def a7_2_5():
             fehler=abs(fn(xs, 0, x0_1, f) - I0_1)
             E.append(fehler)
         plt.semilogy(N, E, label=lbl)
-    plt.legend()
+
+    I = romberg(0, x0_1, 4)
+    plt.semilogy([4, 8, 16, 32], [abs(I[i,i] - I0_1) for i in range(4)], label='Romberg')
+    plt.legend(loc='lower left')
     plt.show()
 
     for (lbl, fn) in funs:
@@ -176,10 +179,22 @@ def a7_2_5():
             fehler = abs(fn(xs, 0, x0_2, f) - I0_2)
             E.append(fehler)
         plt.semilogy(N, E, label=lbl)
-    plt.legend()
+
+    I = romberg(0, x0_2, 4)
+    plt.semilogy([4, 8, 16, 32], [abs(I[i,i] - I0_2) for i in range(4)], label='Romberg')
+
+    plt.legend(loc='lower left')
     plt.show()
     
 a7_2_5()
+
+'''Intervalen bei Romberg
+
+Die Eingaben bei Romberg werden benutzt um die Intervallängen zu bestimmen. dies funktionert anders
+als die *Regel. Bei I[i,0] wird eine Intervallänge von x0 / 4*2**-i benutzt. Also ist die Anzahl der
+Intervale n = 4*2**i. Das heißt, um 40 Intervalle zu verwenden, brauchen wir log(40/4) = 3.32. Wir
+setzen 4 in die Romberg-Folge, und I[i,i] ist was wir für Intervallänge n = 4*2**i verwenden.
+'''
 
 '''
 Bemerkung zu A7.2.5
