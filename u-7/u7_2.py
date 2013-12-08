@@ -191,9 +191,14 @@ a7_2_5()
 '''Intervalen bei Romberg
 
 Die Eingaben bei Romberg werden benutzt um die Intervallängen zu bestimmen. dies funktionert anders
-als die *Regel. Bei I[i,0] wird eine Intervallänge von x0 / 4*2**-i benutzt. Also ist die Anzahl der
+als die *Regel. Bei I[i,0] wird eine Intervallänge von x0 / 4*2**i benutzt. Also ist die Anzahl der
 Intervale n = 4*2**i. Das heißt, um 40 Intervalle zu verwenden, brauchen wir log(40/4) = 3.32. Wir
 setzen 4 in die Romberg-Folge, und I[i,i] ist was wir für Intervallänge n = 4*2**i verwenden.
+
+h = x0 / 4*2**i, und h = (b - a)/n mit b = x0 und a = 0
+
+daraus folgt 2**i = b*n / 4b -> 2**i = n/4
+
 '''
 
 '''
