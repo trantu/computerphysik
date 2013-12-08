@@ -149,7 +149,7 @@ plt.show()
 funs = [
     ('Trapez', trapezregel),
     ('Simpson', simpsonregel),
-    ('Gauss', gauss_quadratur),
+    (u'Gauß', gauss_quadratur),
     ]
 
 def a7_2_5():
@@ -162,7 +162,7 @@ def a7_2_5():
     for (lbl, fn) in funs:
         E = []
         for i in N:
-            xs = linspace(0, x0_1, i)
+            xs = linspace(0, x0_1, i+1)
             fehler=abs(fn(xs, 0, x0_1, f) - I0_1)
             E.append(fehler)
         plt.semilogy(N, E, label=lbl)
@@ -172,8 +172,8 @@ def a7_2_5():
     for (lbl, fn) in funs:
         E = []
         for i in N:
-            xs = linspace(0, x0_2, i)
-            fehler = abs(fn(xs, 0, x0_2, f)-I0_2)
+            xs = linspace(0, x0_2, i+1)
+            fehler = abs(fn(xs, 0, x0_2, f) - I0_2)
             E.append(fehler)
         plt.semilogy(N, E, label=lbl)
     plt.legend()
