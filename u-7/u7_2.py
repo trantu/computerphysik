@@ -155,8 +155,8 @@ funs = [
 def a7_2_5():
     N = range(2,41,2)
 
-    I0_1 = round(pi/(3*sqrt(3)),14)
-    I0_2 = round(pi/sqrt(3),13)
+    I0_1 = pi/(3*sqrt(3))
+    I0_2 = pi/sqrt(3)
     x0_1= pi/2.0
     x0_2 = pi
     for (lbl, fn) in funs:
@@ -204,17 +204,17 @@ daraus folgt 2**i = b*n / 4b -> 2**i = n/4
 '''
 Bemerkung zu A7.2.5
     Bei x0_1= pi/2.0:
-        * Trapez: bessere Genauigkeit als Simpson, aber schlechter als der Rest
-        * Simpson: hat hoehere Fehler als die anderen Methoden
-        * h-Extrapolation:
+        * Trapez: hat bessere Genauigkeit als h-Extrapolation, aber verbessert sich nicht viel bei größeren N
+        * Simpson: bessere Genauigkeit als Trapez. Es liegt wohl an der höheren Ordnung des Polynoms
+        * h-Extrapolation: hat hoehere Fehler als die anderen Methoden
         * Gauss-Quadratur: hat hoechste Genauigkeit von allen Methoden, ab n = 10 ist der Fehler vernachlaessigbar klein.
 
     Bei x0_2 = pi
         * Trapez: hat eine hohe Genauigkeit wie bei gauss-quadratur Verfahren, viel besser als bei x0_1
-        * Simpson: hat hoehere Fehler als die anderen Methoden
-        * h-Extrapolation: 
+        * Simpson: man sieht hier, dass der Fehler ein bisschen langsamer konvergiert als bei Trapez
+        * h-Extrapolation: ändert sich nicht an dem Fehler zu x0_1
         * Gauss-Quadratur: hat hoechste Genauigkeit von allen Methoden, ab n = 15 ist der Fehler vernachlaessigbar klein. 
     
-    Aufgrund der Fehler, die sehr klein sind und deswegen als 0 resultieren (bei Trapez und Gauss). Da wird kein ergebnis gezeigt, 
+    Aufgrund der Fehler, die sehr klein sind und deswegen als 0 resultieren (bei Trapez und Simpson). Da wird kein ergebnis gezeigt, 
     deswegen wird eine Zahl dementsprechend gerundet, damit es gezeigt wird.
 '''
