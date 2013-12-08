@@ -90,7 +90,6 @@ funs = [
     ('Rechteck', rechteckregel),
     ('Trapez', trapezregel),
     ('Simpson', simpsonregel),
-    ('Gauss', gauss_quadratur),
     ]
 
 print '### x0 = pi/2'
@@ -147,40 +146,38 @@ plt.show()
 
 #print 'Gauss-Quadratur', gauss_quadratur(a, b, f, n)
 #Aufgabe 7.2.5
+
+funs = [
+    ('Trapez', trapezregel),
+    ('Simpson', simpsonregel),
+    ('Gauss', gauss_quadratur),
+    ]
+
 def a7_2_5():
     N = range(2,41,2)
+
     I0_1 = round(pi/(3*sqrt(3)),14)
     I0_2 = round(pi/sqrt(3),13)
     x0_1= pi/2.0
     x0_2 = pi
     for (lbl, fn) in funs:
-        if lbl != 'Genau' and lbl != 'Rechteck':
-            E = []
-            for i in N:
-                xs = linspace(0, x0_1, i)
-                fehler=abs(fn(xs, 0, x0_1, f)-I0_1)
-                E.append(fehler)
-            plt.semilogy(N,E,label=lbl)
-            plt.legend()
+        E = []
+        for i in N:
+            xs = linspace(0, x0_1, i)
+            fehler=abs(fn(xs, 0, x0_1, f) - I0_1)
+            E.append(fehler)
+        plt.semilogy(N, E, label=lbl)
+    plt.legend()
     plt.show()
-    print abs(log10(0.5))
+
     for (lbl, fn) in funs:
-        if lbl != 'Genau' and lbl != 'Rechteck':
-            E = []
-            for i in N:
-                xs = linspace(0, x0_2, i)
-                fehler = abs(fn(xs, 0, x0_2, f)-I0_2)
-                '''
-                if fehler == 0.0:
-                    print i
-                    print lbl
-                    print I0_2
-                    print fn(xs, 0, x0_2, f)
-                '''
-                E.append(fehler)
-            #print E
-            plt.semilogy(N,E,label=lbl)
-            plt.legend()
+        E = []
+        for i in N:
+            xs = linspace(0, x0_2, i)
+            fehler = abs(fn(xs, 0, x0_2, f)-I0_2)
+            E.append(fehler)
+        plt.semilogy(N, E, label=lbl)
+    plt.legend()
     plt.show()
     
 a7_2_5()
