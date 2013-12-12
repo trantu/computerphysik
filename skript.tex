@@ -1822,14 +1822,70 @@ n_i(t + \delta t) - n_i(t) &= \frac{p}{2} \left( n_{i+1}(t) + n_{i-1}(t) -2n_i(t
 \frac{n_i(t + \delta t) - n_i(t)}{\delta t} &= \frac{pa^2}{2\delta t} \left( \frac{n_{i+1}(t) -2n_i(t) + n_{i-1}(t)}{a^2} \right)
 \end{align*}
 
-Kontinuumslinmes $\delta t \to 0$, $a \to 0$.
+Kontinuumslimes $\delta t \to 0$, $a \to 0$.
 
 \begin{align*}
   \frac{\partial n(x,t)}{\partial t} = D\frac{\partial^2 n(x,t)}{\partial x^2} + S(x,t)
 \end{align*}
 
-Diffusionsgleiching in ID.
+Diffusionsgleiching in 1D.
 
 Ort $x = ia$, $n(x,t)$: Partikeldichte, $D = \frac{pa^2}{2\delta t}$ Diffusionskonstante, $s(x,t) = \frac{S_i(t)}{\delta t}$: Produktionsrate
+
+In 3D: $\dot{n} = D\Delta n + S$, $\Delta = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}$
+
+Zunächst Anfangswert $n(r, t=0)=0$.
+
+\paragraph{Impuls oder Green's Methode}
+
+Quelltext $S(r,t)$ wird in kurze Impulse zerhackt:
+
+\[
+  S(r,\tau) \delta(\tau -t)
+\]
+
+und Lösung des Problems als Konvolution über die separaten Lösungen ($\hat{=}$ Green's Funktionen) geschrieben
+
+\begin{align*}
+  n(r,t) = \int\limits_0^\infty d\tau \eta(r,t,\tau)
+\end{align*}
+
+$\eta$ folgt aus DG
+\begin{align*}
+  \frac{\partial \eta(n,\tau,t)}{\partial t} = D\Delta\eta + S(r,\tau)\delta(t-\tau)
+\end{align*}
+
+Integral über $\tau$ ergibt die originelle PD:
+
+\begin{align*}
+  \int\limits_0^\infty \! d\tau \frac{\partial \eta(n,\tau,t)}{\partial t} &= \int\limits_0^\infty\! d\tau\, D\Delta\eta(r,\tau,t) + \int\limits_0^\infty\! d\tau\, S(r,\tau)\delta(t-\tau)\\
+\frac{\partial}{\partial t} \int\limits_0^\infty \! d\tau \eta(n,\tau,t) &= D\Delta n(r,t) + S(r,t)\\
+\frac{\partial}{\partial t} n(r,t) &= D\Delta n(r,t) + S(r,t)
+\end{align*}
+
+$\delta$ ist $\int f(x') \delta(x-x')dx' = F(x)$
+
+Wir machen den Ansatz $\eta(r,\tau,t)\Theta(t-\tau)$
+
+$\Theta(t-\tau)$: Heargride oder Stufenfunktion $\Theta(x)
+\begin{cases}
+  1 & x > 0\\
+  0 & x < 0
+\end{cases}$. $\Theta'(x) = d(x)$ da $\int\limits_{-\infty}^x \! dy \delta(y) = \Theta(x)$.
+
+Ansatz einsetzen in PDG:
+\begin{align*}
+  \text{l.S. } \frac{\partial}{\partial t} \eta(r,\tau,t)\Theta(t-\tau) &= \Theta(t-\tau) \frac{\partial}{\partial t} \eta(r,\tau,t) + \eta(r,\tau,t)\delta(t-\tau)\\
+\text{r.S.} &= \Theta(t-\tau) D\Delta\eta(r,\tau,t) + S(r,\tau)\delta(t-\tau)d
+\end{align*}
+
+Gleichung wird also gelöst wenn:
+\begin{enumerate}
+\item $\frac{\partial}{\partial t}\eta(r,\tau,t) = D\Delta\eta(r,\tau,t)$ homogene PDG
+\item $\eta(r,\tau,\tau) = S(r,\tau)$ Anfangswertbedingung
+\end{enumerate}
+
+Wir haben das inhomogene Problem für $n(r,t)$ (mit Anfangswert $n(r,0)=0$) in das homogene Problem mit Angangswertbedingung $\eta(r,\tau,\tau) = S(r,\tau)$ umgewandelt $\to$ lösbar.
+
 
 \end{document}
