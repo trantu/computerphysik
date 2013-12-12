@@ -2,7 +2,7 @@ computerphysik
 ==============
 
 Fu-Berlin Nebenfach
-Computer science
+Computer Science
 Approximation using numeric methods like Newton,Gaus-Seidel, Jacobi
 
 * u1: 17.5
@@ -11,4 +11,6 @@ Approximation using numeric methods like Newton,Gaus-Seidel, Jacobi
 * u4: 20
 * u5: 17.5
 * u6: 20
-* avg:  18.66 ~ Mark: 1.3
+* u7: 18
+* sum: 130
+* avg:  93% ~ Mark: 1.3
