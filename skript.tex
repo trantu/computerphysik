@@ -8,6 +8,7 @@
 \usepackage{cancel}
 \usepackage{gnuplottex}
 \usepackage{dsfont}
+\usepackage{siunitx}
 
 %Compiler
 \usepackage{ifxetex}
@@ -1767,5 +1768,68 @@ Gauß Quadraturformeln für $n=1,2,3$
 \end{itemize}
 
 Fehlerordnung $k=2n$. Vorteil von Gauß Quadratur: Gewichte immer positiv und damit numerisch sehr stabil!
+
+%% break, 20131212
+
+\pagebreak
+
+6.3 partielle DG
+
+Wellengl.
+
+\[
+\frac{\partial^2}{\partial t^2} u(x,t) = c^2 \frac{\partial^2}{\partial x^2} u(x,t) \to u(x,t) = f(x \pm ct)
+\]
+
+Separationsansatz:
+
+\[
+u(x,t) = f(x) \phi(t) \to f(x) \phi''(t) = c^2 \phi(t) f''(x) \to \frac{\phi''(t)}{\phi(t)} = c^2 \frac{f''(x)}{f(x)} = -c^2 k^2 \text{ Konstante}
+\]
+$\to$ 2 entkoppelte Eigenwertgl.:
+\begin{align*}
+  \phi''(t) + c^2k^2 \phi(t) &= 0\\
+  f''(x) +  k^2 f(x) & = 0
+\end{align*}
+
+Federkette: Randbedingung für $F(0),\ f(l)$. Anfangsbedingung in der Zeit.
+
+Separationsansatz funktioniert auch für viele nicht mehr exakt lösbare Probleme! Bsp: inhomogene schwere Federkette.
+
+Homogene Federkette : $\rho \dot{\dot{u}} = T u'' \to \rho(x) \frac{\partial^2}{\partial t^2} u(x,t) = T \frac{\partial^2}{\partial t^2} u(x,t) - \rho(x) g$, $g = 9.8\si{ms^{-2}}$ Erdbeschleinigung, $\rho(x)$ Mamerdichtverteilung.
+
+Lösung der sich anorgenen DG durch Supenparitiion der allgem. homogener Lösung (also für $g=0$) und einer "`partiluklären"' Lösung der sich anorgener DG homogene DG: $u_h(x,t) = f(x) \phi(t) \to f(x)\phi''(t) = \frac{T}{\rho(x)}\phi(t) f''(x) \to \frac{\phi''(t)}{\phi(t)} = \frac{T}{\rho(x)}\frac{f''(x)}{f(x)} = -\omega^2$
+
+$\to$ 2 Gleichungen: $f''(x) + \frac{\omega^2}{T} \rho(x)f(x) = 0$ kann als Eigenwertproblem für beliebige Randwerte $f(0)$, $f(l)$ mit Schießverfahren gelöst werden.
+
+$\phi''(t) + \omega^2 \phi(t) = 0$ kann exakt gelöst werden. Partikuläre Lösung: hier kann statische Lösung benutzt werden: $u_p(x) \to T\frac{\partial^2 u_p(x)}{\partial x^2} -\rho(x)g = 0 \hat{=}$ normales Randwertproblem ($u_p(0)$ und $U_p(l)$) $\to$ allgemeine Lösung $u(x,t) = u_h(x,t) + u_p(x) = f(x)\phi(t) + u_p(x)$. Kann dann wieder aus der Anfangsbedingungen $u(x,t=0)$ konstruiert werden!
+
+Partielle DG mit zeitlich veränderlicher Inhomogenität $\to$ Green's Funktionen. Bspl: Diffusionsgleich.
+
+Partikeldiffusion: Partikel diffundieren und werden erzeugt/vernichtet (Wärmediffusion, chemische Reaktions-Diffusionssysteme, Migration von Zellen und Lebewesen\dots)
+
+$n_i(t)$: Partikelzahl in Zelle $i$ zur Zeit $t$.
+
+\paragraph{Diffusion}
+
+in einem Zeitschritt $\delta t$ macht ein Partikel mit Wahrscheinlichkeit $p$ einen Schritt weg vom Gitterplatz $i$ nach Platz $i+1$ oder $i-1$.
+
+\paragraph{Partikelerhanltung bei Diffusion}
+
+\begin{align*}
+  n_i(t + \delta t) &= n_i(t) (1-p) + \frac{p}{2} n_{i+1}(t) +   \frac{p}{2} n_{i-1}(t) + S_i(t)\\
+n_i(t + \delta t) - n_i(t) &= \frac{p}{2} \left( n_{i+1}(t) + n_{i-1}(t) -2n_i(t)\right) + S_i(t)\\
+\frac{n_i(t + \delta t) - n_i(t)}{\delta t} &= \frac{pa^2}{2\delta t} \left( \frac{n_{i+1}(t) -2n_i(t) + n_{i-1}(t)}{a^2} \right)
+\end{align*}
+
+Kontinuumslinmes $\delta t \to 0$, $a \to 0$.
+
+\begin{align*}
+  \frac{\partial n(x,t)}{\partial t} = D\frac{\partial^2 n(x,t)}{\partial x^2} + S(x,t)
+\end{align*}
+
+Diffusionsgleiching in ID.
+
+Ort $x = ia$, $n(x,t)$: Partikeldichte, $D = \frac{pa^2}{2\delta t}$ Diffusionskonstante, $s(x,t) = \frac{S_i(t)}{\delta t}$: Produktionsrate
 
 \end{document}
