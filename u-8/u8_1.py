@@ -106,3 +106,7 @@ plt.xlabel('$h$')
 plt.ylabel('Fehler')
 plt.legend()
 plt.show()
+
+# Fehlerordnung:
+# Euler: 3. Ordnung
+# Range-Kutta: 4. Ordnung
