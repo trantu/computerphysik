@@ -25,7 +25,7 @@ def mittelpunktsregel(n, h, y0, F, t0=0):
     hh = h/2.0
     ys = []
     for i in range(1, n+1):
-        y = y + h*F(tn + hh, y + hh*f(y, tn))
+        y = y + h*F(tn + hh, y + hh*f(tn, y))
         ys.append(y)
         tn = tn + h
 
@@ -62,7 +62,7 @@ trange = (0, 2)
 hs = [0.1, 0.01, 0.001]
 funs = [
     ('Euler', euler, '-'),
-    #('Mittelpunkt', mittelpunktsregel, '-'),
+    ('Mittelpunkt', mittelpunktsregel, '-'),
     ('Runge-Kutta', runge_kutta, '-'),
     #('Exakt', exact, '--')
 ]
