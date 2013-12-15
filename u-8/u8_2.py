@@ -56,7 +56,7 @@ def plot_8_2_a():
     plt.legend()
     plt.show()
 
-def rungeKutta(F,a,b,h,y0):
+def rungeKutta(F1,F2,F3,F4,a,b,h,y0):
     yn = y0
     tn = a
     n = int(round((b-a) / h))
@@ -67,12 +67,31 @@ def rungeKutta(F,a,b,h,y0):
     
     
     while n > 0:
-        k1 = F(tn,yn)
-        k2 = F(tn + 0.5*h , yn + h*0.5*k1)
-        k3 = F(tn + 0.5*h , yn + h*0.5*k2)
-        k4 = F(tn + h , yn + h*k3)
+        k1_1 = F1(tn,yn[0],yn[1],yn[2],yn[3])
+        k1_2 = F2(tn,yn[0],yn[1],yn[2],yn[3])
+        k1_3 = F3(tn,yn[0],yn[1],yn[2],yn[3])
+        k1_4 = F4(tn,yn[0],yn[1],yn[2],yn[3])
         
-        yn = yn + h/6.0*(k1 + 2*k2 + 2*k3 + k4)
+        k2_1 = F(tn + 0.5*h,yn[0] + h*0.5*k1_1,yn[1] + h*0.5*k1_1,yn[2] + h*0.5*k1_1,yn[3] + h*0.5*k1_1)
+        k2_2 = F(tn + 0.5*h,yn[0] + h*0.5*k1_2,yn[1] + h*0.5*k1_2,yn[2] + h*0.5*k1_2,yn[3] + h*0.5*k1_2)
+        k2_3 = F(tn + 0.5*h,yn[0] + h*0.5*k1_3,yn[1] + h*0.5*k1_3,yn[2] + h*0.5*k1_3,yn[3] + h*0.5*k1_3)
+        k2_4 = F(tn + 0.5*h,yn[0] + h*0.5*k1_4,yn[1] + h*0.5*k1_4,yn[2] + h*0.5*k1_4,yn[3] + h*0.5*k1_4)
+        
+        k3_1 = F(tn + 0.5*h,yn[0] + h*0.5*k2_1,yn[1] + h*0.5*k2_1,yn[2] + h*0.5*k2_1,yn[3] + h*0.5*k2_1)
+        k3_2 = F(tn + 0.5*h,yn[0] + h*0.5*k2_2,yn[1] + h*0.5*k2_2,yn[2] + h*0.5*k2_2,yn[3] + h*0.5*k2_2)
+        k3_3 = F(tn + 0.5*h,yn[0] + h*0.5*k2_3,yn[1] + h*0.5*k2_3,yn[2] + h*0.5*k2_3,yn[3] + h*0.5*k2_3)
+        k3_4 = F(tn + 0.5*h,yn[0] + h*0.5*k2_4,yn[1] + h*0.5*k2_4,yn[2] + h*0.5*k2_4,yn[3] + h*0.5*k2_4)
+        
+        k4_1 = F(tn + h,yn[0] + h*k3_1,yn[1] + h*k3_1,yn[2] + h*k3_1,yn[3] + h*k3_1)
+        k4_2 = F(tn + h,yn[0] + h*k3_2,yn[1] + h*k3_2,yn[2] + h*k3_2,yn[3] + h*k3_2)
+        k4_3 = F(tn + h,yn[0] + h*k3_3,yn[1] + h*k3_3,yn[2] + h*k3_3,yn[3] + h*k3_3)
+        k4_4 = F(tn + h,yn[0] + h*k3_4,yn[1] + h*k3_4,yn[2] + h*k3_4,yn[3] + h*k3_4)
+
+        
+        yn[0] = yn[0] + h/6.0*(k1_1 + 2*k2_1 + 2*k3_1 + k4_1)
+        yn[1] = yn[1] + h/6.0*(k1_2 + 2*k2_2 + 2*k3_2 + k4_2)
+        yn[2] = yn[2] + h/6.0*(k1_3 + 2*k2_3 + 2*k3_3 + k4_3)
+        yn[3] = yn[3] + h/6.0*(k1_4 + 2*k2_4 + 2*k3_4 + k4_4)
         tn += h
         
         n -= 1
