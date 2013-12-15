@@ -101,16 +101,21 @@ def auf_8_3_4():
 def auf_8_3_5():
     y0 = np.array([radians(0.5), radians(0.5), 0.0, 0.0])
     ys = runge_kutta(5000, 0.01, y0, double_pendulum_f)
-    theta1s = map(first, ys)
     _, y1s, _, y2s = positions(ys)
-    omega1s = map(third, ys)
-    omega2s = map(fourth, ys)
+    w1s = map(third, ys)
+    w2s = map(fourth, ys)
 
-    plt.plot(omega1s, y1s, label='Pendel 1')
-    plt.plot(omega2s, y2s, label='Pendel 2')
-    plt.xlabel(r'$\omega$')
-    plt.ylabel('$y$')
-    plt.legend()
+    plt.suptitle('Winkelgeschwindigkeit gegen Position')
+    plt.subplot(1, 2, 1)
+    plt.plot(w1s, y1s, label='Pendel 1')
+    plt.xlabel(r'$\omega_1$')
+    plt.ylabel('$y_1$')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(w2s, y2s, label='Pendel 2')
+    plt.xlabel(r'$\omega_2$')
+    plt.ylabel('$y_2$')
+
     plt.show()
 
 # 8.3.6
