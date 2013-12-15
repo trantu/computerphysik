@@ -129,20 +129,20 @@ def auf_8_3_5():
 def auf_8_3_6():
     y0 = np.array([radians(160), radians(60), 0.0, 0.0])
     ys = runge_kutta(1000000, 0.01, y0, double_pendulum_f)
-    #ys = runge_kutta(100000, 0.01, y0, double_pendulum_f)
+    #ys = runge_kutta(10000, 0.01, y0, double_pendulum_f)
 
     w1s = map(third, ys)
     w2s = map(fourth, ys)
 
-    H, xedges, yedges = np.histogram2d(w1s, w2s, bins=[256, 256])
-    plt.imshow(H, extent=[yedges[0], yedges[-1], xedges[-1], xedges[0]])
+    H, xedges, yedges = np.histogram2d(w1s, w2s, bins=(256, 256))
+    plt.imshow(H, extent=[yedges[0], yedges[-1], xedges[-1], xedges[0]], aspect='auto')
     plt.xlabel(r'$\omega_1$')
     plt.ylabel(r'$\omega_2$')
     plt.title('Histogramm der Wilkelgeschwindigkeiten')
+    plt.colorbar()
     plt.show()
 
-#auf_8_3_3()
-#auf_8_3_4()
-#auf_8_3_5()
-#auf_8_3_6()
-
+auf_8_3_3()
+auf_8_3_4()
+auf_8_3_5()
+auf_8_3_6()
