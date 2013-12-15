@@ -17,7 +17,7 @@ def second(arr):
     return nth(arr, 1)
 def third(arr):
     return nth(arr, 2)
-def forth(arr):
+def fourth(arr):
     return nth(arr, 3)
 
 def runge_kutta(n, h, y0, F, t0=0):
@@ -98,10 +98,39 @@ def auf_8_3_4():
         plt.ylabel('$y$')
         plt.show()
 
-auf_8_3_3()
-auf_8_3_4()
+def auf_8_3_5():
+    y0 = np.array([radians(0.5), radians(0.5), 0.0, 0.0])
+    ys = runge_kutta(5000, 0.01, y0, double_pendulum_f)
+    theta1s = map(first, ys)
+    _, y1s, _, y2s = positions(ys)
+    omega1s = map(third, ys)
+    omega2s = map(fourth, ys)
 
-# y0 = np.array([radians(0.5), radians(0.5), 0.0, 0.0])
-# ys = runge_kutta(5000, 0.01, y0, double_pendulum_f)
-# theta1s = map(first, ys)
-# x1s = [
+    plt.plot(omega1s, y1s, label='Pendel 1')
+    plt.plot(omega2s, y2s, label='Pendel 2')
+    plt.xlabel(r'$\omega$')
+    plt.ylabel('$y$')
+    plt.legend()
+    plt.show()
+
+# 8.3.6
+def auf_8_3_6():
+    y0 = np.array([radians(160), radians(60), 0.0, 0.0])
+    ys = runge_kutta(1000000, 0.01, y0, double_pendulum_f)
+    #ys = runge_kutta(100000, 0.01, y0, double_pendulum_f)
+
+    w1s = map(third, ys)
+    w2s = map(fourth, ys)
+
+    H, xedges, yedges = np.histogram2d(w1s, w2s, bins=[256, 256])
+    plt.imshow(H, extent=[yedges[0], yedges[-1], xedges[-1], xedges[0]])
+    plt.xlabel(r'$\omega_1$')
+    plt.ylabel(r'$\omega_2$')
+    plt.title('Histogramm der Wilkelgeschwindigkeiten')
+    plt.show()
+
+#auf_8_3_3()
+#auf_8_3_4()
+#auf_8_3_5()
+#auf_8_3_6()
+
