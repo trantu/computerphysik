@@ -78,7 +78,13 @@ def positions(ys):
     return x1s, y1s, x2s, y2s
 
 
-# And now for the positions
+# Wenn die Winkeln der beiden Pendeln ähnlich sind, dann heißt es,
+# dass sie fast in eine Linie stehen. Intuitiv kann man voraussagen,
+# dass beide eine ähnliche Zeit brauchen, bis deren Winkeln wieder auf
+# Null sind. Deren Winkeln werden ähnlich bleiben, und der
+# Doppelpendel wird sich "unchaotisch" verhalten.
+
+
 def auf_8_3_3():
     y0 = np.array([radians(0.5), radians(0.5), 0.0, 0.0])
     ys = runge_kutta(1000, 0.01, y0, double_pendulum_f)
