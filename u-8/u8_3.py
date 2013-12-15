@@ -52,7 +52,7 @@ def double_pendulum_f(t, y):
         [(omega2**2 * sin(dt) * cos(dt)),
          + (2.0 * g * sin(theta1) * cos(dt)),
          + (2.0 * omega1**2 * sin(dt)),
-         - (1.0 * g * sin(theta2))])
+         - (2.0 * g * sin(theta2))])
 
     return np.array([omega1, omega2, dividend1/divisor, dividend2/divisor])
 
