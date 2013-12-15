@@ -62,9 +62,25 @@ y0 = np.array([radians(0.5), radians(0.5), 0.0, 0.0])
 
 ys = runge_kutta(1000, 0.01, y0, double_pendulum_f)
 
-plt.plot(range(1000), map(first, ys), label=r'$\theta_1$')
-plt.plot(range(1000), map(second, ys), label=r'$\theta_2$')
-plt.xlabel('Schritt')
-plt.ylabel('Winkel')
-plt.legend()
+# plt.plot(range(1000), map(first, ys), label=r'$\theta_1$')
+# plt.plot(range(1000), map(second, ys), label=r'$\theta_2$')
+# plt.xlabel('Schritt')
+# plt.ylabel('Winkel')
+# plt.legend()
+# plt.show()
+
+# And now for the positions
+x1s = [cos(x) for x in map(first, ys)]
+x2s_raw = [cos(x) for x in map(second, ys)]
+x2s = [a + b for (a,b) in zip(x1s, x2s_raw)]
+
+y1s = [sin(x) for x in map(first, ys)]
+y2s_raw = [sin(x) for x in map(second, ys)]
+y2s = [a + b for (a,b) in zip(y1s, y2s_raw)]
+
+#plt.plot(x1s, y1s, label='1')
+plt.plot(x2s, y2s)
+plt.title('Position des 2. Pendels')
+plt.xlabel('$x$')
+plt.ylabel('$y$')
 plt.show()
