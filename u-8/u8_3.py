@@ -42,17 +42,24 @@ def double_pendulum_f(t, y):
     dt = theta1 - theta2
     divisor = 2.0 - (cos(dt)**2)
 
+    g2sint1 = 2.0 * g * sin(theta1)
+    w12 = omega1**2
+    w22 = omega2**2
+    sindt = sin(dt)
+    cosdt = cos(dt)
+    sint2 = sin(theta2)
+
     dividend1 = sum(
-        [- omega1**2 * sin(dt) * cos(dt),
-         + g * sin(theta2) * cos(dt),
-         - omega2**2 * sin(dt),
-         - 2.0 * g * sin(theta1)])
+        [- w12 * sindt * cosdt,
+         + g * sint2 * cosdt,
+         - w22 * sindt,
+         - g2sint1])
 
     dividend2 = sum(
-        [(omega2**2 * sin(dt) * cos(dt)),
-         + (2.0 * g * sin(theta1) * cos(dt)),
-         + (2.0 * omega1**2 * sin(dt)),
-         - (2.0 * g * sin(theta2))])
+        [(w22 * sindt * cosdt),
+         + g2sint1 * cosdt,
+         + (2.0 * w12 * sindt),
+         - (2.0 * g * sint2)])
 
     return np.array([omega1, omega2, dividend1/divisor, dividend2/divisor])
 
