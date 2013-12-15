@@ -59,39 +59,49 @@ def double_pendulum_f(t, y):
 ## 8.3.3
 
 def positions(ys):
-    x1s = [cos(x) for x in map(first, ys)]
-    x2s_raw = [cos(x) for x in map(second, ys)]
-    x2s = [a + b for (a,b) in zip(x1s, x2s_raw)]
+    theta1s = map(first, ys)
+    theta2s = map(second, ys)
 
-    y1s = [sin(x) for x in map(first, ys)]
-    y2s_raw = [sin(x) for x in map(second, ys)]
-    y2s = [a + b for (a,b) in zip(y1s, y2s_raw)]
+    x1s = [sin(x) for x in theta1s]
+    x2s = [x1 + sin(t1) for (x1, t1) in zip(x1s, theta1s)]
+
+    y1s = [-cos(x) for x in theta1s]
+    y2s = [y1 - cos(t2) for (y1, t2) in zip(y1s, theta2s)]
 
     return x1s, y1s, x2s, y2s
 
-y0 = np.array([radians(0.5), radians(0.5), 0.0, 0.0])
-
-ys = runge_kutta(1000, 0.01, y0, double_pendulum_f)
 
 # And now for the positions
-_, _, x2s, y2s = positions(ys)
-plt.plot(x2s, y2s)
-plt.title('Position des 2. Pendels')
-plt.xlabel('$x$')
-plt.ylabel('$y$')
-plt.show()
-
-# 8.3.4
-
-for (t1, t2) in [(0, 60), (160, 60)]:
-    for (n, h) in [(500, 0.2), (1000, 0.1), (10000, 0.01)]:
-        y0 = np.array([radians(t1), radians(t2), 0.0, 0.0])
-        ys = runge_kutta(n, h, y0, double_pendulum_f)
-        _, _, posx, posy = positions(ys)
-        plt.plot(posx, posy, label=r'n = %d, h = %.3f' % (n, h))
-
-    plt.title(r'Position des 2. Pendels bei $\theta_1 = %d^\circ,\ \theta2 = %d^\circ$' % (t1, t2))
-    plt.legend()
+def auf_8_3_3():
+    y0 = np.array([radians(0.5), radians(0.5), 0.0, 0.0])
+    ys = runge_kutta(1000, 0.01, y0, double_pendulum_f)
+    _, _, x2s, y2s = positions(ys)
+    plt.plot(x2s, y2s)
+    plt.title(r'Position 2. Pendel bei $\theta_1 = 0.5^\circ$, $\theta_2 = 0.5^\circ$')
     plt.xlabel('$x$')
     plt.ylabel('$y$')
     plt.show()
+
+# 8.3.4
+
+def auf_8_3_4():
+    for (t1, t2) in [(0, 60), (160, 60)]:
+        for (n, h) in [(500, 0.2), (1000, 0.1), (10000, 0.01)]:
+            y0 = np.array([radians(t1), radians(t2), 0.0, 0.0])
+            ys = runge_kutta(n, h, y0, double_pendulum_f)
+            _, _, posx, posy = positions(ys)
+            plt.plot(posx, posy, label=r'n = %d, h = %.3f' % (n, h))
+
+        plt.title(r'Position des 2. Pendels bei $\theta_1 = %d^\circ,\ \theta2 = %d^\circ$' % (t1, t2))
+        plt.legend()
+        plt.xlabel('$x$')
+        plt.ylabel('$y$')
+        plt.show()
+
+auf_8_3_3()
+auf_8_3_4()
+
+# y0 = np.array([radians(0.5), radians(0.5), 0.0, 0.0])
+# ys = runge_kutta(5000, 0.01, y0, double_pendulum_f)
+# theta1s = map(first, ys)
+# x1s = [
