@@ -1796,7 +1796,7 @@ Federkette: Randbedingung für $F(0),\ f(l)$. Anfangsbedingung in der Zeit.
 
 Separationsansatz funktioniert auch für viele nicht mehr exakt lösbare Probleme! Bsp: inhomogene schwere Federkette.
 
-Homogene Federkette : $\rho \dot{\dot{u}} = T u'' \to \rho(x) \frac{\partial^2}{\partial t^2} u(x,t) = T \frac{\partial^2}{\partial t^2} u(x,t) - \rho(x) g$, $g = 9.8\si{ms^{-2}}$ Erdbeschleinigung, $\rho(x)$ Mamerdichtverteilung.
+Homogene Federkette : $\rho \ddot{u} = T u'' \to \rho(x) \frac{\partial^2}{\partial t^2} u(x,t) = T \frac{\partial^2}{\partial t^2} u(x,t) - \rho(x) g$, $g = 9.8\si{ms^{-2}}$ Erdbeschleinigung, $\rho(x)$ Mamerdichtverteilung.
 
 Lösung der sich anorgenen DG durch Supenparitiion der allgem. homogener Lösung (also für $g=0$) und einer "`partiluklären"' Lösung der sich anorgener DG homogene DG: $u_h(x,t) = f(x) \phi(t) \to f(x)\phi''(t) = \frac{T}{\rho(x)}\phi(t) f''(x) \to \frac{\phi''(t)}{\phi(t)} = \frac{T}{\rho(x)}\frac{f''(x)}{f(x)} = -\omega^2$
 
@@ -1832,7 +1832,7 @@ Diffusionsgleiching in 1D.
 
 Ort $x = ia$, $n(x,t)$: Partikeldichte, $D = \frac{pa^2}{2\delta t}$ Diffusionskonstante, $s(x,t) = \frac{S_i(t)}{\delta t}$: Produktionsrate
 
-In 3D: $\dot{n} = D\Delta n + S$, $\Delta = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}$
+In 3D: $\dot{n} = \frac{\partial n(\vec{r},t)}{\partial t} = D\Delta n + S$, $\Delta = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}$
 
 Zunächst Anfangswert $n(r, t=0)=0$.
 
@@ -1859,13 +1859,13 @@ Integral über $\tau$ ergibt die originelle PD:
 
 \begin{align*}
   \int\limits_0^\infty \! d\tau \frac{\partial \eta(n,\tau,t)}{\partial t} &= \int\limits_0^\infty\! d\tau\, D\Delta\eta(r,\tau,t) + \int\limits_0^\infty\! d\tau\, S(r,\tau)\delta(t-\tau)\\
-\frac{\partial}{\partial t} \int\limits_0^\infty \! d\tau \eta(n,\tau,t) &= D\Delta n(r,t) + S(r,t)\\
+\frac{\partial}{\partial t} \int\limits_0^\infty \! d\tau \ \eta(n,\tau,t) &= D\Delta n(r,t) + S(r,t)\\
 \frac{\partial}{\partial t} n(r,t) &= D\Delta n(r,t) + S(r,t)
 \end{align*}
 
 $\delta$ ist $\int f(x') \delta(x-x')dx' = F(x)$
 
-Wir machen den Ansatz $\eta(r,\tau,t)\Theta(t-\tau)$
+Wir machen den Ansatz $\eta(r,\tau,t)\cdot\Theta(t-\tau)$
 
 $\Theta(t-\tau)$: Heargride oder Stufenfunktion $\Theta(x)
 \begin{cases}
@@ -1882,10 +1882,113 @@ Ansatz einsetzen in PDG:
 Gleichung wird also gelöst wenn:
 \begin{enumerate}
 \item $\frac{\partial}{\partial t}\eta(r,\tau,t) = D\Delta\eta(r,\tau,t)$ homogene PDG
-\item $\eta(r,\tau,\tau) = S(r,\tau)$ Anfangswertbedingung
+\item $\eta(r,t=\tau,\tau) \overset{!}{=} S(r,\tau)$ Anfangswertbedingung
 \end{enumerate}
 
 Wir haben das inhomogene Problem für $n(r,t)$ (mit Anfangswert $n(r,0)=0$) in das homogene Problem mit Angangswertbedingung $\eta(r,\tau,\tau) = S(r,\tau)$ umgewandelt $\to$ lösbar.
 
+Lösung des homogenen Anfangswertproblem: Separationsansatz
+[mit Angangsbedingung $\eta(r,t=\tau,\tau) = S(r,\tau)$]
+
+\begin{align*}
+  \eta(\vec{r},t,\tau) &= f(\vec{r}) \phi(t) \to\\
+  f(r) \phi'(t) &= D \phi(t)\Delta f(r) \to\\
+  \frac{\Delta f(r)}{f(r)} &= \frac{\phi'(t)}{D\phi(t)} = -k^2 = -|\vec{k}|^2 \to\\
+\phi'(t) + \omega\phi(t) &= 0
+\intertext{ mit $\omega \equiv Dk^2$ Dispersionsrelation, und}
+\Delta f(r) + k^2 f(r) &= 0
+\intertext{allgemeine Lösung}
+f(\vec{r}) &= A(\vec{k}) e^{i\vec{k}\vec{r}} = A(\vec{k}) e^{ik_xx + ik_yy + ik_zz}
+\intertext{noch allgemeiner}
+&= \int \frac{d^3k}{(2\pi)^3} A(\vec{k}) e^{i\cdot\vec{k}\cdot\vec{r}}\\
+\phi(t) &= C\cdot e^{-\omega t} = e^{-\omega(t-\tau)}
+\intertext{so dass $\phi(t=\tau) = 1$. Zusammen}
+\eta(\vec{r},t) &= \int\frac{d^3k}{(2\pi)^3}\, A(k) e^{i\vec{k}\cdot\vec{r} - \omega(t-\tau)}
+\end{align*}
+
+Lösen des Anfangswertproblems:
+\begin{align*}
+\eta(r,t=\tau,\tau) &= S(r,\tau) \overset{!}{=} \int\frac{d^3k}{(2\pi)^3}A(k) e^{i\vec{k}\cdot\vec{r} - \omega(t-\tau)} \to\\
+\int\! d^3r\ S(\vec{r}, \tau) e^{-i\vec{q}\cdot\vec{r}} &= \int\! d^3r \int \frac{d^3k}{(2\pi)^3}\, A(k) e^{i\vec{r}(\vec{k}-\vec{q})}\\
+&= \int\frac{d^3k}{(2\pi)^3}\, A(k) \int\!  d^3r\ e^{i\vec{r}(\vec{k}-\vec{q})}\\
+\intertext{$\boxed{\int\! dx\ e^{ixq} = 2\pi\delta(q)}$}
+&= \int\frac{d^3k}{(2\pi)^3}\, A(k) (2\pi)^3 \delta(\vec{k} - \vec{q})\\
+&= \boxed{A(\vec{q}) = \int\! d^3r\ S(\vec{r}, \tau) e^{-i\vec{q}\cdot\vec{r}}}
+\end{align*}
+\begin{align*}
+  \eta(\vec{r}, t) = \int\frac{d^3k}{(2\pi)^3}\int d^3r'\S(\vec{r},\tau) e^{-k\cdot r' + ik\cdot r' - \omega(t-\tau)}
+\end{align*}
+Achung: $\omega = Dk^2$!! Integral über $\vec{k}$ kann durchgeführt werden!! Quadratische Ergänzung:
+
+\[
+\exp\{ -Dk^2(t-\tau) + i\vec{k}\cdot(\vec{r} - \vec{r'}) \} \to -D(t-\tau)\left[ \vec{k} - \frac{1}{2}\frac{i(\vec{r}-\vec{r'})}{D(t-\tau)} \right]^2 - \frac{1}{4}\frac{(\vec{r}-\vec{r'})^2}{D(t-\tau)}
+\]
+
+jetzt kann das Gauß-Integral durchgeführt werden:
+
+\begin{align*}
+  \int\limits_{-\infty}^\infty \! d\vec{k}\dots e ^{D(t-\tau)[\vec{k}-\vec{k_0}]^2+\dots} &= \int\! d\vec{k}\ e^{-D(t-\tau)k^2}
+\end{align*}
+
+Shift der Integralvariable
+
+\[
+\vec{k'} = \vec{k} - \frac{1}{2} \frac{i(\vec{r}-\vec{r'})}{D(t-\tau)}
+\]
+
+\[
+\eta(r,t) = \int \frac{d^2k'}{(2\pi)^3} \int d^3r' e^{-D(t-\tau)\vec{k'}^2 - \frac{(\vec{r} - \vec{r'})^2}{4D(t-\tau)}} S(r',\tau)
+\]
+
+Gauß Integral
+
+\[
+\int\limits_{-\infty}^\infty\! dh_x e^{D(t-\tau)k_x^2} = \sqrt{\frac{\pi}{D(t-\tau)}}
+\]
+\[
+\eta(r,t) = \frac{1}{(4\pi D(t\tau))^{3/2}} \int\! d^3r \exp\left\{ -\frac{(\vec{r} - \vec{r'})^2}{4D(t-\tau)} S(r',\tau)\right\}
+\]
+
+Noch mal bei Wärmeleitungsglechung in 3D
+
+\[
+\eta(r,t)  (4\pi D(t-\tau))^{-3/2} \int\! d^3r' e^{-\frac{(\vec{r}-\vec{r'})^2}{\pi D(t-\tau)} S(\vec{r'},\tau)}
+\]
+
+$4\pi D(t-\tau)$ und $e^{-\frac{(\vec{r}-\vec{r'})^2}{\pi D(t-\tau)}}$ sind Green's Fkt\@. der Dif\@.-Gl. Um die Lösung des urprünglcichen Problems zu bekommen:
+\begin{align*}
+  n(r,t) &= \int\limits_0^\infty \! d\tau\ \eta(r,t,\tau)\Theta(t-\tau) = \int\limits_0^t \! d\tau\ \eta(r,t,\tau)
+\intertext{Kausalitätsprinzip $\hat{=}$ Wirkung nach Ursache $\hat{=} \ \tau \leq t$}
+\to n(r,t) &= \int\limits_0^t\! d\tau\ (4\pi D(t-\tau))^{3/2} \int\ d^3r'\ e^{-\frac{(\vec{r}-\vec{r'})^2}{\pi D(t-\tau)} S(\vec{r'},\tau)}
+\end{align*}
+
+nur das letzte (gutartige) Integral muss für allgemeine Fkt\@. $S(r,t)$ gelöst werden! Für komplexe Randbedingungen können häufig ähnliche Separationsansätze benutzt werden.
+
+\paragraph{Direkte numerische Lösung der Diffusionsgleichung}
+
+Starte mit Diffusionsgleichung
+
+\[
+\frac{\partial n(r,t)}{\partial t} = D\left(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} +\frac{\partial^2}{\partial z^2}\right) n(r,t) + S(r,t)
+\]
+
+diskretisiere Raum und Zeit (in 1D) mit der Euler Methode.
+
+\begin{align*}
+  \frac{n_i(t+\delta t) -n_i(t)}{\delta t)} &= D\frac{n_{i-1} (t) - 2n_i(t) = n_{i+1}(t)}{a^2} + S_i(t)\\
+\to n_i(t+\delta t) &= n_i(t) + \frac{\delta tD}{a^2} \left[n_{i-1} (t) - 2n_i(t) = n_{i+1}(t)\right]  \delta t S_i(t)\\
+\end{align*}
+
+bekannt: $b_i(t) \hat{=}$ Angangswert, $S_i(t)$, berechne $n_i(\delta t)$ und itereiere! Vorteil: einfaches Konzept, Nachteil: schlechte Konvergenz. Bessere Konvergenz: berechne rechte Seite der PDG zur Zeit $t+ \frac{\delta t}{2}$:
+\begin{align*}
+  \frac{n_i(t + \delta t) - n_i(t)}{\delta t} =& \frac{D}{2a^2} \left\{ n_{i-1}(t) - 2n_i(t) + n{i+1}(t)\right.\\
+  &+ \left.n_{i-1}(t+\delta t) -2n_i(t + \delta t) + n_{i+1}(t+\delta t)\right\}\\
+&+ \frac{1}{2} \left\{ S_i(t) + S_i(t + \delta t)\right\}\\
+\end{align*}
+\begin{align*}
+\to n_i(t+\delta t) - \frac{\delta tD}{a^2} \left\{ n_{i-1}(t+\delta t) - 2n_i(t+\delta t)+n_{i+1}(t+\delta t) \right\} =&\ n_i(t)\\
+&+ \frac{\delta tD}{a^2} \left\{ n_{i-1}(t) - 2n_i(t) + n{i+1}(t) \right\}\\
+&+ \frac{1}{2} \left\{ S_i(t) + S_i(t + \delta t)\right\}
+\end{align*}
 
 \end{document}
