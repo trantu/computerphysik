@@ -1991,4 +1991,89 @@ bekannt: $b_i(t) \hat{=}$ Angangswert, $S_i(t)$, berechne $n_i(\delta t)$ und it
 &+ \frac{1}{2} \left\{ S_i(t) + S_i(t + \delta t)\right\}
 \end{align*}
 
+\chapter{7)Spektralanalyse}
+
+Periodische Bewegungen können elegant mit Fourierreiehen analysiert werden: Fouriertheorem. Periodische Funktionen $f(t) = f(t+T)$ können durch Furierreihe dargestellt werden:
+
+\begin{align*}
+  f(t) &= \sum_{n=-\infty}^\infty g_n e^{-in\omega_0 t}\\
+  \omega_o &= \frac{2\pi}{T} &\text{fundamentale Winekelfrquenz}
+\end{align*}
+
+Fourierkoeffizienten
+
+\begin{align*}
+g_n = \frac{1}{T} \int\limits_0^T\! dt\, f(t) e^{in\omega_o t}
+\end{align*}
+
+\paragraph{Herleitung}
+
+orthonormaler Basissatz
+\begin{align*}
+  \Phi_n(t) &= \frac{1}{\sqrt{T}} e^{-in\omega_o t}\\
+  \int\limits_{t_0}^{t_0+T}\!dt\ \Phi_n^\star (t) \Phi_m(t) &= \frac{1}{T} \int\limits_{t_0}^{t_0+T}\! dt\, \underbrace{e^{-i\omega_0 t(m-n)}}_{\star} = \delta_{mn}
+\end{align*}
+
+$\star$ periodische Sinus/Cosinus Funktion für $n\neq m$ \underline{oder} $=1$ für $n=m$.
+
+Zum Beweis der Fourerreihe:
+
+\begin{align*}
+  \int\! dt\ f(t) \Phi_m^\star (t) &= \sum_n g_n \int\! dt \ \Phi_m^\star (t) \sqrt{T} \Phi_n(t)\\
+&= \sum_n g_n \sqrt{T} \delta_{nm}\\
+&= g_m\sqrt{T}\\
+\to g_m &=  \frac{1}{\sqrt{T}} \int\! dt\ f(t) \Phi_m^\star (t)\\
+&= \frac{1}{T} \int\! dt\ f e^{in\omega_0 t}
+\end{align*}
+
+\paragraph{Überlegung zur kontinierliches Fouriertransformationen}
+
+Definiere
+
+\[
+g_n = \frac{1}{T} \int_{-T/2}^{T/2}\! dt\ f(t) e^{in\omega_o t}
+\]
+
+Im Limes $T\to \infty$ gilt $\omega_0 = \frac{2\pi}{T} \to 0$! und aus der Summe in der Fourierreihe wird ein Integral:
+
+\begin{align*}
+  f(t) &= \sum_{n=-\infty}^\infty g_n e^{-in\omega_0 t}\\
+  &\approx \int\limits_{-\infty}^\infty \! dn\ g(n) e^{-in\omega_0 t}
+\end{align*}
+
+Nun definiere
+\begin{align*}
+  \omega &= n\omega_0\\
+  \to \frac{d\omega}{dn} &= \omega_0\\
+  \to f(t) &=   \int\limits_{-\infty\omega_0 = \infty}^{\infty\omega_0 =     \infty}\! d\omega \frac{g(\omega)}{\omega_0} e^{-i\omega t}\\
+\frac{g(\omega)}{\omega_0} \to \frac{g(\omega)}{2\pi}T &= \frac{\tilde{f}(\omega)}{2\pi}
+\end{align*}
+
+und definiere
+\begin{align*}
+  g(\omega)T &\equiv \tilde{f}(\omega)\\
+  \to   \tilde{f}(\omega) &= \int\limits_{-\infty}^\infty f(t) e^{i\omega t}\, dt\\
+f(\omega) &= \int\limits_{-\infty}^\infty \frac{\tilde{f}(t)}{2\pi} e^{-i\omega t}\, dt
+\end{align*}
+
+Alternativ: $\frac{g(\omega)T}{2\pi} \equiv \tilde{\tilde{f}}(\omega)$ oder $\frac{g(\omega)T}{\sqrt{2\pi}} \equiv \tilde{\tilde{\tilde{f}}}(\omega)$
+
+\paragraph{Test ob's funktioniert}
+
+\begin{align*}
+  f(t) &= \int_{-\infty}^\infty \! \frac{d\omega}{2\pi} e^{-i\omega t} \int\limits_{-\infty}^{\infty}\! dt'\ f(t') e^{i\omega t'}\\
+&= \int\limits_{-\infty}^{\infty}\! dt'\ f(t') \int \frac{d\omega}{2\pi} e^{i\omega(t'-t)}
+\end{align*}
+
+Def. $\delta$-Fkt: $f(t) = \int\limits_{-\infty}^{\infty}\! dt'\ f('t) \delta(t-t')$; $f(t) = 1$: $1 = \int\limits_{-\infty}^{\infty}\! dt'\ \delta(t-t')$
+
+Eine Darstellung der $\delta$-Funktion:
+\begin{align*}
+  \delta(t'-t) = \int\frac{d\omega}{2\pi} e^{i\omega(t'-t)}
+\end{align*}
+
+und aus $\delta(t) = \int\frac{d\omega}{2\pi} e^{-i\omega t} = \int\frac{d\omega}{2\pi} \tilde{\delta}(\omega) e^{-i\omega t}$ mit $\tilde\delta(\omega) = 1$.
+
+Fourier-Repräsentation der $\delta$-Funktion ist also sehr einfach!
+
 \end{document}
