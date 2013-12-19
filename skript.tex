@@ -2076,4 +2076,39 @@ und aus $\delta(t) = \int\frac{d\omega}{2\pi} e^{-i\omega t} = \int\frac{d\omega
 
 Fourier-Repräsentation der $\delta$-Funktion ist also sehr einfach!
 
+\paragraph{Typische Anwendung von FT: nicht-lineares Pendel}
+
+\begin{align*}
+  m\cdot\frac{d^2\phi(t)L}{dt^2} = -mg\sin\phi - \gamma \frac{d\phi(t)L}{dt} + f_0 cos(\omega t)
+\end{align*}
+
+Mit $g = 9.8ms^{-2}$ Erdbeschl\@., $\gamma$ Dämpfung, $f_0$ äußere treiber der Kraft. Reduktion der Parameter:
+\begin{enumerate}
+\item Transformation der Gl\@.
+  \begin{align*}
+    \frac{L}{g} \frac{d^2t}{dt^2} + \sin\phi(t) + \frac{\gamma L}{mg} \frac{d\phi}{dt} = \frac{f_0}{mg}\cos(\omega t)
+  \end{align*}
+\item Reskaliereung von Variablen, hier $t=\tilde{t}\sqrt{\frac{L}{g}}$
+  \begin{align*}
+    \to \frac{d^2\phi}{d\tilde{t}^2} + \sin\phi(\tilde{t}) + \frac{\gamma}{m} \sqrt{\frac{L}{g}} \frac{d\phi}{d\tilde{t}} = \frac{f_0}{mg} \cos\left(\omega\frac{L}{g} \tilde{t}\right)
+  \end{align*}
+  nur noch drei effektive Parameter in der Thorie! Für sehr klein   etreibende Kraft $\frac{f_0}{mg} << 1 \to$ Amplitude $\phi << 1$.
+  \begin{align*}
+    \frac{d^2\phi}{d\tilde{t}^2} + \sin\phi(\tilde{t}) + \tilde\gamma \frac{d\phi}{d\tilde{t}} = \tilde{f}_0 \cos\left(\tilde{\omega} \tilde{t}\right)
+  \end{align*}
+
+$\sin\phi\sim\phi$ und wir dabei ein lineares Problem. Eigenfrequenz der ungedämpften Lösung:
+\begin{align*}
+  \frac{d^2 \phi(\tilde{t})}{d\tilde{t}^2} + \phi(\tilde{t}) &= 0\\
+  \to \phi(\tilde{t}) &= A\cos(\tilde{t})\\
+  \to \tilde{\omega}_0 &= 1 \to \omega_0 = \sqrt{\frac{g}{L}}
+\end{align*}
+Eigenfrequenz $= \omega_0$.
+\end{enumerate}
+
+Quantifizierung von Chaos möglich mit Spektralanalyse $\hat{=}$ Fouriertransformation.
+
+Spektrum $\tilde\phi(\omega) = \int\!dt\ \phi(t) e^{i\omega t}$. Das "`Powerspektrum"' $S(\omega) = |\tilde\phi(\omega)|^2$ ist sehr gut geeignet, um die Bewegung zu charakterisieren.
+
+
 \end{document}
