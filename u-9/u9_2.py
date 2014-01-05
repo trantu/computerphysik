@@ -49,6 +49,11 @@ def bisect_root(V, y0, rng, Eleft, E0left, Eright, E0right, delta):
     func = schroed_system(E0mid, V)
     [Emid, _] = one_step(func, y0, rng)
 
+    # If we try to bisect too much, we can reach the machine's limit
+    # and one of the sides will be equal to the middle
+    if E0mid == E0left or E0mid == E0right:
+        return (E0mid, Emid)
+
     if abs(Emid) < delta:
         return (E0mid, Emid)
 
