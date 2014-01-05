@@ -24,21 +24,12 @@ def take(seq, n):
 def V(x):
     return x**8 * 2.5e-4
 
-def Valt(x):
-    return 0.5 * x**2
-
 def schroed_system(E, V):
     def func(y, x):
         a, b = y
         return [b, -2.0 * a * (E - V(x))]
 
     return func
-
-def gradient(E, V):
-    """Ignore this"""
-    def func(y, t):
-        #return [[-2*(E - V(x)), 0], [0, 1]]
-        return [[0, 1], [-2*(E - V(x)), 0]]
 
 def one_step(func, y0, rng):
     """Return the next value we're interested in for the Eigenvalues"""
@@ -91,7 +82,7 @@ rng = np.arange(-6, 6, 0.01)
 y0 = [10e-10, 10e-10]
 E0 = 0
 
-eigens_gen = find_eigenvalues(E0, Valt, y0, rng)
+eigens_gen = find_eigenvalues(E0, V, y0, rng)
 eigens = take(imap(first, eigens_gen), 5)
 print u'Erste fünf Eigenwerte:', eigens
 
