@@ -3,8 +3,9 @@
 
 ## Carlos Martín, Tran Tu
 
-from math import exp
+from math import exp, sin, pi
 import numpy as np
+import matplotlib.pyplot as plt
 import scipy.integrate
 
 from itertools import islice, imap
@@ -14,6 +15,8 @@ def nth(seq, n):
 
 def first(seq):
     return nth(seq, 0)
+def second(seq):
+    return nth(seq, 1)
 
 def take(seq, n):
     return list(islice(seq, 0, n))
@@ -40,6 +43,10 @@ def gradient(E, V):
 def one_step(func, y0, rng):
     """Return the next value we're interested in for the Eigenvalues"""
     return scipy.integrate.odeint(func, y0, rng)[-1]
+
+def schroedinger(E, V, y0, rng):
+    func = schroed_system(E, V)
+    return scipy.integrate.odeint(func, y0, rng)
 
 def sign_change(a, b):
     return True if a * b < 0 else False
@@ -84,6 +91,37 @@ rng = np.arange(-6, 6, 0.01)
 y0 = [10e-10, 10e-10]
 E0 = 0
 
-eigens = find_eigenvalues(E0, Valt, y0, rng)
-print u'Erste fünf Eigenwerte:'
-print take(imap(first, eigens), 5)
+eigens_gen = find_eigenvalues(E0, Valt, y0, rng)
+eigens = take(imap(first, eigens_gen), 5)
+print u'Erste fünf Eigenwerte:', eigens
+
+# Now that we have the Eigenvalues, we solve the Scrhödinger equation
+# with them.
+for E in eigens:
+   plt.plot(rng, map(first, schroedinger(E, V, y0, rng)), label='E = %f' % E)
+
+plt.legend()
+plt.show()
+
+# 9.2.2
+
+squares = []
+for kmax in [10, 40, 100]:
+    def Vsquare(x):
+        f  = 1.0 / (8.0 / 2.0)
+        sums = [sin(2*pi*(2*k - 1)*f*x)/(2*k -1) for k in range(1, kmax+1)]
+        return (4.0/pi) * sum(sums)
+
+    plt.figure()
+    plt.title('rechteckiger Potenzialtopf $k_{max} = %d$' % kmax)
+    vals = [Vsquare(x) for x in rng]
+    plt.plot(rng, [Vsquare(x) for x in rng], label='Potenzial')
+    squares.append(vals)
+    y0 = [1e-10, 1e-10]
+    eigens = take(imap(first, find_eigenvalues(E0, Vsquare, y0, rng, 0.01)), 5)
+    #print eigens
+    for E in eigens:
+        plt.plot(rng, map(first, schroedinger(E, Vsquare, y0, rng)), label='E = %f' % E)
+    plt.legend()
+    
+plt.show()
