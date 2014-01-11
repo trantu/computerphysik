@@ -29,6 +29,9 @@ def exp_euler(f, tN, dt, xs, dx):
     # Initial values with u(x, t=0)
     for i in range(len(xs)):
         mat[i,0] = f(xs[i], 0)
+    # set u(∓1/2,t) = 0
+    for n in range(tN):
+        mat[0,n] = 0
 
     for n in range(1, tN):
         for i in range(xN-1):
