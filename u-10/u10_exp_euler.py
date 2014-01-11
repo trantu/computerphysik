@@ -52,5 +52,7 @@ for dx in [0.11, 0.15, 0.2, 0.3, 0.4]:
     r = dt / dx**2
     plt.plot(xs, ys, label='dx = %f, r = %f' % (dx, r))
 
+plt.ylabel('$u(x, t_{\text{end}})$')
+plt.xlabel('$x$')
 plt.legend()
 plt.show()
