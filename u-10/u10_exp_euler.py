@@ -27,8 +27,6 @@ def exp_euler(f, tN, dt, xN, dx):
     for i in range(xN):
         mat[i,0] = f(i * dx, 0)
 
-    print mat
-
     for n in range(1, tN):
         for i in range(xN-1):
             # since we're calculating u_i^{n+1}, we need to replace n -> n-1 in code
@@ -45,10 +43,10 @@ dt = 0.01
 xN = 10
 dx = 0.1
 
-# TODO: try with different dx sizes
-ys = exp_euler(lambda x, t: u(x, t, U), tN, dt, xN, dx)
-r = dt / dx**2
+for dx in [0.10, 0.15, 0.20]:
+    ys = exp_euler(lambda x, t: u(x, t, U), tN, dt, xN, dx)
+    r = dt / dx**2
+    plt.plot(ys, label='dx = %f, r = %f' % (dx, r))
 
-plt.plot(ys, label='r = %f' % r)
 plt.legend()
 plt.show()
