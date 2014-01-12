@@ -36,7 +36,7 @@ def exp_euler(f, tN, dt, xs, dx):
     for n in range(1, tN):
         for i in range(xN-1):
             # since we're calculating u_i^{n+1}, we need to replace n -> n-1 in code
-            mat[i,n] = mat[i,n-1] + r * (mat[i,n-1] - 2*mat[i,n-1] + mat[i+1,n-1])
+            mat[i,n] = mat[i,n-1] + r * (mat[i-1,n-1] - 2*mat[i,n-1] + mat[i+1,n-1])
 
     return mat[:,-1].tolist()
 
