@@ -31,8 +31,8 @@ def imp_euler(f, ts, dt, xs, dx):
     # The first and last need to skip the first and last resp.
     A[0,0] = 1 + 2*r
     A[0,1] = -r
-    A[-1,-2] = 1 + 2*r
-    A[-1,-1] = -r
+    A[-1,-2] = -r
+    A[-1,-1] = 1 + 2*r
 
     # The rest is filled with [-r, 1+2r, -r]
     for i in range(1, xN-1):
