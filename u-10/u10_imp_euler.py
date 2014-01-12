@@ -54,7 +54,7 @@ def imp_euler(f, ts, dt, xs, dx):
 U = 10
 tN = 6
 dt = 0.01
-dx = 0.1
+dx = 0.01
 r = dt / dx**2
 t_lims = [0.0, 0.01, 0.03, 0.04, 0.05]
 
