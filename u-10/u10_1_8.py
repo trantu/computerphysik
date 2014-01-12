@@ -69,6 +69,7 @@ for t in t_lims:
     ts = np.arange(0, t+dt, dt)
     ys,_,_ = exp_euler(lambda x, t: u(x, t, U), ts, xs, dx)
     plt.plot(xs, ys, label='t=%g' % (t))
+plt.show()
 
 xs = np.arange(-0.5, 0.5+dx, dx)
 t_lims = np.arange(0, 0.2, 0.00001)    
