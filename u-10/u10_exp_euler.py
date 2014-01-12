@@ -13,7 +13,7 @@ def u(x, t, U):
 
     raise NotImplementedError
 
-def exp_euler(f, tN, dt, xs, dx):
+def exp_euler(f, ts, xs, dx):
     """Explicit Euler for particle diffussion
     f: function to use
     tN: how many times to use
@@ -23,6 +23,7 @@ def exp_euler(f, tN, dt, xs, dx):
     """
 
     xN = len(xs)
+    tN = len(ts)
     mat = np.matrix(np.zeros((xN, tN)), dtype=float)
     r = dt / dx**2
 
@@ -40,22 +41,28 @@ def exp_euler(f, tN, dt, xs, dx):
 
     return mat[:,-1].tolist()
 
-# 10.1.4
-ts = [0, 0.01, 0.03, 0.04, 0.05]
+# 10.1.2
+t_lims = [0.0, 0.01, 0.03, 0.04, 0.05]
 
 U = 10
-tN = 6
-dt = 0.01
-dx = 0.1
+dt = 0.00001
+dx = 0.01
+r = dt / dx**2
 
-#for dx in [0.1]:
-for dx in [0.11, 0.15, 0.2, 0.3, 0.4]:
-    xs = np.arange(-0.5, 0.5, dx)
-    ys = exp_euler(lambda x, t: u(x, t, U), tN, dt, xs, dx)
-    r = dt / dx**2
-    plt.plot(xs, ys, label='dx = %f, r = %f' % (dx, r))
+# We should be able to do this calculation only once and look into
+# different offsets in a returned matrix, but this works, and isn't
+# overly expensive
+for t in t_lims:
+    xs = np.arange(-0.5, 0.5+dx, dx)
+    ts = np.arange(0, t+dt, dt)
+    ys = exp_euler(lambda x, t: u(x, t, U), ts, xs, dx)
+    plt.plot(xs, ys, label='t=%g' % (t))
 
-plt.ylabel('$u(x, t_{\text{end}})$')
+plt.title('Teilchendifussion, $dt=$%g, $dx=$%g, $r=$%g' % (dt, dx, r))
+plt.ylabel('$u(x, t)$')
 plt.xlabel('$x$')
 plt.legend()
 plt.show()
+
+# 10.1.3: Bei einem Wert von r < 1 konvergiert dieses Verfahren. Bei r
+# >= 1 (e.g. dt = 0.001 setzten) konvergiert es nicht.
