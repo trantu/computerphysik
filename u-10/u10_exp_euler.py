@@ -13,7 +13,7 @@ def u(x, t, U):
 
     raise NotImplementedError
 
-def exp_euler(f, ts, xs, dx):
+def exp_euler(f, ts, dt, xs, dx):
     """Explicit Euler for particle diffussion
     f: function to use
     tN: how many times to use
@@ -55,10 +55,10 @@ r = dt / dx**2
 for t in t_lims:
     xs = np.arange(-0.5, 0.5+dx, dx)
     ts = np.arange(0, t+dt, dt)
-    ys = exp_euler(lambda x, t: u(x, t, U), ts, xs, dx)
+    ys = exp_euler(lambda x, t: u(x, t, U), ts, dt, xs, dx)
     plt.plot(xs, ys, label='t=%g' % (t))
 
-plt.title('Teilchendifussion, $dt=$%g, $dx=$%g, $r=$%g' % (dt, dx, r))
+plt.title('Teilchendifussion (exp), $dt=$%g, $dx=$%g, $r=$%g' % (dt, dx, r))
 plt.ylabel('$u(x, t)$')
 plt.xlabel('$x$')
 plt.legend()
