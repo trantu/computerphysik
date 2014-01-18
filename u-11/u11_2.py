@@ -33,6 +33,8 @@ window_fns = [
 for N in [2000, 10000]:
     plt.figure()
     plt.title('Spektralanalyse N = %d' % N)
+    plt.xlabel('Hz')
+    plt.ylabel('Power')
     freqs = fftfreq(N, d=0.05)
     xs = [0.05 * i for i in range(N)]
     a = map(signal, xs)
