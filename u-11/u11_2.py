@@ -17,29 +17,28 @@ def blackman(i, N):
 def trapez(i, N):
     if i < N/10.0:
         return i / (N/10.0)
-    elif i > N - N/10.0:
+    elif i > (N - N/10.0):
         adj_i = i - (N - N/10.0) # adjusted i, starting at top 10%
         return 1 - adj_i / (N/10.0)
     else:
         return 1.0
 
-#freqs = fftfreq(N)
-#plt.xticks(freqs)
 window_fns = [
     (lambda i, N: 1, 'Straight'),
     (blackman, 'Blackman'),
     (trapez, 'Trapez'),
     ]
 for N in [2000, 10000]:
-    #plt.figure()
-    #plt.title('N = %d' % N)
+    plt.figure()
+    plt.title('Spektralanalyse N = %d' % N)
+    freqs = fftfreq(N)
     xs = [0.05 * i for i in range(N)]
     a = map(signal, xs)
 
     for (w, lbl) in window_fns:
         in_values = [a[i] * w(i, N) for i in range(N)]
         values = [abs(x)**2 for x in fft(in_values)]
-        plt.semilogy(xs, values, label=lbl)
-        
+        plt.semilogy(freqs, values, label=lbl)
+
 plt.legend()
 plt.show()
