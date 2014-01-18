@@ -28,10 +28,11 @@ window_fns = [
     (blackman, 'Blackman'),
     (trapez, 'Trapez'),
     ]
+
 for N in [2000, 10000]:
     plt.figure()
     plt.title('Spektralanalyse N = %d' % N)
-    freqs = fftfreq(N)
+    freqs = fftfreq(N, d=0.05)
     xs = [0.05 * i for i in range(N)]
     a = map(signal, xs)
 
