@@ -4,7 +4,7 @@
 # Carlos Martín, Tran Tu
 
 from math import sin, cos, pi, exp
-from numpy.fft import fft, fftfreq
+from numpy.fft import fft, fftfreq, fftshift
 import matplotlib.pyplot as plt
 import random
 import numpy as np
@@ -32,5 +32,5 @@ plt.show()
 freqs = fftfreq(len(ts), d=dt)
 values = fft(map(c, ts))
 ys = [abs(x)**2 for x in values]
-plt.semilogy(freqs, ys)
+plt.semilogy(fftshift(freqs), fftshift(ys))
 plt.show()
