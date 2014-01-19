@@ -66,7 +66,7 @@ def filter_spectrum(C, i, w, w0, phi):
 
 C = fftshift(fft(cs))
 freqs = fftshift(fftfreq(len(ts), d=dt))
-w0 = 5
+w0 = 3
 
 filtered = [filter_spectrum(C, i, freqs[i], w0, phi) for i in range(len(freqs))]
 filtered_c = ifft(filtered)
