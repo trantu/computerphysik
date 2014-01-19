@@ -47,3 +47,13 @@ for N in [2000, 10000]:
         plt.legend()
 
 plt.show()
+
+# Bei beide Analyse macht die Trapezfernsterfunktion die Unterschiede
+# zwischen den Höhen und Tiefen deutlicher. Die Blackman-Funktion
+# macht diese Unterschiede noch größer. Die Höhen bleiben aber auf dem
+# gleichem Niveau.
+#
+# Bei 2000 Samples liegen die Höhen bei 1e6 und bei 10000 liegen sie
+# bei 1e8. Je mehr Samples, desto höher sind die Höhen der
+# Fourier-Transform. Bei N → ∞ würde man erwarten, dass die Höhen auch
+# immer weiter wachsen.
