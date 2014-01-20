@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 '''
-Created on Nov 29, 2013
-
 @author: Carlos Matin Nieto, Tu Tran
 '''
 import time
@@ -41,10 +39,16 @@ def u11_1_1():
         phis.append(autokorrelation(l, i, data))
     plt.plot(range(0,100,5),phis)
     plt.title('u11_1_1')
+    plt.xlabel('0.1 tau = 1 Datenpunkt')
+    plt.ylabel('Phi(tau)')
     plt.show()
 
 u11_1_1()
-
+'''
+Zeitmessung:
+phi(tau = 0.0): time =  3.07 s
+phi(tau = 10.0): time =  2.97 s
+'''
 #u11_1_2
 def u11_1_2():
     start = time.clock()
@@ -58,7 +62,7 @@ def u11_1_2():
     Py = np.fft.fft(Py)
     Pz = np.fft.fft(Pz)
     #print z[99997]
-    for i in range(l):
+    for i in range(2*l):
         Px[i] = abs(Px[i]*Px[i])
         Py[i] = abs(Py[i]*Py[i])
         Pz[i] = abs(Pz[i]*Pz[i])
@@ -78,15 +82,16 @@ def u11_1_2():
         #print normierung     
         # erste Nullstelle fuer u11_1_3 finden (Obergrenze des Intergrals)
         if normierung >= 0.0 and normierung <= 0.001 and not printed:
-            print 'print', j
+            print 'print: ', j
             printed = 1
     elapsed = (time.clock() - start)
-    print 'Time u11.1.2: ', elapsed
+    print 'u11.1.2 Zeitmessung fuer alle tau bis 10000: ', elapsed
     #print phis
-    plt.plot(range(1000), phis[0:1000])
+    plt.plot(range(10000), phis[0:10000])
     plt.title('u11_1_2')
+    plt.xlabel('tau in Ps (0.1 tau = 10 Datenpunkte)')
+    plt.ylabel('Phi\'s')
     plt.show()
-    # TODO normieren, Zeit messen
     #summe = 0.0
     #for i in range(l):
     #    summe = summe + Px[i]+Py[i]+Pz[i]
@@ -94,8 +99,13 @@ def u11_1_2():
     #print np.fft.ifft(np.fft.fft(data,30,0))
     
 u11_1_2()
+'''
+u11_1_2 
+Zeitmessung:
+fuer alle tau (1:1000) -> Zeit = 0.75 s
+'''
 
-def phi(tau = 100000):
+def phi(tau = 10000):
     Px = np.zeros(2*l)
     Py = np.zeros(2*l)
     Pz = np.zeros(2*l)
@@ -106,7 +116,7 @@ def phi(tau = 100000):
     Py = np.fft.fft(Py)
     Pz = np.fft.fft(Pz)
     
-    for i in range(l):
+    for i in range(2*l):
         Px[i] = abs(Px[i]*Px[i])
         Py[i] = abs(Py[i]*Py[i])
         Pz[i] = abs(Pz[i]*Pz[i])
@@ -124,24 +134,28 @@ def phi(tau = 100000):
     return phis
 def u11_1_3():
     phis = phi()
-    def X(f):
+    def X(f_):
+        f = (10**(-4))*f_ # 1 Ghz = 10**9 1/s -> 0.1 Ghz = 10**(-4) 1/ps
         vorfactor = 1.8769
-        phi_0 = phis[0]
-        z1 = -(2*np.pi*f)*1j
+        z1 = (2*np.pi*f)*1j
         a = 0
         b = 1046 # Obergrenze abgelesen von u11_1_2()
         summe = 0.0
-        for t in range(a,b):
-            summe = summe + np.exp(-2*np.pi*f*t*1j)*phis[t]
-        
-        return vorfactor*(phi_0 - z1*(summe))
-    ys_real = [X(freq).real for freq in np.arange(0.1,100,0.1)]
-    ys_imag = [X(freq).imag for freq in np.arange(0.1,100,0.1)]
+        for t in range(a,b+1):
+            summe = summe + np.exp(-2*np.pi*f*(t/10.0)*1j)*phis[t]
+        return vorfactor*(phis[0] - z1*(summe))
+    ys_real = [X(freq).real for freq in np.arange(0.1,100.1,0.1)]
+    print 'real 0: ', ys_real
+    ys_imag = [X(freq).imag for freq in np.arange(0.1,100.1,0.1)]
     plt.figure()
     plt.title('u11.1.3 Real-Teil-Plot')
-    plt.semilogy(np.arange(0.1,100,0.1),ys_real)
+    plt.semilogy(ys_real,np.arange(0.1,100.1,0.1))
+    plt.ylabel('Frequenzen')
+    plt.xlabel('X_real')
     plt.figure()
     plt.title('u11.1.3 Imaginaer-Teil-Plot')
-    plt.semilogy(np.arange(0.1,100,0.1),ys_imag)
+    plt.semilogy(ys_imag,np.arange(0.1,100.1,0.1))
+    plt.ylabel('Frequenzen')
+    plt.xlabel('X_imaginaer')
     plt.show()
 u11_1_3()
