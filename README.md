@@ -15,9 +15,9 @@ Approximation using numeric methods like Newton,Gaus-Seidel, Jacobi
 * u8: 17.5
 * u9: 11
 * u10: 17
-* u11:
+* u11: 19
 * u12:
 * u13:
 * u14:
-* sum: 175.5 / 200
-* avg:  87.7% ~ Mark: 1.7
+* sum: 194.5 / 220
+* avg:  88.7% ~ Mark: 1.7
