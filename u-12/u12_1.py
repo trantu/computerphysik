@@ -53,26 +53,25 @@ def sigma(xs):
     return sq_mean
     #return sqrt(sq_mean)
 
-m = 2**31 - 1
-N = 10000
+def u12_1_2():
+    m = 2**31 - 1
+    N = 10000
 
-rng = RandomGenerator()
-xs = [float(r) / m for r in take(rng, N)]
+    rng = RandomGenerator()
+    xs = [float(r) / m for r in take(rng, N)]
 
 
-# squared differences from the mean
+    xmean = mean(xs)
+    xsig = sigma(xs)
+    print 'Mean', xmean
+    print 'σ   ', xsig
 
-xmean = mean(xs)
-xsig = sigma(xs)
-print 'Mean', xmean
-print 'σ   ', xsig
-
-# Histogramm
-plt.hist(xs, bins=np.arange(0, 1.01, 0.1))
-plt.title(r'Histogramm der Zufallszahlen, Mean %f, $\sigma=$%f' % (xmean, xsig))
-plt.xlabel('Werte')
-plt.ylabel('Anzahl')
-plt.show()
+    # Histogramm
+    plt.hist(xs, bins=np.arange(0, 1.01, 0.1))
+    plt.title(r'Histogramm der Zufallszahlen, Mean %f, $\sigma=$%f' % (xmean, xsig))
+    plt.xlabel('Werte')
+    plt.ylabel('Anzahl')
+    plt.show()
 
 # 10.1.3
 
@@ -91,21 +90,28 @@ def C(xs, ys):
     return s / float(n)
 
 ls = range(100, 10001, 100)
-corrs = []
-for l in ls:
-    xs = take(rng, l)
-    corrs.append(C(xs[:-1], xs[1:]))
 
-plt.plot(ls, corrs, label='VL')
+def u12_1_3():
+    rng = RandomGenerator()
+    corrs = []
+    for l in ls:
+        xs = take(rng, l)
+        corrs.append(C(xs[:-1], xs[1:]))
 
-corrs = []
-for l in ls:
-    xs = take(rng, l)
-    xcos = [cos((pi/180)*j + xj) for (xj, j) in zip(xs, range(len(xs)))]
-    corrs.append(C(xcos[:-1], xcos[1:]))
+    plt.plot(ls, corrs, label='VL')
 
-plt.plot(ls, corrs, label='cos')
+    corrs = []
+    for l in ls:
+        xs = take(rng, l)
+        xcos = [cos((pi/180)*j + xj) for (xj, j) in zip(xs, range(len(xs)))]
+        corrs.append(C(xcos[:-1], xcos[1:]))
 
-plt.title('Korrelation zwischen Zufallszahlen')
-plt.legend()
-plt.show()
+    plt.plot(ls, corrs, label='cos')
+
+    plt.title('Korrelation zwischen Zufallszahlen')
+    plt.legend()
+    plt.show()
+
+if __name__ == '__main__':
+    u12_1_2()
+    u12_1_3()
