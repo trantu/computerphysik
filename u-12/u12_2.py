@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
 Created on Nov 29, 2013
@@ -60,4 +61,4 @@ def mittelpunkt(f,a,b,N):
         summe = summe + f(a+(b-a)*(i-0.5)/np.float(N))
     return vorfaktor*summe
 if __name__ == '__main__':
-    
+    pass
