@@ -35,11 +35,12 @@ class RandomGenerator:
         return self.num
 
 def stuetz_monteC_integr(f,N,a,b):
-    vorfaktor = (b-a)/N
+    vorfaktor = (b-a)/np.float(N)
     summe = 0.0
-    r = RandomGenerator()
-    for i in range(1,N):
-        r =  float(r.next())/(2**31 - 1)
+    rs = RandomGenerator()
+    for _ in range(1,N):
+        r =  float(rs.next())/(2**31 - 1)
+        #print summe
         summe = summe + f(a + (b-a) * r)
     return vorfaktor*summe
 
@@ -55,9 +56,10 @@ def hit_miss_monte(f,fmin,fmax,N,a,b):
 
 def f(x):
     return np.abs(np.pi*x)
-            
+def f_analytisch(n):
+    return 2*n/np.pi           
 def mittelpunkt(f,a,b,N):
-    vorfaktor = np.float((b-a)/N)
+    vorfaktor = (b-a)/np.float(N)
     summe = 0.0
     for i in range(1,N):
         summe = summe + f(a+(b-a)*(i-0.5)/np.float(N))
@@ -65,8 +67,27 @@ def mittelpunkt(f,a,b,N):
 def u12_2():
     N = 2**16
     ns = [2**(x) for x in range(-1,17)]
+    ys_stutz = [stuetz_monteC_integr(f, N, 0, n) for n in ns]
+    ys_hit = [hit_miss_monte(f, 0, 1, N, 0, n) for n in ns]
+    ys_mittel = [mittelpunkt(f, 0, n, N) for n in ns]
+    ys_analytisch = [f_analytisch(n) for n in ns]
+    
+    ys_stutz_fehler = []
+    ys_hit_fehler = []
+    ys_mittel_fehler = []
+    for i in range(len(ns)):
+        ys_stutz_fehler.append((ys_stutz[i]-ys_analytisch[i])/ys_analytisch[i])
+        ys_hit_fehler.append((ys_hit[i]-ys_analytisch[i])/ys_analytisch[i])
+        ys_mittel_fehler.append((ys_mittel[i] - ys_analytisch[i])/ys_analytisch[i])
+    print 'ys_stutz',ys_stutz
+    print 'ys_hit',ys_hit
+    print 'ys_mittel',ys_mittel
+    print 'ys_analytisch',ys_analytisch
+    print 'ys_fehler',ys_hit_fehler
+    #plt.plot(ns,ys_stutz_fehler,'-*',label = 'Relativer Fehler bei Stuetz-Monte-Integration')
+    plt.loglog(ns,ys_hit_fehler,'-*',label = 'Relativer Fehler Hit-miss-Monte-Integration')
+    #plt.plot(ns,ys_mittel_fehler,'-*',label = 'Relativer Fehler Mittelpunkt-Integration')
+    plt.show()
 if __name__ == '__main__':
-    r = RandomGenerator()
-    for _ in range(10):
-        print float(r.next())/(2**31 - 1)
+    u12_2()
 #!
