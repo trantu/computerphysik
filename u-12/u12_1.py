@@ -50,7 +50,8 @@ def sigma(xs):
     sq_diffs = [(xmean - x)**2 for x in xs]
     sq_mean = sum(sq_diffs) / len(xs)
 
-    return sqrt(sq_mean)
+    return sq_mean
+    #return sqrt(sq_mean)
 
 m = 2**31 - 1
 N = 10000
@@ -87,7 +88,7 @@ def C(xs, ys):
 
     s = sum([(xs[i] - xmean) * (ys[i] - ymean) / (xsig * ysig) for i in range(n)])
 
-    return s / n
+    return s / float(n)
 
 ls = range(100, 10001, 100)
 corrs = []
@@ -100,7 +101,7 @@ plt.plot(ls, corrs, label='VL')
 corrs = []
 for l in ls:
     xs = take(rng, l)
-    xcos = [cos((pi/180)*j + xj) for (xj, j) in zip(xs, range(1, len(xs)+1))]
+    xcos = [cos((pi/180)*j + xj) for (xj, j) in zip(xs, range(len(xs)))]
     corrs.append(C(xcos[:-1], xcos[1:]))
 
 plt.plot(ls, corrs, label='cos')
