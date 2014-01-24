@@ -36,11 +36,12 @@ class RandomGenerator:
 
 def stuetz_monteC_integr(f,N,a,b):
     vorfaktor = (b-a)/np.float(N)
+    #print vorfaktor
     summe = 0.0
     rs = RandomGenerator()
     for _ in range(1,N):
         r =  float(rs.next())/(2**31 - 1)
-        #print summe
+        #print r
         summe = summe + f(a + (b-a) * r)
     return vorfaktor*summe
 
@@ -54,17 +55,23 @@ def hit_miss_monte(f,fmin,fmax,N,a,b):
             N_plus = N_plus + 1
     return (b-a)*((N_plus/np.float(N))*(fmax - fmin) + fmin)
 
-def f(x):
-    return np.abs(np.pi*x)
-def f_analytisch(n):
-    return 2*n/np.pi           
+          
 def mittelpunkt(f,a,b,N):
     vorfaktor = (b-a)/np.float(N)
     summe = 0.0
     for i in range(1,N):
         summe = summe + f(a+(b-a)*(i-0.5)/np.float(N))
     return vorfaktor*summe
-def u12_2():
+
+def u12_2_2():
+    '''
+    fmin von f = 0 , weil es ein Betrag von der Funktion ist, deswegen ist der kleiner Wert = 0
+    und fmax = 1 (eindeutig) 
+    '''
+    def f(x):
+        return np.abs(np.sin(np.pi*x))
+    def f_analytisch(n):
+        return 2*n/np.pi 
     N = 2**16
     ns = [2**(x) for x in range(-1,17)]
     ys_stutz = [stuetz_monteC_integr(f, N, 0, n) for n in ns]
@@ -76,18 +83,50 @@ def u12_2():
     ys_hit_fehler = []
     ys_mittel_fehler = []
     for i in range(len(ns)):
-        ys_stutz_fehler.append((ys_stutz[i]-ys_analytisch[i])/ys_analytisch[i])
-        ys_hit_fehler.append((ys_hit[i]-ys_analytisch[i])/ys_analytisch[i])
-        ys_mittel_fehler.append((ys_mittel[i] - ys_analytisch[i])/ys_analytisch[i])
+        ys_stutz_fehler.append(abs((ys_stutz[i]-ys_analytisch[i])/ys_analytisch[i]))
+        ys_hit_fehler.append(abs((ys_hit[i]-ys_analytisch[i])/ys_analytisch[i]))
+        ys_mittel_fehler.append(abs((ys_mittel[i] - ys_analytisch[i])/ys_analytisch[i]))
     print 'ys_stutz',ys_stutz
     print 'ys_hit',ys_hit
     print 'ys_mittel',ys_mittel
     print 'ys_analytisch',ys_analytisch
     print 'ys_fehler',ys_hit_fehler
-    #plt.plot(ns,ys_stutz_fehler,'-*',label = 'Relativer Fehler bei Stuetz-Monte-Integration')
-    plt.loglog(ns,ys_hit_fehler,'-*',label = 'Relativer Fehler Hit-miss-Monte-Integration')
-    #plt.plot(ns,ys_mittel_fehler,'-*',label = 'Relativer Fehler Mittelpunkt-Integration')
+    plt.loglog(ns,ys_stutz_fehler,'-*',label = 'Relativer Fehler bei Stuetz-Monte bei n')
+    plt.loglog(ns,ys_hit_fehler,'-*',label = 'Relativer Fehler Hit-miss-Monte bei n')
+    plt.loglog(ns,ys_mittel_fehler,'-*',label = 'Relativer Fehler Mittelpunkt bei n')
+    plt.ylabel('log(fehler)')
+    plt.xlabel('log(n)')
+    plt.legend()
+    plt.show()
+'''
+Erklaerung zu dem Plot von U12.2.2:
+Stuetzstellen-Monte-Integration: die Fehler verlaufen ziemlich konstant 
+(in einem gewissen Intervall log(Fehler) = (10**-4 bis 10**-2) im Gegensatz zu Mittelpunktmethode
+Hit-Miss-Monte-Integration: läuft schneller als Stuetzstellen-Monte-Integration aufgrund der fehlenden Summierung. Auf dem Plot sieht
+man, dass dessen Fehler ähnlich verlaufen wie die von Stuetzstellen-Monte-Integration.
+Mittelpunkt-Integration: die Fehler werden größer in Abhängigkeit von N. Je größer n wird desto größer wird der Fehler
+'''    
+def u12_2_3():
+    def f(x):
+        return np.abs(np.sin(np.pi*x))
+    def f_analytisch(n):
+        return 2*n/np.pi 
+    Ns = [2**(x) for x in range(1,17)]
+    n = 1
+    ys_stutz = [stuetz_monteC_integr(f, N, 0, n) for N in Ns]
+    ys_hit = [hit_miss_monte(f, 0, 1, N, 0, n) for N in Ns]
+    ys_analytisch = [f_analytisch(n) for n in [i**0 for i in range(16)]]
+    ys_stutz_fehler = []
+    ys_hit_fehler = []
+    for i in range(len(Ns)):
+        ys_stutz_fehler.append(abs((ys_stutz[i]-ys_analytisch[i])/ys_analytisch[i]))
+        ys_hit_fehler.append(abs((ys_hit[i]-ys_analytisch[i])/ys_analytisch[i]))
+    plt.loglog(Ns,ys_stutz_fehler,'-*',label = 'Relativer Fehler bei Stuetz-Monte  bei N')
+    plt.loglog(Ns,ys_hit_fehler,'-*',label = 'Relativer Fehler Hit-miss-Monte bei N')
+    plt.ylabel('log(fehler)')
+    plt.xlabel('log(N)')
+    plt.legend()
     plt.show()
 if __name__ == '__main__':
-    u12_2()
+    u12_2_2()
 #!
