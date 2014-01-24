@@ -33,12 +33,10 @@ class RandomGenerator:
 
     # Sensible name and lets us make this an iterator
     def next(self):
-        oldval = self.num
-
         # Calculate the new number, as per (1)
         self.num = (self.a * self.num + self.c) % self.m
 
-        return oldval
+        return self.num
 
 # 12.1.2
 
@@ -112,6 +110,39 @@ def u12_1_3():
     plt.legend()
     plt.show()
 
+class DeterminateRandomGenerator(RandomGenerator):
+    def __init__(self, a, c, m, x0=757685724):
+        self.a = a
+        self.c = c
+        self.m = m
+        self.num = x0
+
+from mpl_toolkits.mplot3d import Axes3D
+
+def u12_1_4():
+    k = 1
+    N = 10000 + 2
+    magics = [(1,1,1024), (61,0,1024), (61,1,1024), (101,2,16384), (65539,0,2**31)]
+
+    for args in magics:
+        # We generate exta numbers so we can have all three lists
+        # with 10000 numbers, the extra at the end are thrown away
+        rng = DeterminateRandomGenerator(*args)
+        nums = take(rng, N)
+        xs = nums[:-2]
+        ys = nums[1:-1]
+        zs = nums[2:]
+
+        fig = plt.figure(figsize=(10, 8))
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(xs, ys, zs, '.', s=1)
+        plt.title('$a=$ %d, $c=$ %d, $m=$ %d' % args)
+        plt.xlabel('x')
+        plt.ylabel('y')
+
+    plt.show()
+
 if __name__ == '__main__':
-    u12_1_2()
-    u12_1_3()
+    #u12_1_2()
+    #u12_1_3()
+    u12_1_4()
