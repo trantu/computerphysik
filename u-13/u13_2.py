@@ -6,6 +6,8 @@
 import numpy as np
 import random
 from math import exp
+from multiprocessing import Pool
+from itertools import product
 
 random.seed(5)
 
@@ -91,11 +93,26 @@ def flip_spin(field, i, j):
 
     field[i,j] = snew
 
-def simulate(n, H, kBT, steps=100):
+# TODO: we should be able to calculate the diff here as well
+def magnetisation(field):
+    """Calculate the magnetisation of this field"""
+    n = len(field)
+
+    m = 0.0
+    for i in range(n):
+        for j in range(n):
+            m += field[i,j]
+
+    return m
+
+def simulate(n, kBT, H, steps, equilibrium, snapshot=False):
     """Simulate a field of size n**2"""
 
     field = random_field(n)
     E = total_energy(field, H)
+
+    Es = [] # history of the energy in the system
+    Ms = [] # history or magnetisations
 
     for step in range(steps):
         # Generate a random pair, to see which spin we should try to
@@ -103,11 +120,35 @@ def simulate(n, H, kBT, steps=100):
         i, j = np.random.random_integers(0, n-1, 2)
 
         accepted, dE = accept_flip(E, H, kBT, field, i, j)
-        print accepted, dE
+        #print accepted, dE
 
         if accepted:
             E += dE
             flip_spin(field, i, j)
 
+        if snapshot and step > equilibrium:
+            Es.append(E)
+            Ms.append(magnetisation(field))
+
+    return Es, Ms
+
+# Run our simulation, we get the variables via a tuple though Pool.map()
+def run_simulation((kBT, H)):
+    n = 10
+    nsteps = 25000
+    nequi = nsteps / 4 # the first fourth is to let it settle
+
+    return simulate(n, kBT, H, nsteps, nequi, True)
+
 if __name__ == '__main__':
-    simulate(10, 1, 10e-3)
+
+    kBTs = [1e-3, 1e-1, 1, 2, 5, 10, 100]
+    Hs = [0, 0.1, 1]
+    # Cartesian product of the temperatures and the magenic fields
+    experiments = product(kBTs, Hs)
+
+    # Each experiment (and each repetition) is independent, so we can
+    # create a pool of workers and make use of all the machine's
+    # cores.
+    pool = Pool()
+    answers = pool.map(run_simulation, experiments)
