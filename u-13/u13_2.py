@@ -4,6 +4,7 @@
 # Carlos Martín, Tran Tu
 
 import numpy as np
+import matplotlib.pyplot as plt
 import random
 from math import exp
 from multiprocessing import Pool
@@ -81,7 +82,7 @@ def accept_flip(E, H, kBT, field, i, j,):
     # if it doesn't lose energy, there's still a chance to accept it
     E2 = E + dE
     chance = exp((E - E2) / kBT)
-    if random.uniform(0, 1) < chance:
+    if random.uniform(0, 1) < min(1, chance):
         return True, dE
 
     return False, dE
@@ -126,11 +127,11 @@ def simulate(n, kBT, H, steps, equilibrium, snapshot=False):
             E += dE
             flip_spin(field, i, j)
 
-        if snapshot and step > equilibrium:
+        if step > equilibrium:
             Es.append(E)
             Ms.append(magnetisation(field))
 
-    return Es, Ms
+    return np.mean(Es), np.mean(Ms), np.mean(np.abs(Ms))
 
 # Run our simulation, we get the variables via a tuple though Pool.map()
 def run_simulation((kBT, H)):
@@ -138,17 +139,31 @@ def run_simulation((kBT, H)):
     nsteps = 25000
     nequi = nsteps / 4 # the first fourth is to let it settle
 
-    return simulate(n, kBT, H, nsteps, nequi, True)
+    return simulate(n, kBT, H, nsteps, nequi, False)
 
 if __name__ == '__main__':
 
     kBTs = [1e-3, 1e-1, 1, 2, 5, 10, 100]
     Hs = [0, 0.1, 1]
     # Cartesian product of the temperatures and the magenic fields
-    experiments = product(kBTs, Hs)
+    experiments = list(product(kBTs, Hs))
 
     # Each experiment (and each repetition) is independent, so we can
     # create a pool of workers and make use of all the machine's
     # cores.
     pool = Pool()
     answers = pool.map(run_simulation, experiments)
+
+    Es, Ms, AMs = zip(*answers)
+
+    print experiments
+    print Es
+
+    # Plot the energy for each magnetism level
+    for i, h in enumerate(Hs):
+        plt.semilogx(kBTs, Es[i::3], label='H = %g' % h)
+
+    plt.xlabel('$k_B T$')
+    plt.ylabel('Energy')
+    plt.legend()
+    plt.show()
