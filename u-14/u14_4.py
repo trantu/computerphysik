@@ -4,7 +4,13 @@
 # Carlos Martín, Tran Tu
 
 import numpy as np
+import matplotlib.pyplot as plt
 import random
+from math import exp
+from math import factorial as fac
+from collections import Counter
+from multiprocessing import Pool
+import time
 
 def random_network(n, p):
     """Create a randomly connected n-node network.
@@ -21,7 +27,6 @@ def random_network(n, p):
     # data from it, as we don't care about position.
     max_conns = n*(n-1) / 2
     vals = (x < p for x in [rng.uniform(0, 1) for _ in range(max_conns)])
-    #vals = (x for x in np.random.random_integers(0, 1, max_conns))
 
     # Generate the n-by-n edge matrix
     M = np.empty((n,n), dtype=bool)
@@ -31,7 +36,9 @@ def random_network(n, p):
         for j in range(i):
             M[j,i] = next(vals)
 
-    # We now need to mirror across the diagonal
+    # We now need to mirror across the diagonal. This makes it easier
+    # to deal with edges, as we don't need to worry which is the entry
+    # that contains the true value.
     for i in range(1, n):
         for j in range(i):
             M[i,j] = M[j,i]
@@ -39,6 +46,57 @@ def random_network(n, p):
     # transform what we return into a boolean array
     return M
 
+def count_edges(M):
+    """Return the amount of edges in the network M"""
+
+    # As the values are repeated, get only a triangle
+    return np.count_nonzero(np.tril(M))
+
+def count_conns(M, i):
+    """Count the amount of connections which node 'i' has"""
+
+    # we can simply count non-false for the row/column
+    return np.count_nonzero(M[i])
+
+def poisson(N, p):
+    lam = p * (N - 1) # expected value <k>
+
+    # NumPy helpfully provides us with a Poisson function which
+    # doesn't complain about longs being too big.
+    return np.random.poisson(lam=lam, size=N)
+
+def one_random((n, p)):
+        M = random_network(N, p)
+        c = [count_conns(M, i) for i in range(N)]
+        return Counter(c).items()
+
 if __name__ == '__main__':
-    M = random_network(5, 0.5)
-    print 'M\n', M
+    N = 1000
+    p = 0.02
+
+    random.seed()
+    
+    dist = [[0]*N]*10
+    # Count connections 10 times
+    pool = Pool()
+    for n, items in enumerate(pool.map(one_random, [(N, p)]*10)):
+        print(items)
+        print(dist[9])
+        for i, reps in items:
+            dist[n][i] += reps
+
+    # Now that we have the ten repetitions, we need to find the
+    # average amount of nodes with a particular amount of neighbours.
+
+    dist = np.matrix(dist, dtype=int)
+    avg_conns = []
+    for i in range(N):
+        avg_conns.append(np.mean(dist[:,i]))
+
+    plt.hist(avg_conns, bins=100, normed=True, label="Real")
+
+    pois = poisson(N, p)
+    plt.hist(pois, bins=100, normed=True, label='Poisson')
+
+    plt.legend()
+    plt.show()
