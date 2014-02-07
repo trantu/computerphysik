@@ -20,28 +20,18 @@ def random_network(n, p):
 
     Returns a boolean array of edges"""
 
-    rng = random.Random()
-
-    # first, we need n(n-1)/2 random values {0,1} to represent the
-    # connections We make 'vals' a generator so we can keep reading
-    # data from it, as we don't care about position.
-    max_conns = n*(n-1) / 2
-    vals = (x < p for x in [rng.uniform(0, 1) for _ in range(max_conns)])
-
     # Generate the n-by-n edge matrix
-    M = np.empty((n,n), dtype=bool)
-    M.fill(False)
-    # and fill it with the random values from before
-    for i in range(1, n):
-        for j in range(i):
-            M[j,i] = next(vals)
+    M = np.zeros((n,n), dtype=int)
+    # and fill it randomly with 1 or 0
+    for j in range(1, n):
+        for i in range(j):
+            if random.random() <= p:
+                M[i,j] = 1
 
     # We now need to mirror across the diagonal. This makes it easier
     # to deal with edges, as we don't need to worry which is the entry
     # that contains the true value.
-    for i in range(1, n):
-        for j in range(i):
-            M[i,j] = M[j,i]
+    M = M + M.transpose()
 
     # transform what we return into a boolean array
     return M
@@ -68,7 +58,7 @@ def poisson(N, p):
 def one_random((n, p)):
         M = random_network(N, p)
         c = [count_conns(M, i) for i in range(N)]
-        return Counter(c).items()
+        return c
 
 if __name__ == '__main__':
     N = 1000
@@ -76,27 +66,19 @@ if __name__ == '__main__':
 
     random.seed()
     
-    dist = [[0]*N]*10
+    dist = [0]*N
     # Count connections 10 times
     pool = Pool()
-    for n, items in enumerate(pool.map(one_random, [(N, p)]*10)):
-        print(items)
-        print(dist[9])
-        for i, reps in items:
-            dist[n][i] += reps
-
-    # Now that we have the ten repetitions, we need to find the
-    # average amount of nodes with a particular amount of neighbours.
-
-    dist = np.matrix(dist, dtype=int)
-    avg_conns = []
+    lists = pool.map(one_random, [(N, p)]*10)
+    counts = [0]*N
+    # and average how many neighbours each node had
     for i in range(N):
-        avg_conns.append(np.mean(dist[:,i]))
-
-    plt.hist(avg_conns, bins=100, normed=True, label="Real")
+        counts[i] = np.mean([lists[j][i] for j in range(10)])
+        
+    norm, bins, _ = plt.hist(counts, normed=True, label='$P(k_i)$')
 
     pois = poisson(N, p)
-    plt.hist(pois, bins=100, normed=True, label='Poisson')
+    plt.hist(pois, normed=True, label='Poisson', alpha=0.5)
 
     plt.legend()
     plt.show()
