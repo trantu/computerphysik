@@ -119,6 +119,8 @@ def u14_4_2():
     pois = poisson(N, p)
     plt.hist(pois, normed=True, label='Poisson', alpha=0.5)
 
+    plt.title(u'Mittlere Verbindungen eines zufälligen Netzwerkes')
+    plt.xlabel('Verbindungen')
     plt.legend()
     plt.show()
 
@@ -133,9 +135,8 @@ def average_distance(pool, n, pN):
     dist = pool.map(one_avg_distance, [(n,p)]*5)
     return np.mean(dist)
 
-if __name__ == '__main__':
-    # u14_4_2()
 
+def u14_4_3():
     Ns = range(60, 161, 20)
 
 
@@ -147,5 +148,13 @@ if __name__ == '__main__':
         plt.plot(Ns, res, label=r'$\langle l \rangle_N$, $pN = %d$' % (pN))
 
     plt.semilogy(Ns, Ns, label=r'$\log N$')
+
+    plt.title('Mittlere Distanz zwischen zei Knoten')
+    plt.xlabel('N')
+    plt.ylabel('Mittlere Distanz')
     plt.legend(loc='upper left')
     plt.show()
+
+if __name__ == '__main__':
+    u14_4_2()
+    u14_4_3()
