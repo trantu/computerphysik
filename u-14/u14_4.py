@@ -126,11 +126,10 @@ def one_avg_distance((n, p)):
     M = random_network(n, p)
     return [distances(M, j) for j in range(n)]
 
-def average_distance(n, pN):
+def average_distance(pool, n, pN):
     """Return the average distance, over five runs, of an n-node network"""
     p = float(pN) / n
 
-    pool = Pool()
     dist = pool.map(one_avg_distance, [(n,p)]*5)
     return np.mean(dist)
 
@@ -140,10 +139,11 @@ if __name__ == '__main__':
     Ns = range(60, 161, 20)
 
 
+    pool = Pool()
     for pN in [10, 20]:
         res = []
         for N in Ns:
-            res.append(average_distance(N, pN))
+            res.append(average_distance(pool, N, pN))
         plt.plot(Ns, res, label=r'$\langle l \rangle_N$, $pN = %d$' % (pN))
 
     plt.semilogy(Ns, Ns, label=r'$\log N$')
