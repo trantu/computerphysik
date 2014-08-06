@@ -20,4 +20,4 @@ Approximation using numeric methods like Newton,Gaus-Seidel, Jacobi
 * u13: 20
 * u14: 8
 * sum: 242.5 / 260
-* avg:  93.02% ~ Mark: 1.3
+* avg:  93.02% ~ Mark: 1.0
